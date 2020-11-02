@@ -1,0 +1,17 @@
+// export * from './source-statuses.route';
+// export * from './sources.route';
+// export * from './transactions.route';
+
+import { Router } from 'express';
+// router.get('/', function(req, res) {
+//     res.redirect('/catalog');
+//   });
+const router = Router();
+
+class IndexRoutes {
+  get routes() {
+    return router.get('', (req, res) => res.send('Index routes 2!'));
+  }
+}
+
+export { IndexRoutes };
