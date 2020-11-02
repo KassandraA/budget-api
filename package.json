@@ -16,26 +16,14 @@
     "body-parser": "^1.19.0",
     "express": "^4.17.1",
     "express-validator": "^6.6.1",
+    "nodemon": "^2.0.6",
     "sqlite3": "^5.0.0"
-  },
-  "nodemonConfig": {
-    "watch": [
-      "src"
-    ],
-    "ext": "ts",
-    "ignore": [
-      "*.test.ts"
-    ],
-    "delay": "3",
-    "execMap": {
-      "ts": "ts-node"
-    }
   },
   "scripts": {
     "prebuild": "rm -rf dist/* && tslint -c tslint.json -p tsconfig.json --fix",
     "build": "tsc && cp -rf package.json dist/package.json && cp -rf database.db dist/database.db",
     "prestart": "npm run build",
-    "start": "ts-node .",
+    "start": "nodemon src/app.ts",
     "debug": "yarn build && nodemon --inspect .",
     "migration:run": "ts-node ./node_modules/typeorm/cli.js migration:run",
     "migration:revert": "ts-node ./node_modules/typeorm/cli.js migration:revert"

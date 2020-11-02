@@ -11,7 +11,7 @@ const sourceRoutes = new SourcesRoute();
 
 app.use(bodyParser.json());
 
-app.use('/test', (req, res) => res.send('Server is working'));
+app.use('/test', (req, res) => res.send('Server is still working on reload'));
 app.use('/api/v1/sources', sourceRoutes.routes);
 
 app.listen(5000, () => {
