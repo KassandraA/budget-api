@@ -23,7 +23,7 @@
     "prebuild": "rm -rf dist/* && tslint -c tslint.json -p tsconfig.json --fix",
     "build": "tsc && cp -rf package.json dist/package.json && cp -rf database.db dist/database.db",
     "prestart": "npm run build",
-    "start": "nodemon src/app.ts",
+    "start": "nodemon .",
     "debug": "yarn build && nodemon --inspect .",
     "migration:run": "ts-node ./node_modules/typeorm/cli.js migration:run",
     "migration:revert": "ts-node ./node_modules/typeorm/cli.js migration:revert"
