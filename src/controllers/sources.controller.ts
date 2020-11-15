@@ -7,7 +7,7 @@ import { Source } from '../models/source.model';
 export class SourcesController {
   static async getSources(req: Request, res: Response): Promise<Response<{ data: Source[] }>> {
     try {
-      const sources = await SourcesService.getSources();
+      const sources = await SourcesService.getAll();
       return res.json({ data: sources });
     } catch (e) {
       return res.status(500).json({ message: e.message });
@@ -16,7 +16,7 @@ export class SourcesController {
 
   static async getSourceById(req: Request, res: Response): Promise<Response<{ data: Source }>> {
     try {
-      const source = await SourcesService.getSourceById(Number(req.params.id));
+      const source = await SourcesService.getOneById(Number(req.params.id));
       return res.json({ data: source });
     } catch (e) {
       if (e instanceof NotFoundError) {
@@ -29,11 +29,11 @@ export class SourcesController {
   static async createSource(req: Request, res: Response): Promise<Response<{ data: Source }>> {
     try {
       const { name, description, currency, note_1, note_2, status_id } = req.body;
-      const newSource = await SourcesService.addSource(name, description, currency, note_1, note_2, status_id);
+      const newSource = await SourcesService.addOne(name, description, currency, note_1, note_2, status_id);
       return res.json({ data: newSource });
     } catch (e) {
       if (e instanceof NotFoundError) {
-        return res.status(400).json({ message: e.message });
+        return res.status(404).json({ message: e.message });
       } else if (e instanceof NotUniqueError) {
         return res.status(400).json({ message: e.message });
       }
@@ -53,9 +53,7 @@ export class SourcesController {
         status_id: number;
       } = req.body;
 
-      source.sourceId = Number(req.params.id);
-
-      const updatedSource = await SourcesService.updateSource(
+      const updatedSource = await SourcesService.updateOne(
         Number(req.params.id),
         source.name,
         source.description,
@@ -67,7 +65,7 @@ export class SourcesController {
       return res.json({ data: updatedSource });
     } catch (e) {
       if (e instanceof NotFoundError) {
-        return res.status(400).json({ message: e.message });
+        return res.status(404).json({ message: e.message });
       } else if (e instanceof NotUniqueError) {
         return res.status(400).json({ message: e.message });
       }
@@ -77,7 +75,7 @@ export class SourcesController {
 
   static async deleteSource(req: Request, res: Response): Promise<Response<{ message: string }>> {
     try {
-      await SourcesService.deleteSource(Number(req.params.id));
+      await SourcesService.deleteOne(Number(req.params.id));
       return res.json({ message: 'Deleted successfully' });
     } catch (e) {
       if (e instanceof NotFoundError) {

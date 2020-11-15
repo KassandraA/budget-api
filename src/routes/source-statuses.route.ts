@@ -1,17 +1,17 @@
 import { Router } from 'express';
+import { SourceStatusValidator } from '../validators/source-status.validator';
 import { SourceStatusesController } from '../controllers/source-statuses.controller';
 
 const router = Router();
-const PREFIX = '/api/v1';
 
-class SourceStatusesRoutes {
+export class SourceStatusesRoutes {
   get routes() {
-    router.get(`${PREFIX}/source-statuses`, SourceStatusesController.getAll);
-    router.get(`${PREFIX}/source-statuses/:id([0-9]+)`, SourceStatusesController.getOneById);
-    router.post(`${PREFIX}/source-statuses`, SourceStatusesController.add);
+    router.get('', SourceStatusesController.getSourceStatuses);
+    router.get('/:id([0-9]+)', SourceStatusesController.getSourceStatusById);
+    router.post('', SourceStatusValidator.validateOnCreate, SourceStatusesController.createSourceStatus);
+    router.put('/:id([0-9]+)', SourceStatusValidator.validateOnUpdate, SourceStatusesController.updateSourceStatus);
+    router.delete('/:id([0-9]+)', SourceStatusesController.deleteSourceStatus);
 
     return router;
   }
 }
-
-export { SourceStatusesRoutes };
