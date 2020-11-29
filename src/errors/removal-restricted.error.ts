@@ -3,4 +3,5 @@ export class RemovalRestrictedError extends Error {
     super(message);
     this.name = 'RemovalRestrictedError';
   }
+  public statusCode = 400;
 }

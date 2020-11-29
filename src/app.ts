@@ -2,8 +2,8 @@ import 'reflect-metadata';
 import express from 'express';
 import * as bodyParser from 'body-parser';
 import { connect } from './db/db';
-import { SourcesRoutes } from './routes/sources.route';
-import { SourceStatusesRoutes } from './routes/source-statuses.route';
+import { SourcesRoutes } from './routes/sources.routes';
+import { SourceStatusesRoutes } from './routes/source-statuses.routes';
 
 connect();
 

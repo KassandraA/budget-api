@@ -3,12 +3,10 @@ import { NotFoundError } from '../errors/not-found.error';
 import { Source } from '../models/source.model';
 
 export class SourcesService {
-  /* GET sources */
   static async getAll(): Promise<Source[]> {
     return await Source.find();
   }
 
-  /* GET sources by ID */
   static async getOneById(sourceId: number): Promise<Source> {
     const source = await Source.findOne({
       id: sourceId,
@@ -18,7 +16,6 @@ export class SourcesService {
     return source;
   }
 
-  /* POST new source */
   static async addOne(
     name: string,
     description: string,
@@ -38,7 +35,6 @@ export class SourcesService {
     return this.saveSource(new_source);
   }
 
-  /* PUT source */
   static async updateOne(
     sourceId: number,
     name: string,
@@ -64,7 +60,6 @@ export class SourcesService {
     return this.saveSource(updated_source);
   }
 
-  /* DELETE source */
   static async deleteOne(sourceId: number) {
     const deleted_source = await Source.findOne({ id: sourceId });
     if (!deleted_source) throw new NotFoundError('Source not found');

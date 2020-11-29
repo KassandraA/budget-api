@@ -4,12 +4,10 @@ import { RemovalRestrictedError } from '../errors/removal-restricted.error';
 import { SourceStatus } from '../models/source-status.model';
 
 export class SourceStatusesService {
-  /** GET all source statuses */
   static async getAll() {
     return await SourceStatus.find();
   }
 
-  /** GET one source status */
   static async getOneById(source_status_id: number): Promise<SourceStatus> {
     const source_status = await SourceStatus.findOne({ id: source_status_id });
 
@@ -17,7 +15,6 @@ export class SourceStatusesService {
     return source_status;
   }
 
-  /** POST new source status */
   static async addOne(name: string, description: string): Promise<SourceStatus> {
     const new_source_status = new SourceStatus();
     new_source_status.name = name;
@@ -26,7 +23,6 @@ export class SourceStatusesService {
     return this.saveSourceStatus(new_source_status);
   }
 
-  /** PUT updated source status */
   static async updateOne(source_status_id: number, name: string, description: string): Promise<SourceStatus> {
     const updated_source_status = await SourceStatus.findOne({ id: source_status_id });
 
@@ -38,7 +34,6 @@ export class SourceStatusesService {
     return this.saveSourceStatus(updated_source_status);
   }
 
-  /** DELETE source status */
   static async deleteOne(source_status_id: number) {
     const deleted_source_status = await SourceStatus.findOne({ id: source_status_id });
     if (!deleted_source_status) throw new NotFoundError('Source status not found');
@@ -46,7 +41,9 @@ export class SourceStatusesService {
       await deleted_source_status.remove();
     } catch (error) {
       if (error.message.includes('FOREIGN KEY constraint failed')) {
-        throw new RemovalRestrictedError('The source status can not be deleted, it is used by at least one source');
+        throw new RemovalRestrictedError(
+          `The source status with id ${source_status_id} can not be deleted, it is used by at least one source`
+        );
       } else {
         throw error;
       }
