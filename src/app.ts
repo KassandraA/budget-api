@@ -11,7 +11,7 @@ const sourceRoutes = new SourcesRoutes();
 
 app.use(bodyParser.json());
 
-app.use('/test', (req, res) => res.send('Server is still working nodemon 7'));
+app.use('/test', (req, res) => res.send('Server is working with nodemon reload'));
 app.use('/api/v1/sources', sourceRoutes.routes);
 
 app.listen(5000, () => {
