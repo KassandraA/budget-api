@@ -13,7 +13,7 @@ const sourceStatusRoutes = new SourceStatusesRoutes();
 
 app.use(bodyParser.json());
 
-app.use('/test', (req, res) => res.send('Server is still working'));
+app.use('/test', (req, res) => res.send('Server is working with nodemon reload'));
 app.use('/api/v1/sources', sourceRoutes.routes);
 app.use('/api/v1/source_statuses', sourceStatusRoutes.routes);
 
