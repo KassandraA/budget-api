@@ -3,4 +3,5 @@ export class NotFoundError extends Error {
     super(message);
     this.name = 'NotFoundError';
   }
+  public statusCode = 404;
 }
