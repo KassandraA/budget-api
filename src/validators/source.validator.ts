@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
-import { check, validationResult } from 'express-validator';
+import { validationResult } from 'express-validator';
 import { ValidationHelpers } from './validation-helpers';
 
 export class SourceValidator {

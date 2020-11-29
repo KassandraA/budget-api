@@ -3,4 +3,5 @@ export class NotUniqueError extends Error {
     super(message);
     this.name = 'NotUniqueError';
   }
+  public statusCode = 400;
 }
