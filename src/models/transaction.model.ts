@@ -43,7 +43,11 @@ export class Transaction extends BaseEntity {
   @JoinColumn({ name: 'source_id' })
   source: Source;
 
-  @ManyToMany((type) => Tag, (tag) => tag.transactions)
-  @JoinTable()
+  @ManyToMany(() => Tag, (tag) => tag.transactions)
+  @JoinTable({
+    name: 'transaction_tags',
+    joinColumn: { name: 'transaction_id', referencedColumnName: 'id' },
+    inverseJoinColumn: { name: 'tag_id', referencedColumnName: 'id' },
+  })
   tags: Tag[];
 }

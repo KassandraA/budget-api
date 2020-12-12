@@ -9,6 +9,6 @@ export class Tag extends BaseEntity {
   @Column({ unique: true })
   name: string;
 
-  @ManyToMany((type) => Transaction, (transaction) => transaction.tags)
+  @ManyToMany(() => Transaction, (transaction) => transaction.tags)
   transactions: Transaction[];
 }

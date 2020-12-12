@@ -36,8 +36,6 @@ export class TagsService {
 
   static async deleteOne(tagId: number) {
     const deleted_tag = await Tag.findOne({ id: tagId });
-    // tslint:disable-next-line: no-debugger
-    debugger;
     if (!deleted_tag) throw new NotFoundError('Tag not found');
 
     await deleted_tag.remove();
