@@ -1,3 +1,4 @@
+import { RemovalRestrictedError } from '../errors/removal-restricted.error';
 import { NotFoundError } from '../errors/not-found.error';
 import { NotUniqueError } from '../errors/not-unique.error';
 import { Tag } from '../models/tag.model';
@@ -38,16 +39,28 @@ export class TagsService {
     const deleted_tag = await Tag.findOne({ id: tagId });
     if (!deleted_tag) throw new NotFoundError('Tag not found');
 
-    await deleted_tag.remove();
+    // await deleted_tag.remove(); //test
+    try {
+      await deleted_tag.remove();
+    } catch (error) {
+      if (error.message.includes('FOREIGN KEY constraint failed')) {
+        throw new RemovalRestrictedError(
+          `The tag with id ${deleted_tag} can not be deleted, it is used by at least one transaction`
+        );
+      } else {
+        throw error;
+      }
+    }
   }
 
   private static async saveTag(tag: Tag): Promise<Tag> {
     try {
       return await tag.save();
     } catch (error) {
-      if (error.message.includes('FOREIGN KEY constraint failed')) {
-        throw new NotFoundError('status_id not found');
-      } else if (error.message.includes('UNIQUE constraint failed: tags.name')) {
+      // if (error.message.includes('FOREIGN KEY constraint failed')) {
+      //   throw new NotFoundError('status_id not found');
+      // } else
+      if (error.message.includes('UNIQUE constraint failed: tags.name')) {
         throw new NotUniqueError(`The name '${tag.name}' is already in use`);
       } else {
         throw error;
