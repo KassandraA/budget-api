@@ -9,7 +9,7 @@ export class TransactionsRoutes {
     router.get('', TransactionsController.getTransactions);
     router.get('/:id([0-9]+)', TransactionsController.getTransactionById);
     router.post('', TransactionValidator.validateOnCreate, TransactionsController.createTransaction);
-    router.put('/:id([0-9]+)', TransactionValidator.validateOnUpdate, TransactionsController.updateTransaction);
+    router.patch('/:id([0-9]+)', TransactionValidator.validateOnUpdate, TransactionsController.updateTransaction);
     router.delete('/:id([0-9]+)', TransactionsController.deleteTransaction);
 
     return router;

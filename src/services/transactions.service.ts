@@ -1,6 +1,7 @@
 import { Tag } from '../models/tag.model';
 import { NotFoundError } from '../errors/not-found.error';
 import { Transaction } from '../models/transaction.model';
+import { ValueNormalizer } from '../utils/value-normalizer.utils';
 // import { Between } from 'typeorm';
 // import { TransactionRequestDto } from '../dto/transaction-request.dto';
 
@@ -36,7 +37,8 @@ export class TransactionsService {
     tags: Tag[]
     // tag_ids: number[]
   ): Promise<Transaction> {
-    const new_transaction = new Transaction();
+    let new_transaction = new Transaction();
+
     new_transaction.date = date;
     new_transaction.message = message;
     new_transaction.note_1 = note_1;
@@ -47,6 +49,8 @@ export class TransactionsService {
     new_transaction.tags = tags;
     // new_transaction.tags = tag_ids;
     // tags logic
+
+    new_transaction = this.normalizeTransaction(new_transaction);
 
     return this.saveTransaction(new_transaction);
   }
@@ -62,21 +66,22 @@ export class TransactionsService {
     source_id: number,
     tags: Tag[]
   ): Promise<Transaction> {
-    const updated_transaction = await Transaction.findOne({
+    let updated_transaction = await Transaction.findOne({
       id: transactionId,
     });
 
     if (!updated_transaction) throw new NotFoundError('Transaction not found');
 
     if (date !== undefined) updated_transaction.date = date;
-    // if (message !== undefined) updated_transaction.message = message; //'' ==> null
-    if (message !== undefined) updated_transaction.message = message?.length > 0 ? message : null;
-    if (note_1 !== undefined) updated_transaction.note_1 = note_1?.length > 0 ? note_1 : null;
-    if (note_2 !== undefined) updated_transaction.note_2 = note_2?.length > 0 ? note_2 : null;
-    if (note_3 !== undefined) updated_transaction.note_3 = note_3?.length > 0 ? note_3 : null;
+    if (message !== undefined) updated_transaction.message = message;
+    if (note_1 !== undefined) updated_transaction.note_1 = note_1;
+    if (note_2 !== undefined) updated_transaction.note_2 = note_2;
+    if (note_3 !== undefined) updated_transaction.note_3 = note_3;
     if (amount !== undefined) updated_transaction.amount = amount;
     if (source_id !== undefined) updated_transaction.source_id = source_id;
     if (tags !== undefined) updated_transaction.tags = tags;
+
+    updated_transaction = this.normalizeTransaction(updated_transaction);
 
     return this.saveTransaction(updated_transaction);
   }
@@ -93,10 +98,26 @@ export class TransactionsService {
       return await transaction.save();
     } catch (error) {
       if (error.message.includes('FOREIGN KEY constraint failed')) {
-        throw new NotFoundError('source_id not found');
+        throw new NotFoundError(`source_id not found`);
       } else {
         throw error;
       }
     }
+  }
+
+  // private static validateSourceId(sourceId: number, errorIfNotValid: string): number {
+  //   if (typeof sourceId === 'number') return sourceId;
+  //  else  {
+  //     throw new Error(`${errorIfNotValid} ${ret} -- ${num}`);
+  //   }
+  // }
+
+  private static normalizeTransaction(transaction: Transaction): Transaction {
+    transaction.message = ValueNormalizer.normalizeString(transaction.message);
+    transaction.note_1 = ValueNormalizer.normalizeString(transaction.note_1);
+    transaction.note_2 = ValueNormalizer.normalizeString(transaction.note_2);
+    transaction.note_3 = ValueNormalizer.normalizeString(transaction.note_3);
+
+    return transaction;
   }
 }

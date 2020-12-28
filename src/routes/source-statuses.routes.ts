@@ -9,7 +9,7 @@ export class SourceStatusesRoutes {
     router.get('', SourceStatusesController.getSourceStatuses);
     router.get('/:id([0-9]+)', SourceStatusesController.getSourceStatusById);
     router.post('', SourceStatusValidator.validateOnCreate, SourceStatusesController.createSourceStatus);
-    router.put('/:id([0-9]+)', SourceStatusValidator.validateOnUpdate, SourceStatusesController.updateSourceStatus);
+    router.patch('/:id([0-9]+)', SourceStatusValidator.validateOnUpdate, SourceStatusesController.updateSourceStatus);
     router.delete('/:id([0-9]+)', SourceStatusesController.deleteSourceStatus);
 
     return router;

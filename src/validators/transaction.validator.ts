@@ -19,15 +19,15 @@ export class TransactionValidator {
 
   static validateOnCreate = [
     ValidationHelpers.validateDate('date', true),
-    ValidationHelpers.validateNumber('amount', true),
-    ValidationHelpers.validateNumber('source_id', true),
+    ValidationHelpers.validateInteger('amount', true),
+    ValidationHelpers.validateInteger('source_id', true), //check
     ...TransactionValidator.validate,
   ];
 
   static validateOnUpdate = [
     ValidationHelpers.validateDate('date'),
-    ValidationHelpers.validateNumber('amount'),
-    ValidationHelpers.validateNumber('source_id'),
+    ValidationHelpers.validateInteger('amount'),
+    ValidationHelpers.validateInteger('source_id'),
     ...TransactionValidator.validate,
   ];
 }
