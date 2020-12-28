@@ -1,9 +1,7 @@
-import { Tag } from '../models/tag.model';
 import { NotFoundError } from '../errors/not-found.error';
 import { Transaction } from '../models/transaction.model';
 import { ValueNormalizer } from '../utils/value-normalizer.utils';
-// import { Between } from 'typeorm';
-// import { TransactionRequestDto } from '../dto/transaction-request.dto';
+import { TagsService } from './tags.service';
 
 export class TransactionsService {
   static async getAll(): Promise<Transaction[]> {
@@ -14,7 +12,7 @@ export class TransactionsService {
     //   skip: data.filters.perPage * (data.filters.pageNumber - 1),
     //   take: data.filters.perPage,
     // };
-    return await Transaction.find();
+    return await Transaction.find({ relations: ['tags'] });
   }
 
   static async getOneById(transactionId: number): Promise<Transaction> {
@@ -34,9 +32,10 @@ export class TransactionsService {
     note_3: string,
     amount: number,
     source_id: number,
-    tags: Tag[]
-    // tag_ids: number[]
+    tag_ids: number[]
   ): Promise<Transaction> {
+    const tags = await TagsService.getManyById(tag_ids);
+
     let new_transaction = new Transaction();
 
     new_transaction.date = date;
@@ -47,8 +46,6 @@ export class TransactionsService {
     new_transaction.amount = amount;
     new_transaction.source_id = source_id;
     new_transaction.tags = tags;
-    // new_transaction.tags = tag_ids;
-    // tags logic
 
     new_transaction = this.normalizeTransaction(new_transaction);
 
@@ -64,8 +61,10 @@ export class TransactionsService {
     note_3: string,
     amount: number,
     source_id: number,
-    tags: Tag[]
+    tag_ids: number[]
   ): Promise<Transaction> {
+    const tags = await TagsService.getManyById(tag_ids);
+
     let updated_transaction = await Transaction.findOne({
       id: transactionId,
     });

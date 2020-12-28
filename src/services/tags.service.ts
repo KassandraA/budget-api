@@ -17,6 +17,13 @@ export class TagsService {
     return tag;
   }
 
+  static async getManyById(tagIds: number[]): Promise<Tag[]> {
+    const tags = await Tag.findByIds(tagIds);
+
+    if (tags.length !== tagIds.length) throw new NotFoundError('Tags not found:'); // todo tagIds
+    return tags;
+  }
+
   static async addOne(name: string): Promise<Tag> {
     const new_tag = new Tag();
     new_tag.name = name;

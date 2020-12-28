@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
-import { validationResult } from 'express-validator';
+import { check, validationResult } from 'express-validator';
 import { ValidationHelpers } from './validation-helpers';
 
 export class TransactionValidator {
@@ -9,6 +9,7 @@ export class TransactionValidator {
     ValidationHelpers.validateString('note_2'),
     ValidationHelpers.validateString('note_3'),
     ValidationHelpers.validateArray('tags'),
+    check('tags.*').isInt().withMessage(`Tags must be an array of numbers`).bail(),
 
     (req: Request, res: Response, next: NextFunction) => {
       const errors = validationResult(req);
@@ -19,14 +20,14 @@ export class TransactionValidator {
 
   static validateOnCreate = [
     ValidationHelpers.validateDate('date', true),
-    ValidationHelpers.validateInteger('amount', true),
-    ValidationHelpers.validateInteger('source_id', true), //check
+    ValidationHelpers.validateDecimal('amount', true),
+    ValidationHelpers.validateInteger('source_id', true), // check
     ...TransactionValidator.validate,
   ];
 
   static validateOnUpdate = [
     ValidationHelpers.validateDate('date'),
-    ValidationHelpers.validateInteger('amount'),
+    ValidationHelpers.validateDecimal('amount'),
     ValidationHelpers.validateInteger('source_id'),
     ...TransactionValidator.validate,
   ];
