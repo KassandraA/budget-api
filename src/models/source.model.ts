@@ -11,7 +11,7 @@ export class Source extends BaseEntity {
   name: string;
 
   @Column({ nullable: true })
-  description?: string | null;
+  description?: string;
 
   @Column({ nullable: true })
   currency?: string;
