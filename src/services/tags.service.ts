@@ -20,7 +20,11 @@ export class TagsService {
   static async getManyById(tagIds: number[]): Promise<Tag[]> {
     const tags = await Tag.findByIds(tagIds);
 
-    if (tags.length !== tagIds.length) throw new NotFoundError('Tags not found:'); // todo tagIds
+    if (tags.length !== tagIds.length) {
+      const receivedTagIds = tags.map((t) => t.id);
+      const missingTags = tagIds.filter((id) => !receivedTagIds.includes(id)).join(', ');
+      throw new NotFoundError('Some tags not found: ' + missingTags);
+    }
     return tags;
   }
 
