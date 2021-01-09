@@ -4,8 +4,6 @@ import { ValidationHelpers } from './validation-helpers';
 
 export class TagValidator {
   private static validate = [
-    ValidationHelpers.validateString('name'),
-
     (req: Request, res: Response, next: NextFunction) => {
       const errors = validationResult(req);
       if (!errors.isEmpty()) return res.status(422).json({ errors: errors.array() });
@@ -13,7 +11,7 @@ export class TagValidator {
     },
   ];
 
-  static validateOnCreate = [ValidationHelpers.validateString('name', true), ...TagValidator.validate];
+  static validateOnCreate = [ValidationHelpers.validateString('name', true, true), ...TagValidator.validate];
 
-  static validateOnUpdate = [ValidationHelpers.validateString('name'), ...TagValidator.validate];
+  static validateOnUpdate = [ValidationHelpers.validateString('name', true, true), ...TagValidator.validate];
 }

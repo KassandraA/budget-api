@@ -13,7 +13,7 @@ export class SourceStatusValidator {
     },
   ];
 
-  static validateOnCreate = [ValidationHelpers.validateString('name', true), ...SourceStatusValidator.validate];
+  static validateOnCreate = [ValidationHelpers.validateString('name', true, true), ...SourceStatusValidator.validate];
 
-  static validateOnUpdate = [ValidationHelpers.validateString('name'), ...SourceStatusValidator.validate];
+  static validateOnUpdate = [ValidationHelpers.validateString('name', false, true), ...SourceStatusValidator.validate];
 }

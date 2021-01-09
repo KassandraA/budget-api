@@ -1,7 +1,7 @@
 import { body, ValidationChain } from 'express-validator';
 
 export class ValidationHelpers {
-  static validateString(paramName: string, isRequired: boolean = false): ValidationChain {
+  static validateString(paramName: string, isRequired: boolean = false, isNotEmpty: boolean = false): ValidationChain {
     const checker = this.validateRequired(body(paramName), paramName, isRequired);
     return checker
       .not()
@@ -10,6 +10,10 @@ export class ValidationHelpers {
       .bail()
       .isString()
       .withMessage(`${paramName} must be a string`)
+      .bail()
+      .if(() => isNotEmpty)
+      .notEmpty()
+      .withMessage(`${paramName} must not be empty`)
       .bail();
   }
 

@@ -17,13 +17,13 @@ export class SourceValidator {
   ];
 
   static validateOnCreate = [
-    ValidationHelpers.validateString('name', true),
+    ValidationHelpers.validateString('name', true, true),
     ValidationHelpers.validateInteger('status_id', true),
     ...SourceValidator.validate,
   ];
 
   static validateOnUpdate = [
-    ValidationHelpers.validateString('name'),
+    ValidationHelpers.validateString('name', false, true),
     ValidationHelpers.validateInteger('status_id'),
     ...SourceValidator.validate,
   ];
