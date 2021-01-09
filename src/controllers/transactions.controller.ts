@@ -33,7 +33,7 @@ export class TransactionsController {
         req.body.note_3,
         req.body.amount,
         req.body.source_id,
-        req.body.tags
+        req.body.tag_ids
       );
       return res.json({ data: newTransaction });
     } catch (e) {

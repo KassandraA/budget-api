@@ -8,8 +8,8 @@ export class TransactionValidator {
     ValidationHelpers.validateString('note_1'),
     ValidationHelpers.validateString('note_2'),
     ValidationHelpers.validateString('note_3'),
-    ValidationHelpers.validateArray('tags'),
-    check('tags.*').isInt().withMessage(`Tags must be an array of numbers`).bail(),
+    ValidationHelpers.validateArray('tag_ids'),
+    check('tag_ids.*').isInt().withMessage(`Tags must be an array of numbers`).bail(),
 
     (req: Request, res: Response, next: NextFunction) => {
       const errors = validationResult(req);
@@ -21,7 +21,7 @@ export class TransactionValidator {
   static validateOnCreate = [
     ValidationHelpers.validateDate('date', true),
     ValidationHelpers.validateDecimal('amount', true),
-    ValidationHelpers.validateInteger('source_id', true), // check
+    ValidationHelpers.validateInteger('source_id', true),
     ...TransactionValidator.validate,
   ];
 

@@ -14,3 +14,6 @@ tslint.json
 # misc
 package-lock.json
 
+#database
+*.db
+

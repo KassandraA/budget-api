@@ -1,31 +1,51 @@
-import { check, ValidationChain } from 'express-validator';
+import { body, ValidationChain } from 'express-validator';
 
 export class ValidationHelpers {
   static validateString(paramName: string, isRequired: boolean = false): ValidationChain {
-    const checker = this.validateRequired(check(paramName), paramName, isRequired);
-    return checker.isString().withMessage(`${paramName} must be a string`).bail();
-  }
-
-  static validateInteger(paramName: string, isRequired: boolean = false): ValidationChain {
-    const checker = this.validateRequired(check(paramName), paramName, isRequired);
-    return checker.isInt().withMessage(`${paramName} must be an integer`).bail();
-  }
-
-  static validateDecimal(paramName: string, isRequired: boolean = false): ValidationChain {
-    const checker = this.validateRequired(check(paramName), paramName, isRequired);
-    return checker.isDecimal().withMessage(`${paramName} must be a decimal`).bail();
-  }
-
-  static validateDate(paramName: string, isRequired: boolean = false): ValidationChain {
-    const checker = this.validateRequired(check(paramName), paramName, isRequired);
+    const checker = this.validateRequired(body(paramName), paramName, isRequired);
     return checker
-      .isDate() // 'YYY/MM/DD' .isDate('format')?
-      .withMessage(`${paramName} must be a valid Date`)
+      .not()
+      .isArray()
+      .withMessage(`${paramName} must not be an array`)
+      .bail()
+      .isString()
+      .withMessage(`${paramName} must be a string`)
       .bail();
   }
 
+  static validateInteger(paramName: string, isRequired: boolean = false): ValidationChain {
+    const checker = this.validateRequired(body(paramName), paramName, isRequired);
+    return checker
+      .not()
+      .isArray()
+      .withMessage(`${paramName} must not be an array`)
+      .bail()
+      .isInt()
+      .withMessage(`${paramName} must be an integer`)
+      .bail()
+      .toInt();
+  }
+
+  static validateDecimal(paramName: string, isRequired: boolean = false): ValidationChain {
+    const checker = this.validateRequired(body(paramName), paramName, isRequired);
+    return checker
+      .not()
+      .isArray()
+      .withMessage(`${paramName} must not be an array`)
+      .bail()
+      .isDecimal()
+      .withMessage(`${paramName} must be a decimal`)
+      .bail()
+      .toFloat();
+  }
+
+  static validateDate(paramName: string, isRequired: boolean = false): ValidationChain {
+    const checker = this.validateRequired(body(paramName), paramName, isRequired);
+    return checker.isISO8601({ strict: true }).withMessage(`${paramName} must be a valid Date`).bail();
+  }
+
   static validateArray(paramName: string, isRequired: boolean = false): ValidationChain {
-    const checker = this.validateRequired(check(paramName), paramName, isRequired);
+    const checker = this.validateRequired(body(paramName), paramName, isRequired);
     return checker.isArray().withMessage(`${paramName} must be an array`).bail();
   }
 

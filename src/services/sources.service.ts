@@ -20,19 +20,19 @@ export class SourcesService {
     name: string,
     description: string,
     currency: string,
-    note_1: string,
-    note_2: string,
-    status_id: number
+    note1: string,
+    note2: string,
+    statusId: number
   ): Promise<Source> {
-    const new_source = new Source();
-    new_source.name = name;
-    new_source.description = description;
-    new_source.currency = currency;
-    new_source.note_1 = note_1;
-    new_source.note_2 = note_2;
-    new_source.status_id = status_id;
+    const newSource = new Source();
+    newSource.name = name;
+    newSource.description = description;
+    newSource.currency = currency;
+    newSource.note_1 = note1;
+    newSource.note_2 = note2;
+    newSource.status_id = statusId;
 
-    return this.saveSource(new_source);
+    return this.saveSource(newSource);
   }
 
   static async updateOne(
@@ -40,31 +40,31 @@ export class SourcesService {
     name: string,
     description: string,
     currency: string,
-    note_1: string,
-    note_2: string,
-    status_id: number
+    note1: string,
+    note2: string,
+    statusId: number
   ): Promise<Source> {
-    const updated_source = await Source.findOne({
+    const updatedSource = await Source.findOne({
       id: sourceId,
     });
 
-    if (!updated_source) throw new NotFoundError('Source not found');
+    if (!updatedSource) throw new NotFoundError('Source not found');
 
-    if (name !== undefined) updated_source.name = name;
-    if (description !== undefined) updated_source.description = description;
-    if (currency !== undefined) updated_source.currency = currency;
-    if (note_1 !== undefined) updated_source.note_1 = note_1;
-    if (note_2 !== undefined) updated_source.note_2 = note_2;
-    if (status_id !== undefined) updated_source.status_id = status_id;
+    if (name !== undefined) updatedSource.name = name;
+    if (description !== undefined) updatedSource.description = description;
+    if (currency !== undefined) updatedSource.currency = currency;
+    if (note1 !== undefined) updatedSource.note_1 = note1;
+    if (note2 !== undefined) updatedSource.note_2 = note2;
+    if (statusId !== undefined) updatedSource.status_id = statusId;
 
-    return this.saveSource(updated_source);
+    return this.saveSource(updatedSource);
   }
 
   static async deleteOne(sourceId: number) {
-    const deleted_source = await Source.findOne({ id: sourceId });
-    if (!deleted_source) throw new NotFoundError('Source not found');
+    const deletedSource = await Source.findOne({ id: sourceId });
+    if (!deletedSource) throw new NotFoundError('Source not found');
 
-    await deleted_source.remove();
+    await deletedSource.remove();
   }
 
   private static async saveSource(source: Source): Promise<Source> {

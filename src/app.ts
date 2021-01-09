@@ -17,7 +17,6 @@ const transactionsRoutes = new TransactionsRoutes();
 
 app.use(bodyParser.json());
 
-app.use('/test', (req, res) => res.send('Server is working with nodemon reload'));
 app.use('/api/v1/sources', sourceRoutes.routes);
 app.use('/api/v1/source_statuses', sourceStatusRoutes.routes);
 app.use('/api/v1/tags', tagsRoutes.routes);

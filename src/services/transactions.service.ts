@@ -16,9 +16,7 @@ export class TransactionsService {
   }
 
   static async getOneById(transactionId: number): Promise<Transaction> {
-    const transaction = await Transaction.findOne({
-      id: transactionId,
-    });
+    const transaction = await Transaction.findOne({ id: transactionId }, { relations: ['tags'] });
 
     if (!transaction) throw new NotFoundError('Transaction not found');
     return transaction;
@@ -27,69 +25,69 @@ export class TransactionsService {
   static async addOne(
     date: Date,
     message: string,
-    note_1: string,
-    note_2: string,
-    note_3: string,
+    note1: string,
+    note2: string,
+    note3: string,
     amount: number,
-    source_id: number,
-    tag_ids: number[]
+    sourceId: number,
+    tagIds: number[]
   ): Promise<Transaction> {
-    const tags = await TagsService.getManyById(tag_ids);
+    const tags = await TagsService.getManyById(tagIds);
 
-    let new_transaction = new Transaction();
+    let newTransaction = new Transaction();
 
-    new_transaction.date = date;
-    new_transaction.message = message;
-    new_transaction.note_1 = note_1;
-    new_transaction.note_2 = note_2;
-    new_transaction.note_3 = note_3;
-    new_transaction.amount = amount;
-    new_transaction.source_id = source_id;
-    new_transaction.tags = tags;
+    newTransaction.date = date;
+    newTransaction.message = message;
+    newTransaction.note_1 = note1;
+    newTransaction.note_2 = note2;
+    newTransaction.note_3 = note3;
+    newTransaction.amount = amount;
+    newTransaction.source_id = sourceId;
+    newTransaction.tags = tags;
 
-    new_transaction = this.normalizeTransaction(new_transaction);
+    newTransaction = this.normalizeTransaction(newTransaction);
 
-    return this.saveTransaction(new_transaction);
+    return this.saveTransaction(newTransaction);
   }
 
   static async updateOne(
     transactionId: number,
     date: Date,
     message: string,
-    note_1: string,
-    note_2: string,
-    note_3: string,
+    note1: string,
+    note2: string,
+    note3: string,
     amount: number,
-    source_id: number,
-    tag_ids: number[]
+    sourceId: number,
+    tagIds: number[]
   ): Promise<Transaction> {
-    const tags = await TagsService.getManyById(tag_ids);
-
-    let updated_transaction = await Transaction.findOne({
+    let updatedTransaction = await Transaction.findOne({
       id: transactionId,
     });
 
-    if (!updated_transaction) throw new NotFoundError('Transaction not found');
+    if (!updatedTransaction) throw new NotFoundError('Transaction not found');
 
-    if (date !== undefined) updated_transaction.date = date;
-    if (message !== undefined) updated_transaction.message = message;
-    if (note_1 !== undefined) updated_transaction.note_1 = note_1;
-    if (note_2 !== undefined) updated_transaction.note_2 = note_2;
-    if (note_3 !== undefined) updated_transaction.note_3 = note_3;
-    if (amount !== undefined) updated_transaction.amount = amount;
-    if (source_id !== undefined) updated_transaction.source_id = source_id;
-    if (tags !== undefined) updated_transaction.tags = tags;
+    if (date !== undefined) updatedTransaction.date = date;
+    if (message !== undefined) updatedTransaction.message = message;
+    if (note1 !== undefined) updatedTransaction.note_1 = note1;
+    if (note2 !== undefined) updatedTransaction.note_2 = note2;
+    if (note3 !== undefined) updatedTransaction.note_3 = note3;
+    if (amount !== undefined) updatedTransaction.amount = amount;
+    if (sourceId !== undefined) updatedTransaction.source_id = sourceId;
+    if (tagIds !== undefined) {
+      updatedTransaction.tags = tagIds.length > 0 ? await TagsService.getManyById(tagIds) : [];
+    }
 
-    updated_transaction = this.normalizeTransaction(updated_transaction);
+    updatedTransaction = this.normalizeTransaction(updatedTransaction);
 
-    return this.saveTransaction(updated_transaction);
+    return this.saveTransaction(updatedTransaction);
   }
 
   static async deleteOne(transactionId: number) {
-    const deleted_source = await Transaction.findOne({ id: transactionId });
-    if (!deleted_source) throw new NotFoundError('Transaction not found');
+    const deletedSource = await Transaction.findOne({ id: transactionId });
+    if (!deletedSource) throw new NotFoundError('Transaction not found');
 
-    await deleted_source.remove();
+    await deletedSource.remove();
   }
 
   private static async saveTransaction(transaction: Transaction): Promise<Transaction> {
@@ -103,13 +101,6 @@ export class TransactionsService {
       }
     }
   }
-
-  // private static validateSourceId(sourceId: number, errorIfNotValid: string): number {
-  //   if (typeof sourceId === 'number') return sourceId;
-  //  else  {
-  //     throw new Error(`${errorIfNotValid} ${ret} -- ${num}`);
-  //   }
-  // }
 
   private static normalizeTransaction(transaction: Transaction): Transaction {
     transaction.message = ValueNormalizer.normalizeString(transaction.message);
