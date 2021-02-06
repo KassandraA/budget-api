@@ -4,7 +4,7 @@ export class FilterSortPage {
   static getJson(filterSortPage: FilterSortPageDto) {
     return {
       where: this.mapFilters(filterSortPage.filter),
-      order: filterSortPage.order,
+      order: filterSortPage.orderBy,
     };
   }
 

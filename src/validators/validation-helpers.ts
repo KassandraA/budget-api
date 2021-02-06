@@ -53,6 +53,11 @@ export class ValidationHelpers {
     return checker.isArray().withMessage(`${paramName} must be an array`).bail();
   }
 
+  static validateRange(paramName: string, paramValues: string[], isRequired: boolean = false): ValidationChain {
+    const checker = this.validateRequired(body(paramName), paramName, isRequired);
+    return checker.isIn(paramValues).withMessage(`${paramName} must be one of ${paramValues}`).bail();
+  }
+
   private static validateRequired(checker: ValidationChain, param: string, required: boolean): ValidationChain {
     return required ? checker.exists().withMessage(`${param} is required`).bail() : checker.optional();
   }

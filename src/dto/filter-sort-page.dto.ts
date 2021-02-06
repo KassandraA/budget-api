@@ -1,12 +1,17 @@
 export class FilterSortPageDto {
-  filter: IDictionary;
-  order: IDictionary;
-  perPage: number;
-  pageNumber: number;
+  orderBy: Map<string, SortDirection> | undefined;
+  filter: TransactionFilter | undefined;
+  perPage: number | undefined;
+  pageNumber: number | undefined;
 }
 
-export interface IDictionary {
-  [key: string]: any;
+export enum SortDirection {
+  ASC = 'ASC',
+  DESC = 'DESC',
+}
+
+export interface IDictionary<T> {
+  [key: string]: T;
 }
 
 export interface TransactionFilter {

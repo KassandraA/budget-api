@@ -1,11 +1,30 @@
 import { Request, Response } from 'express';
 import { Transaction } from '../models/transaction.model';
 import { TransactionsService } from '../services/transactions.service';
+import { FilterSortPage } from '../services/filter-sort-page.service';
+import { FilterSortPageDto, SortDirection } from '../dto/filter-sort-page.dto';
 
 export class TransactionsController {
   static async getTransactions(req: Request, res: Response): Promise<Response<{ data: Transaction[] }>> {
     try {
-      const transactions = await TransactionsService.getAll();
+      const orderByMap = new Map<string, SortDirection>();
+
+      // const limit = req.params.limit ? Number(req.params.limit) : 10;
+      // const offset = 0;
+
+      Object.entries(req.body.orderBy).forEach(([key, value]) => {
+        orderByMap.set(key, value as SortDirection);
+      });
+
+      const query: FilterSortPageDto = {
+        orderBy: orderByMap,
+        filter: undefined,
+        perPage: undefined,
+        pageNumber: undefined,
+      };
+
+      const transactions = await TransactionsService.getAll(query);
+
       return res.json({ data: transactions });
     } catch (e) {
       const errorCode = e.statusCode ? e.statusCode : 500;
@@ -26,6 +45,7 @@ export class TransactionsController {
   static async createTransaction(req: Request, res: Response): Promise<Response<{ data: Transaction }>> {
     try {
       const newTransaction = await TransactionsService.addOne(
+        // TODO req.body as INewTransactionInterface
         req.body.date,
         req.body.message,
         req.body.note_1,
@@ -53,7 +73,7 @@ export class TransactionsController {
         req.body.note_3,
         req.body.amount,
         req.body.source_id,
-        req.body.tags
+        req.body.tag_ids
       );
       return res.json({ data: updatedTransaction });
     } catch (e) {
