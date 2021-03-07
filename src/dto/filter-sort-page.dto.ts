@@ -10,26 +10,6 @@ export interface FilterSortPageDto {
   pageNumber?: number;
 }
 
-export class FilterSortPageDtoValidator {
-  public static isValidFilterSortPageDto(obj?: any): obj is FilterSortPageDto {
-    return (
-      !obj ||
-      ((!obj.order_by || typeof obj.order_by === 'object') &&
-        (!obj.message || typeof obj.message === 'object') &&
-        (!obj.note_1 || typeof obj.note_1 === 'object') &&
-        (!obj.note_2 || typeof obj.note_2 === 'object') &&
-        (!obj.note_3 || typeof obj.note_3 === 'object') &&
-        (!obj.amount || typeof obj.amount === 'object') &&
-        (!obj.date || typeof obj.date === 'object') &&
-        (!obj.perPage || typeof obj.perPage === 'number') &&
-        (!obj.pageNumber || typeof obj.pageNumber === 'number'))
-    );
-  }
-}
-// function isFilterSortPageDto(obj: any): obj is FilterSortPageDto {
-//   return !obj?.order_by || typeof obj.order_by === 'object[]';
-// }
-
 export interface OrderBy {
   message?: 'ASC' | 'DESC';
   note_1?: 'ASC' | 'DESC';
@@ -47,8 +27,3 @@ export interface NonStringFilter<T> {
   lte?: T;
   gte?: T;
 }
-
-// export enum SortDirection {
-//   ASC = 'ASC',
-//   DESC = 'DESC',
-// }

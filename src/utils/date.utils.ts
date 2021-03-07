@@ -1,19 +1,25 @@
 export class DateUtils {
-  public static toSQLiteString(d: Date): string {
+  public static toSQLiteString(date: Date): string {
+    const d = new Date(date);
     return (
-      [d.getFullYear(), this.getNumLeadingZero(d.getMonth() + 1), this.getNumLeadingZero(d.getDate())].join('-') +
+      [
+        d.getUTCFullYear(),
+        this.getNumLeadingZero(d.getUTCMonth() + 1),
+        this.getNumLeadingZero(d.getUTCDate()),
+      ].join('-') +
       ' ' +
       [
-        this.getNumLeadingZero(d.getHours()),
-        this.getNumLeadingZero(d.getMinutes()),
-        this.getNumLeadingZero(d.getSeconds()),
+        this.getNumLeadingZero(d.getUTCHours()),
+        this.getNumLeadingZero(d.getUTCMinutes()),
+        this.getNumLeadingZero(d.getUTCSeconds()),
       ].join(':') +
       '.' +
-      d.getMilliseconds()
+      this.getNumLeadingZero(d.getUTCMilliseconds(), '000')
     );
   }
 
-  private static getNumLeadingZero(num: number): string {
-    return ('00' + num).slice(-2);
+  private static getNumLeadingZero(num: number, zeros: string = '00'): string {
+    const sliced = Math.abs(zeros.length) * -1;
+    return (zeros + num).slice(sliced);
   }
 }

@@ -1,25 +1,23 @@
 import { NextFunction, Request, Response } from 'express';
-import { body, check, ValidationChain, validationResult } from 'express-validator';
-import { Transaction } from '../models/transaction.model';
+import { validationResult } from 'express-validator';
 import { ValidationHelpers } from './validation-helpers';
 
 export class TransactionValidator {
-  private static validate(req: Request, res: Response, next: NextFunction) {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) return res.status(422).json({ errors: errors.array() });
-    next();
-  }
-
   private static validateOnCreateOrUpdate = [
     ValidationHelpers.validateString('message'),
     ValidationHelpers.validateString('note_1'),
     ValidationHelpers.validateString('note_2'),
     ValidationHelpers.validateString('note_3'),
     ValidationHelpers.validateArray('tag_ids'),
-    // check('tag_ids.*').isInt().withMessage(`Tags must be an array of numbers`).bail(), // Todo: check
     ValidationHelpers.validateInteger('tag_ids.*'),
     TransactionValidator.validate,
   ];
+
+  private static validate(req: Request, res: Response, next: NextFunction) {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) return res.status(422).json({ errors: errors.array() });
+    next();
+  }
 
   static validateOnCreate = [
     ValidationHelpers.validateDate('date', true),

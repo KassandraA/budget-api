@@ -1,23 +1,31 @@
 import { FilterSortPageDto, NonStringFilter, StringFilter } from '../dto/filter-sort-page.dto';
 import {
-  Between,
   Equal,
-  FindConditions,
   FindManyOptions,
   FindOperator,
   LessThanOrEqual,
   Like,
   MoreThanOrEqual,
-  Raw,
 } from 'typeorm';
 import { Transaction } from '../models/transaction.model';
 import { DateUtils } from './date.utils';
 
-// export declare type FilterSortPageUtilsType<T> = {
-//     [P in keyof T]?: T[P] extends never ? FindConditions<T[P]> | FindOperator<FindConditions<T[P]>> : FindConditions<T[P]> | FindOperator<FindConditions<T[P]>>;
-// };
-
 export class FilterSortPageUtils {
+  public static isFilterSortPageDto(obj?: any): obj is FilterSortPageDto {
+    return (
+      !obj ||
+      ((!obj.order_by || typeof obj.order_by === 'object') &&
+        (!obj.message || typeof obj.message === 'object') &&
+        (!obj.note_1 || typeof obj.note_1 === 'object') &&
+        (!obj.note_2 || typeof obj.note_2 === 'object') &&
+        (!obj.note_3 || typeof obj.note_3 === 'object') &&
+        (!obj.amount || typeof obj.amount === 'object') &&
+        (!obj.date || typeof obj.date === 'object') &&
+        (!obj.perPage || typeof obj.perPage === 'number') &&
+        (!obj.pageNumber || typeof obj.pageNumber === 'number'))
+    );
+  }
+
   public static mapDtoToTypeorm(query?: FilterSortPageDto): FindManyOptions<Transaction> {
     const monthAgo = new Date(new Date().setDate(new Date().getDate() - 30));
 
@@ -25,7 +33,7 @@ export class FilterSortPageUtils {
       where: {
         ...(query?.amount ? { amount: this.mapNonStringParam(query.amount) } : {}),
         ...(query?.date
-          ? { date: this.mapNonStringParam(query.date) }
+          ? { date: this.mapDateParam(query.date) }
           : { date: MoreThanOrEqual(DateUtils.toSQLiteString(monthAgo)) }),
         ...(query?.message ? { message: this.mapStringParam(query.message) } : {}),
         ...(query?.note_1 ? { note_1: this.mapStringParam(query.note_1) } : {}),
@@ -37,14 +45,24 @@ export class FilterSortPageUtils {
         ...(query?.order_by?.note_1 ? { note_1: query.order_by.note_1 } : {}),
         ...(query?.order_by?.note_2 ? { note_2: query.order_by.note_2 } : {}),
         ...(query?.order_by?.note_3 ? { note_3: query.order_by.note_3 } : {}),
-        ...(query?.order_by?.date ? { date: query.order_by.date } : { date: 'DESC' }),
         ...(query?.order_by?.message ? { message: query.order_by.message } : {}),
+        ...(query?.order_by?.date ? { date: query.order_by.date } : { date: 'DESC' }),
       },
       // skip: 0,
       // take: 100,
     };
 
     return options;
+  }
+
+  private static mapDateParam(queryParam?: NonStringFilter<Date>): FindOperator<string> {
+    if (queryParam?.lte) {
+      return LessThanOrEqual(DateUtils.toSQLiteString(queryParam.lte));
+    } else if (queryParam?.gte) {
+      return MoreThanOrEqual(DateUtils.toSQLiteString(queryParam.gte));
+    } else if (queryParam?.equal) {
+      return Equal(DateUtils.toSQLiteString(queryParam.equal));
+    }
   }
 
   private static mapNonStringParam<T>(queryParam?: NonStringFilter<T>): FindOperator<T> {
@@ -55,9 +73,6 @@ export class FilterSortPageUtils {
     } else if (queryParam?.equal) {
       return Equal(queryParam.equal);
     }
-    // else if (queryParam?.between) {
-    //   return Between(queryParam.between[0], queryParam.between[1]);
-    // }
   }
 
   private static mapStringParam(queryParam?: StringFilter): FindOperator<string> {

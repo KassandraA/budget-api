@@ -1,18 +1,20 @@
 import { Request, Response } from 'express';
 import { Transaction } from '../models/transaction.model';
 import { TransactionsService } from '../services/transactions.service';
-import { FilterSortPageDto, FilterSortPageDtoValidator } from '../dto/filter-sort-page.dto';
+import { FilterSortPageDto } from '../dto/filter-sort-page.dto';
+import { FilterSortPageUtils } from '../utils/filter-sort-page.utils';
 
 export class TransactionsController {
-  static async getTransactions(req: Request, res: Response): Promise<Response<{ data: Transaction[] }>> {
+  static async getTransactions(
+    req: Request,
+    res: Response
+  ): Promise<Response<{ data: Transaction[] }>> {
     try {
-      const query = FilterSortPageDtoValidator.isValidFilterSortPageDto(req?.query)
+      const dto = FilterSortPageUtils.isFilterSortPageDto(req?.query)
         ? (req.query as FilterSortPageDto)
         : null;
 
-      console.log('---req.query', req.query);
-
-      const transactions = await TransactionsService.get(query);
+      const transactions = await TransactionsService.get(dto);
       return res.json({ data: transactions });
     } catch (e) {
       const errorCode = e.statusCode ? e.statusCode : 500;
@@ -20,7 +22,10 @@ export class TransactionsController {
     }
   }
 
-  static async getTransactionById(req: Request, res: Response): Promise<Response<{ data: Transaction }>> {
+  static async getTransactionById(
+    req: Request,
+    res: Response
+  ): Promise<Response<{ data: Transaction }>> {
     try {
       const tag = await TransactionsService.getOneById(Number(req.params.id));
       return res.json({ data: tag });
@@ -30,7 +35,10 @@ export class TransactionsController {
     }
   }
 
-  static async createTransaction(req: Request, res: Response): Promise<Response<{ data: Transaction }>> {
+  static async createTransaction(
+    req: Request,
+    res: Response
+  ): Promise<Response<{ data: Transaction }>> {
     try {
       const newTransaction = await TransactionsService.addOne(
         // TODO req.body as INewTransactionInterface
@@ -50,7 +58,10 @@ export class TransactionsController {
     }
   }
 
-  static async updateTransaction(req: Request, res: Response): Promise<Response<{ data: Transaction }>> {
+  static async updateTransaction(
+    req: Request,
+    res: Response
+  ): Promise<Response<{ data: Transaction }>> {
     try {
       const updatedTransaction = await TransactionsService.updateOne(
         Number(req.params.id),
@@ -70,7 +81,10 @@ export class TransactionsController {
     }
   }
 
-  static async deleteTransaction(req: Request, res: Response): Promise<Response<{ message: string }>> {
+  static async deleteTransaction(
+    req: Request,
+    res: Response
+  ): Promise<Response<{ message: string }>> {
     try {
       await TransactionsService.deleteOne(Number(req.params.id));
       return res.json({ message: 'Deleted successfully' });
