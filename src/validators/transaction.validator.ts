@@ -1,7 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import { body, check, ValidationChain, validationResult } from 'express-validator';
 import { Transaction } from '../models/transaction.model';
-import { SortDirection } from '../dto/filter-sort-page.dto';
 import { ValidationHelpers } from './validation-helpers';
 
 export class TransactionValidator {
@@ -36,8 +35,9 @@ export class TransactionValidator {
     ...TransactionValidator.validateOnCreateOrUpdate,
   ];
 
-  static validateOnRetrieve = [
-    ValidationHelpers.validateRange('orderBy.*', Object.keys(SortDirection), false),
-    TransactionValidator.validate,
-  ];
+  // ?
+  // static validateOnRetrieve = [
+  //   ValidationHelpers.validateRange('orderBy.*', Object.keys(SortDirection), false),
+  //   TransactionValidator.validate,
+  // ];
 }

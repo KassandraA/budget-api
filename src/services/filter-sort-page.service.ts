@@ -3,8 +3,8 @@ import { FilterSortPageDto } from '../dto/filter-sort-page.dto';
 export class FilterSortPage {
   static getJson(filterSortPage: FilterSortPageDto) {
     return {
-      where: this.mapFilters(filterSortPage.filter),
-      order: filterSortPage.orderBy,
+      // where: this.mapFilters(filterSortPage.filter),
+      order: filterSortPage.order_by,
     };
   }
 

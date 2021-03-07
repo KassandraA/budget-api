@@ -1,30 +1,18 @@
 import { Request, Response } from 'express';
 import { Transaction } from '../models/transaction.model';
 import { TransactionsService } from '../services/transactions.service';
-import { FilterSortPage } from '../services/filter-sort-page.service';
-import { FilterSortPageDto, SortDirection } from '../dto/filter-sort-page.dto';
+import { FilterSortPageDto, FilterSortPageDtoValidator } from '../dto/filter-sort-page.dto';
 
 export class TransactionsController {
   static async getTransactions(req: Request, res: Response): Promise<Response<{ data: Transaction[] }>> {
     try {
-      const orderByMap = new Map<string, SortDirection>();
+      const query = FilterSortPageDtoValidator.isValidFilterSortPageDto(req?.query)
+        ? (req.query as FilterSortPageDto)
+        : null;
 
-      // const limit = req.params.limit ? Number(req.params.limit) : 10;
-      // const offset = 0;
+      console.log('---req.query', req.query);
 
-      Object.entries(req.body.orderBy).forEach(([key, value]) => {
-        orderByMap.set(key, value as SortDirection);
-      });
-
-      const query: FilterSortPageDto = {
-        orderBy: orderByMap,
-        filter: undefined,
-        perPage: undefined,
-        pageNumber: undefined,
-      };
-
-      const transactions = await TransactionsService.getAll(query);
-
+      const transactions = await TransactionsService.get(query);
       return res.json({ data: transactions });
     } catch (e) {
       const errorCode = e.statusCode ? e.statusCode : 500;

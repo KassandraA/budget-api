@@ -1,24 +1,54 @@
-export class FilterSortPageDto {
-  orderBy: Map<string, SortDirection> | undefined;
-  filter: TransactionFilter | undefined;
-  perPage: number | undefined;
-  pageNumber: number | undefined;
+export interface FilterSortPageDto {
+  order_by?: OrderBy;
+  message?: StringFilter;
+  note_1?: StringFilter;
+  note_2?: StringFilter;
+  note_3?: StringFilter;
+  amount?: NonStringFilter<number>;
+  date?: NonStringFilter<Date>;
+  perPage?: number;
+  pageNumber?: number;
 }
 
-export enum SortDirection {
-  ASC = 'ASC',
-  DESC = 'DESC',
+export class FilterSortPageDtoValidator {
+  public static isValidFilterSortPageDto(obj?: any): obj is FilterSortPageDto {
+    return (
+      !obj ||
+      ((!obj.order_by || typeof obj.order_by === 'object') &&
+        (!obj.message || typeof obj.message === 'object') &&
+        (!obj.note_1 || typeof obj.note_1 === 'object') &&
+        (!obj.note_2 || typeof obj.note_2 === 'object') &&
+        (!obj.note_3 || typeof obj.note_3 === 'object') &&
+        (!obj.amount || typeof obj.amount === 'object') &&
+        (!obj.date || typeof obj.date === 'object') &&
+        (!obj.perPage || typeof obj.perPage === 'number') &&
+        (!obj.pageNumber || typeof obj.pageNumber === 'number'))
+    );
+  }
+}
+// function isFilterSortPageDto(obj: any): obj is FilterSortPageDto {
+//   return !obj?.order_by || typeof obj.order_by === 'object[]';
+// }
+
+export interface OrderBy {
+  message?: 'ASC' | 'DESC';
+  note_1?: 'ASC' | 'DESC';
+  note_2?: 'ASC' | 'DESC';
+  note_3?: 'ASC' | 'DESC';
+  amount?: 'ASC' | 'DESC';
+  date?: 'ASC' | 'DESC';
 }
 
-export interface IDictionary<T> {
-  [key: string]: T;
+export interface StringFilter {
+  like: string;
+}
+export interface NonStringFilter<T> {
+  equal?: T;
+  lte?: T;
+  gte?: T;
 }
 
-export interface TransactionFilter {
-  message?: string;
-  note_1?: string;
-  note_2?: string;
-  note_3?: string;
-  amount?: number;
-  source_id?: number;
-}
+// export enum SortDirection {
+//   ASC = 'ASC',
+//   DESC = 'DESC',
+// }

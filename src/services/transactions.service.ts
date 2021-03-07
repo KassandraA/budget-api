@@ -1,5 +1,5 @@
-import { FindManyOptions } from 'typeorm';
-import { FilterSortPageDto, SortDirection } from '../dto/filter-sort-page.dto';
+import { FilterSortPageUtils } from '../utils/filter-sort-page.utils';
+import { FilterSortPageDto } from '../dto/filter-sort-page.dto';
 import { NotFoundError } from '../errors/not-found.error';
 import { Transaction } from '../models/transaction.model';
 import { ValueNormalizer } from '../utils/value-normalizer.utils';
@@ -8,16 +8,8 @@ import { TagsService } from './tags.service';
 export class TransactionsService {
   private static transactionProps = ['id', 'date', 'message', 'note_1', 'note_2', 'note_3', 'amount', 'source_id'];
 
-  static async getAll(params: FilterSortPageDto): Promise<Transaction[]> {
-    // const json = {
-    //   where: data.filters.filter,
-    //   order: data.filters.order,
-    //   date: Between(data.dateFrom, data.dateTo),
-    //   skip: data.filters.perPage * (data.filters.pageNumber - 1),
-    //   take: data.filters.perPage,
-    // };
-
-    const sortFilterPage = this.mapDtoToTypeorm(params);
+  static async get(params?: FilterSortPageDto): Promise<Transaction[]> {
+    const sortFilterPage = FilterSortPageUtils.mapDtoToTypeorm(params);
     sortFilterPage.relations = ['tags'];
 
     return await Transaction.find(sortFilterPage);
@@ -117,22 +109,5 @@ export class TransactionsService {
     transaction.note_3 = ValueNormalizer.normalizeString(transaction.note_3);
 
     return transaction;
-  }
-
-  private static mapDtoToTypeorm(query: FilterSortPageDto): FindManyOptions {
-    const options: FindManyOptions = {
-      order: {},
-      where: {},
-    };
-
-    for (const [key, value] of query.orderBy.entries()) {
-      const direction = (SortDirection as any)[value.toUpperCase()];
-
-      if (this.transactionProps.includes(key) && direction) {
-        options.order[key] = direction;
-      }
-    }
-
-    return options;
   }
 }
