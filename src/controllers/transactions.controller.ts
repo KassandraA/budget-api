@@ -15,7 +15,7 @@ export class TransactionsController {
         : null;
 
       const transactions = await TransactionsService.get(dto);
-      return res.json({ data: transactions });
+      return res.json({ data: transactions.data, meta: transactions.meta });
     } catch (e) {
       const errorCode = e.statusCode ? e.statusCode : 500;
       return res.status(errorCode).json({ message: e.message });

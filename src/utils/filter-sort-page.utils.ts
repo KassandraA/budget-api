@@ -21,8 +21,8 @@ export class FilterSortPageUtils {
         (!obj.note_3 || typeof obj.note_3 === 'object') &&
         (!obj.amount || typeof obj.amount === 'object') &&
         (!obj.date || typeof obj.date === 'object') &&
-        (!obj.perPage || typeof obj.perPage === 'number') &&
-        (!obj.pageNumber || typeof obj.pageNumber === 'number'))
+        (!obj.skip || typeof parseInt(obj.skip, 10) === 'number') &&
+        (!obj.take || typeof parseInt(obj.take, 10) === 'number'))
     );
   }
 
@@ -48,8 +48,8 @@ export class FilterSortPageUtils {
         ...(query?.order_by?.message ? { message: query.order_by.message } : {}),
         ...(query?.order_by?.date ? { date: query.order_by.date } : { date: 'DESC' }),
       },
-      // skip: 0,
-      // take: 100,
+      skip: query?.skip ? +query.skip : 0,
+      take: query?.take ? +query.take : 100,
     };
 
     return options;

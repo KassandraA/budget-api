@@ -6,8 +6,8 @@ export interface FilterSortPageDto {
   note_3?: StringFilter;
   amount?: NonStringFilter<number>;
   date?: NonStringFilter<Date>;
-  perPage?: number;
-  pageNumber?: number;
+  skip?: number;
+  take?: number;
 }
 
 export interface OrderBy {
