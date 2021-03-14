@@ -2,20 +2,21 @@ import { Request, Response } from 'express';
 import { Transaction } from '../models/transaction.model';
 import { TransactionsService } from '../services/transactions.service';
 import { FilterSortPageDto } from '../dto/filter-sort-page.dto';
+import { TransactionMetaDto } from '../dto/transaction-meta.dto';
 import { FilterSortPageUtils } from '../utils/filter-sort-page.utils';
 
 export class TransactionsController {
   static async getTransactions(
     req: Request,
     res: Response
-  ): Promise<Response<{ data: Transaction[] }>> {
+  ): Promise<Response<{ data: Transaction[]; meta: TransactionMetaDto }>> {
     try {
       const dto = FilterSortPageUtils.isFilterSortPageDto(req?.query)
         ? (req.query as FilterSortPageDto)
         : null;
 
       const transactions = await TransactionsService.get(dto);
-      return res.json({ data: transactions.data, meta: transactions.meta });
+      return res.json(transactions);
     } catch (e) {
       const errorCode = e.statusCode ? e.statusCode : 500;
       return res.status(errorCode).json({ message: e.message });

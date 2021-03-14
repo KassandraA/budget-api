@@ -4,25 +4,20 @@ import { NotFoundError } from '../errors/not-found.error';
 import { Transaction } from '../models/transaction.model';
 import { ValueNormalizer } from '../utils/value-normalizer.utils';
 import { TagsService } from './tags.service';
-import { PaginationDto as TransactionMetaDto } from '../dto/pagination.dto';
+import { TransactionMetaDto } from '../dto/transaction-meta.dto';
 
 export class TransactionsService {
   static async get(
     params?: FilterSortPageDto
   ): Promise<{ data: Transaction[]; meta: TransactionMetaDto }> {
-    const sortFilterPage = FilterSortPageUtils.mapDtoToTypeorm(params);
+    const preFilled = FilterSortPageUtils.preFill(params);
+    const sortFilterPage = FilterSortPageUtils.mapDtoToTypeorm(preFilled);
     sortFilterPage.relations = ['tags'];
 
     const [result, totalCount] = await Transaction.findAndCount(sortFilterPage);
     return {
       data: result,
-      meta: {
-        where: sortFilterPage.where,
-        order: sortFilterPage.order,
-        skip: sortFilterPage.skip,
-        take: sortFilterPage.take,
-        total_count: totalCount,
-      },
+      meta: { ...preFilled, total_count: totalCount },
     };
   }
 

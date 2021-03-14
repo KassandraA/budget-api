@@ -26,15 +26,42 @@ export class FilterSortPageUtils {
     );
   }
 
-  public static mapDtoToTypeorm(query?: FilterSortPageDto): FindManyOptions<Transaction> {
+  public static preFill(query?: FilterSortPageDto): FilterSortPageDto {
     const monthAgo = new Date(new Date().setDate(new Date().getDate() - 30));
 
+    const options: FilterSortPageDto = {
+      ...(query?.amount ? { amount: query.amount } : {}),
+      ...(query?.date ? { date: query.date } : { date: { gte: monthAgo } }),
+      ...(query?.message ? { message: query.message } : {}),
+      ...(query?.note_1 ? { note_1: query.note_1 } : {}),
+      ...(query?.note_2 ? { note_2: query.note_2 } : {}),
+      ...(query?.note_3 ? { note_3: query.note_3 } : {}),
+
+      ...(query?.order_by
+        ? {
+            order_by: {
+              ...(query.order_by.amount ? { amount: query.order_by.amount } : {}),
+              ...(query.order_by.note_1 ? { note_1: query.order_by.note_1 } : {}),
+              ...(query.order_by.note_2 ? { note_2: query.order_by.note_2 } : {}),
+              ...(query.order_by.note_3 ? { note_3: query.order_by.note_3 } : {}),
+              ...(query.order_by.message ? { message: query.order_by.message } : {}),
+              ...(query.order_by.date ? { date: query.order_by.date } : { date: 'DESC' }),
+            },
+          }
+        : { order_by: { date: 'DESC' } }),
+
+      skip: query?.skip ? +query.skip : 0,
+      take: query?.take ? +query.take : 100,
+    };
+
+    return options;
+  }
+
+  public static mapDtoToTypeorm(query?: FilterSortPageDto): FindManyOptions<Transaction> {
     const options: FindManyOptions<Transaction> = {
       where: {
         ...(query?.amount ? { amount: this.mapNonStringParam(query.amount) } : {}),
-        ...(query?.date
-          ? { date: this.mapDateParam(query.date) }
-          : { date: MoreThanOrEqual(DateUtils.toSQLiteString(monthAgo)) }),
+        ...(query?.date ? { date: this.mapDateParam(query.date) } : {}),
         ...(query?.message ? { message: this.mapStringParam(query.message) } : {}),
         ...(query?.note_1 ? { note_1: this.mapStringParam(query.note_1) } : {}),
         ...(query?.note_2 ? { note_2: this.mapStringParam(query.note_2) } : {}),
@@ -46,12 +73,11 @@ export class FilterSortPageUtils {
         ...(query?.order_by?.note_2 ? { note_2: query.order_by.note_2 } : {}),
         ...(query?.order_by?.note_3 ? { note_3: query.order_by.note_3 } : {}),
         ...(query?.order_by?.message ? { message: query.order_by.message } : {}),
-        ...(query?.order_by?.date ? { date: query.order_by.date } : { date: 'DESC' }),
+        ...(query?.order_by?.date ? { date: query.order_by.date } : {}),
       },
-      skip: query?.skip ? +query.skip : 0,
-      take: query?.take ? +query.take : 100,
+      skip: query?.skip ? query.skip : 0,
+      take: query?.take ? query.take : 100,
     };
-
     return options;
   }
 
