@@ -3,6 +3,21 @@ import { validationResult } from 'express-validator';
 import { ValidationHelpers } from './validation-helpers';
 
 export class TransactionValidator {
+  private static queryParams = [
+    'order_by',
+    'message',
+    'note_1',
+    'note_2',
+    'note_3',
+    'amount',
+    'date',
+    'skip',
+    'take',
+  ];
+  private static orderByParams = ['message', 'note_1', 'note_2', 'note_3', 'amount', 'date'];
+  private static stringParams = ['like'];
+  private static nonStringParams = ['lte', 'gte', 'equal'];
+
   private static validateOnCreateOrUpdate = [
     ValidationHelpers.validateString('message'),
     ValidationHelpers.validateString('note_1'),
@@ -33,9 +48,19 @@ export class TransactionValidator {
     ...TransactionValidator.validateOnCreateOrUpdate,
   ];
 
-  // ?
-  // static validateOnRetrieve = [
-  //   ValidationHelpers.validateRange('orderBy.*', Object.keys(SortDirection), false),
-  //   TransactionValidator.validate,
-  // ];
+  static validateQueryKeys = [
+    ValidationHelpers.validateQueryKeys(null, TransactionValidator.queryParams),
+    ValidationHelpers.validateQueryKeys('order_by', TransactionValidator.orderByParams),
+    ValidationHelpers.validateQueryKeys('message', TransactionValidator.stringParams),
+    ValidationHelpers.validateQueryKeys('note_1', TransactionValidator.stringParams),
+    ValidationHelpers.validateQueryKeys('note_2', TransactionValidator.stringParams),
+    ValidationHelpers.validateQueryKeys('note_3', TransactionValidator.stringParams),
+    ValidationHelpers.validateQueryKeys('amount', TransactionValidator.nonStringParams),
+    ValidationHelpers.validateQueryKeys('date', TransactionValidator.nonStringParams),
+    // ValidationHelpers.validateInteger('skip'),
+    // ValidationHelpers.validateInteger('take'),
+    // todo: add ValidationTarget.Body/Query as parameter to all validators AND
+    // todo: add validator to query values
+    TransactionValidator.validate,
+  ];
 }

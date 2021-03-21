@@ -20,7 +20,7 @@ export interface OrderBy {
 }
 
 export interface StringFilter {
-  like: string;
+  like: string; // todo: %message%
 }
 export interface NonStringFilter<T> {
   equal?: T;
