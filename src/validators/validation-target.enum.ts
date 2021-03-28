@@ -1,4 +1,4 @@
 export enum ValidationTarget {
-  Body,
-  Query,
+  Body = 'BODY',
+  Query = 'QUERY',
 }

@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
 import { validationResult } from 'express-validator';
 import { ValidationHelpers } from './validation-helpers';
+import { ValidationTarget } from './validation-target.enum';
 
 export class SourceStatusValidator {
   private static validate = [
@@ -13,7 +14,13 @@ export class SourceStatusValidator {
     },
   ];
 
-  static validateOnCreate = [ValidationHelpers.validateString('name', true, true), ...SourceStatusValidator.validate];
+  static validateOnCreate = [
+    ValidationHelpers.validateString('name', ValidationTarget.Body, true, true),
+    ...SourceStatusValidator.validate,
+  ];
 
-  static validateOnUpdate = [ValidationHelpers.validateString('name', false, true), ...SourceStatusValidator.validate];
+  static validateOnUpdate = [
+    ValidationHelpers.validateString('name', ValidationTarget.Body, false, true),
+    ...SourceStatusValidator.validate,
+  ];
 }

@@ -4,12 +4,12 @@ import { ValidationTarget } from './validation-target.enum';
 export class ValidationHelpers {
   static validateString(
     paramName: string,
+    target: ValidationTarget = ValidationTarget.Body,
     isRequired: boolean = false,
     isNotEmpty: boolean = false
   ): ValidationChain {
     const checker = this.validateRequired(
-      this.getChecker(ValidationTarget.Body, paramName),
-      // todo: add ValidationTarget.Body/Query as parameter to all validators
+      this.getChecker(target, paramName),
       paramName,
       isRequired
     );
@@ -25,11 +25,16 @@ export class ValidationHelpers {
       .notEmpty()
       .withMessage(`${paramName} must not be empty`)
       .bail();
+    // todo: add sanitization
   }
 
-  static validateInteger(paramName: string, isRequired: boolean = false): ValidationChain {
+  static validateInteger(
+    paramName: string,
+    target: ValidationTarget = ValidationTarget.Body,
+    isRequired: boolean = false
+  ): ValidationChain {
     const checker = this.validateRequired(
-      this.getChecker(ValidationTarget.Body, paramName),
+      this.getChecker(target, paramName),
       paramName,
       isRequired
     );
@@ -44,9 +49,13 @@ export class ValidationHelpers {
       .toInt();
   }
 
-  static validateDecimal(paramName: string, isRequired: boolean = false): ValidationChain {
+  static validateDecimal(
+    paramName: string,
+    target: ValidationTarget = ValidationTarget.Body,
+    isRequired: boolean = false
+  ): ValidationChain {
     const checker = this.validateRequired(
-      this.getChecker(ValidationTarget.Body, paramName),
+      this.getChecker(target, paramName),
       paramName,
       isRequired
     );
@@ -61,9 +70,13 @@ export class ValidationHelpers {
       .toFloat();
   }
 
-  static validateDate(paramName: string, isRequired: boolean = false): ValidationChain {
+  static validateDate(
+    paramName: string,
+    target: ValidationTarget = ValidationTarget.Body,
+    isRequired: boolean = false
+  ): ValidationChain {
     const checker = this.validateRequired(
-      this.getChecker(ValidationTarget.Body, paramName),
+      this.getChecker(target, paramName),
       paramName,
       isRequired
     );
@@ -73,22 +86,48 @@ export class ValidationHelpers {
       .bail();
   }
 
-  static validateArray(paramName: string, isRequired: boolean = false): ValidationChain {
+  static validateArray(
+    paramName: string,
+    target: ValidationTarget = ValidationTarget.Body,
+    isRequired: boolean = false
+  ): ValidationChain {
     const checker = this.validateRequired(
-      this.getChecker(ValidationTarget.Body, paramName),
+      this.getChecker(target, paramName),
       paramName,
       isRequired
     );
     return checker.isArray().withMessage(`${paramName} must be an array`).bail();
   }
 
-  static validateQueryKeys(paramName: string, queryKeys: string[]): ValidationChain {
-    return this.getChecker(ValidationTarget.Query, paramName).custom((value) => {
-      if (value && Object.keys(value).some((k) => !queryKeys.includes(k))) {
+  static validateIncludes(
+    paramName: string,
+    values: string[],
+    target: ValidationTarget = ValidationTarget.Body,
+    isRequired: boolean = false
+  ): ValidationChain {
+    const checker = this.validateRequired(
+      this.getChecker(target, paramName),
+      paramName,
+      isRequired
+    );
+    return checker
+      .isIn(values)
+      .withMessage(`${paramName} must be in ${values.join(', ')}`)
+      .bail();
+  }
+
+  static validateObjectKeys(
+    paramName: string,
+    target: ValidationTarget,
+    keys: string[]
+  ): ValidationChain {
+    return this.getChecker(target, paramName).custom((value) => {
+      console.log('>>', value);
+      if (value && Object.keys(value).some((k) => !keys.includes(k))) {
         throw new Error(
-          `The query${paramName ? '.' + paramName : ''} param may contain only ${queryKeys.join(
-            ', '
-          )}`
+          `${target.toString()}${
+            paramName ? '.' + paramName : ''
+          } parameters may contain only ${keys.join(', ')}`
         );
       }
       return true;
