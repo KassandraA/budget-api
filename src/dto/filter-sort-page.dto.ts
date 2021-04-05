@@ -6,6 +6,7 @@ export interface FilterSortPageDto {
   note_3?: StringFilter;
   amount?: NonStringFilter<number>;
   date?: NonStringFilter<Date>;
+  tag_ids?: number[]; // ??
   skip?: number;
   take?: number;
 }

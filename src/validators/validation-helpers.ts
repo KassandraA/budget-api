@@ -122,13 +122,14 @@ export class ValidationHelpers {
     keys: string[]
   ): ValidationChain {
     return this.getChecker(target, paramName).custom((value) => {
-      console.log('>>', value);
+      // console.log('>>', value);
       if (value && Object.keys(value).some((k) => !keys.includes(k))) {
         throw new Error(
           `${target.toString()}${
             paramName ? '.' + paramName : ''
           } parameters may contain only ${keys.join(', ')}`
         );
+        // todo: https://express-validator.github.io/docs/5.3.1/validation-result-api.html
       }
       return true;
     });

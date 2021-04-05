@@ -5,16 +5,20 @@ import { Transaction } from '../models/transaction.model';
 import { ValueNormalizer } from '../utils/value-normalizer.utils';
 import { TagsService } from './tags.service';
 import { TransactionMetaDto } from '../dto/transaction-meta.dto';
+import { getRepository } from 'typeorm';
 
 export class TransactionsService {
   static async get(
     params?: FilterSortPageDto
   ): Promise<{ data: Transaction[]; meta: TransactionMetaDto }> {
     const preFilled = FilterSortPageUtils.preFill(params);
-    const sortFilterPage = FilterSortPageUtils.mapDtoToTypeorm(preFilled);
-    sortFilterPage.relations = ['tags'];
+    // sortFilterPage.relations = ['tags'];
 
-    const [result, totalCount] = await Transaction.findAndCount(sortFilterPage);
+    const qb = Transaction.createQueryBuilder('transactions');
+    const sortFilterPage = FilterSortPageUtils.mapDtoToTypeorm(preFilled, qb);
+    const [result, totalCount] = await sortFilterPage.getManyAndCount();
+
+    // const [result, totalCount] = await Transaction.findAndCount(sortFilterPage);
     return {
       data: result,
       meta: { ...preFilled, total_count: totalCount },

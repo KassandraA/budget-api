@@ -1,12 +1,5 @@
 import { FilterSortPageDto, NonStringFilter, StringFilter } from '../dto/filter-sort-page.dto';
-import {
-  Equal,
-  FindManyOptions,
-  FindOperator,
-  LessThanOrEqual,
-  Like,
-  MoreThanOrEqual,
-} from 'typeorm';
+import { SelectQueryBuilder } from 'typeorm';
 import { Transaction } from '../models/transaction.model';
 import { DateUtils } from './date.utils';
 
@@ -21,6 +14,7 @@ export class FilterSortPageUtils {
         (!obj.note_3 || typeof obj.note_3 === 'object') &&
         (!obj.amount || typeof obj.amount === 'object') &&
         (!obj.date || typeof obj.date === 'object') &&
+        (!obj.tag_ids || typeof obj.tag_ids === 'object') &&
         (!obj.skip || typeof parseInt(obj.skip, 10) === 'number') &&
         (!obj.take || typeof parseInt(obj.take, 10) === 'number'))
     );
@@ -30,12 +24,13 @@ export class FilterSortPageUtils {
     const monthAgo = new Date(new Date().setDate(new Date().getDate() - 30));
 
     const options: FilterSortPageDto = {
-      ...(query?.amount ? { amount: query.amount } : {}),
-      ...(query?.date ? { date: query.date } : { date: { gte: monthAgo } }),
       ...(query?.message ? { message: query.message } : {}),
       ...(query?.note_1 ? { note_1: query.note_1 } : {}),
       ...(query?.note_2 ? { note_2: query.note_2 } : {}),
       ...(query?.note_3 ? { note_3: query.note_3 } : {}),
+      ...(query?.amount ? { amount: query.amount } : {}),
+      ...(query?.date ? { date: query.date } : { date: { gte: monthAgo } }),
+      ...(query?.tag_ids ? { tag_ids: query.tag_ids } : {}),
 
       ...(query?.order_by
         ? {
@@ -57,53 +52,123 @@ export class FilterSortPageUtils {
     return options;
   }
 
-  public static mapDtoToTypeorm(query?: FilterSortPageDto): FindManyOptions<Transaction> {
-    const options: FindManyOptions<Transaction> = {
-      where: {
-        ...(query?.amount ? { amount: this.mapNonStringParam(query.amount) } : {}),
-        ...(query?.date ? { date: this.mapDateParam(query.date) } : {}),
-        ...(query?.message ? { message: this.mapStringParam(query.message) } : {}),
-        ...(query?.note_1 ? { note_1: this.mapStringParam(query.note_1) } : {}),
-        ...(query?.note_2 ? { note_2: this.mapStringParam(query.note_2) } : {}),
-        ...(query?.note_3 ? { note_3: this.mapStringParam(query.note_3) } : {}),
-      },
-      order: {
-        ...(query?.order_by?.amount ? { amount: query.order_by.amount } : {}),
-        ...(query?.order_by?.note_1 ? { note_1: query.order_by.note_1 } : {}),
-        ...(query?.order_by?.note_2 ? { note_2: query.order_by.note_2 } : {}),
-        ...(query?.order_by?.note_3 ? { note_3: query.order_by.note_3 } : {}),
-        ...(query?.order_by?.message ? { message: query.order_by.message } : {}),
-        ...(query?.order_by?.date ? { date: query.order_by.date } : {}),
-      },
-      skip: query?.skip ? query.skip : 0,
-      take: query?.take ? query.take : 100,
-    };
-    return options;
+  // roleRepository.find({
+  //   join: { alias: 'roles', innerJoin: { users: 'roles.users' } },
+  //   where: qb => {
+  //     qb.where({ // Filter Role fields
+  //       a: 1,
+  //       b: 2
+  //     }).andWhere('users.name = :userName', { userName: 'John Doe' }); // Filter related field
+  //   }
+  // });
+
+  // public static mapDtoToTypeorm(query?: FilterSortPageDto) {
+  //   getConnection()
+  //     .createQueryBuilder()
+  //     .where('user.id = :id', { id: 1 })
+  //     .getMany();
+  // }
+
+  // public static mapDtoToTypeorm(query?: FilterSortPageDto): FindManyOptions<Transaction> {
+  public static mapDtoToTypeorm(
+    query?: FilterSortPageDto,
+    sqb?: SelectQueryBuilder<Transaction>
+  ): SelectQueryBuilder<Transaction> {
+    this.queryBuilderDateParam(sqb, query?.date, 'date');
+    this.queryBuilderStringParam(sqb, query?.message, 'message');
+    this.queryBuilderStringParam(sqb, query?.note_1, 'note_1');
+    this.queryBuilderStringParam(sqb, query?.note_2, 'note_2');
+    this.queryBuilderStringParam(sqb, query?.note_3, 'note_3');
+    this.queryBuilderNonStringParam(sqb, query?.amount, 'amount');
+
+    // const f = (qb: SelectQueryBuilder<Transaction>) => {
+    // sqb.where({
+    // ...(query?.tag_ids ? { tag_ids: query.tag_ids } : {}),
+    // ...(query?.tag_ids ? { tags: query.tag_ids } : {}),
+    // ...(query?.tag_ids ? { tags: q.where({ tag_ids: query.tag_ids }).andWhere({}) } : {}),
+    // });
+
+    // if (query?.tag_ids) {
+    //   qb = qb
+    //     .leftJoinAndSelect('tags', 'tag')
+    //     .where('tag.id IN (:...tagIds)', { tagIds: query.tag_ids });
+    // }
+
+    return sqb;
+
+    // const options: FindManyOptions<Transaction> = {
+    //   where: f,
+    //   order: {
+    //     ...(query?.order_by?.amount ? { amount: query.order_by.amount } : {}),
+    //     ...(query?.order_by?.note_1 ? { note_1: query.order_by.note_1 } : {}),
+    //     ...(query?.order_by?.note_2 ? { note_2: query.order_by.note_2 } : {}),
+    //     ...(query?.order_by?.note_3 ? { note_3: query.order_by.note_3 } : {}),
+    //     ...(query?.order_by?.message ? { message: query.order_by.message } : {}),
+    //     ...(query?.order_by?.date ? { date: query.order_by.date } : {}),
+    //   },
+    //   skip: query?.skip ? query.skip : 0,
+    //   take: query?.take ? query.take : 100,
+    // };
   }
 
-  private static mapDateParam(queryParam?: NonStringFilter<Date>): FindOperator<string> {
-    if (queryParam?.lte) {
-      return LessThanOrEqual(DateUtils.toSQLiteString(queryParam.lte));
-    } else if (queryParam?.gte) {
-      return MoreThanOrEqual(DateUtils.toSQLiteString(queryParam.gte));
-    } else if (queryParam?.equal) {
-      return Equal(DateUtils.toSQLiteString(queryParam.equal));
+  private static queryBuilderDateParam(
+    qb: SelectQueryBuilder<Transaction>,
+    param: NonStringFilter<Date>,
+    key: string
+  ): SelectQueryBuilder<Transaction> {
+    if (param?.equal) {
+      return qb.where(`transactions.${key} = :date`, {
+        date: DateUtils.toSQLiteString(param.equal),
+      });
+    } else if (param?.gte && param?.lte) {
+      const dates = {
+        lte: DateUtils.toSQLiteString(param.lte),
+        gte: DateUtils.toSQLiteString(param.gte),
+      };
+
+      return dates.gte < dates.lte
+        ? qb.where(`transactions.${key} BETWEEN :gte AND :lte`, dates)
+        : qb
+            .where(`transactions.${key} <= :lte`, { lte: dates.lte })
+            .orWhere(`transactions.${key} >= :gte`, { gte: dates.gte });
+    } else if (param?.gte) {
+      return qb.where(`transactions.${key} >= :date`, {
+        date: DateUtils.toSQLiteString(param.gte),
+      });
+    } else if (param?.lte) {
+      return qb.where(`transactions.${key} <= :date`, {
+        date: DateUtils.toSQLiteString(param.lte),
+      });
     }
   }
 
-  private static mapNonStringParam<T>(queryParam?: NonStringFilter<T>): FindOperator<T> {
-    if (queryParam?.lte) {
-      return LessThanOrEqual(queryParam.lte);
-    } else if (queryParam?.gte) {
-      return MoreThanOrEqual(queryParam.gte);
-    } else if (queryParam?.equal) {
-      return Equal(queryParam.equal);
+  private static queryBuilderStringParam(
+    qb: SelectQueryBuilder<Transaction>,
+    param: StringFilter,
+    key: string
+  ): SelectQueryBuilder<Transaction> {
+    if (param?.like) {
+      const obj: { [key: string]: string } = {};
+      obj[key] = `%${param.like}%`;
+      return qb.andWhere(`transactions.${key} like :${key}`, obj);
     }
   }
 
-  private static mapStringParam(queryParam?: StringFilter): FindOperator<string> {
-    if (queryParam?.like) {
-      return Like(queryParam.like);
+  private static queryBuilderNonStringParam<T>(
+    qb: SelectQueryBuilder<Transaction>,
+    param: NonStringFilter<T>,
+    key: string
+  ): SelectQueryBuilder<Transaction> {
+    const obj: { [key: string]: T } = {};
+    if (param?.lte) {
+      obj[key] = param.lte;
+      return qb.andWhere(`transactions.${key} <= :${key}`, obj);
+    } else if (param?.gte) {
+      obj[key] = param.gte;
+      return qb.andWhere(`transactions.${key} >= :${key}`, obj);
+    } else if (param?.equal) {
+      obj[key] = param.equal;
+      return qb.andWhere(`transactions.${key} = :${key}`, obj);
     }
   }
 }

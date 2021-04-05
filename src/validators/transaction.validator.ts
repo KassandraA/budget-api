@@ -12,6 +12,7 @@ export class TransactionValidator {
     'note_3',
     'amount',
     'date',
+    'tag_ids',
     'skip',
     'take',
   ];
@@ -64,19 +65,18 @@ export class TransactionValidator {
   ];
 
   private static validateQueryValues = [
-    // todo: DONE add ValidationTarget.Body/Query as parameter to all validators AND
-    // todo: DONE add validator to query values
     ValidationHelpers.validateString('message.*', ValidationTarget.Query, false, true),
     ValidationHelpers.validateString('note_1.*', ValidationTarget.Query, false, true),
     ValidationHelpers.validateString('note_2.*', ValidationTarget.Query, false, true),
     ValidationHelpers.validateString('note_3.*', ValidationTarget.Query, false, true),
     ValidationHelpers.validateDecimal('amount.*', ValidationTarget.Query),
     ValidationHelpers.validateDate('date.*', ValidationTarget.Query),
-    ValidationHelpers.validateIncludes('order_by.*', ['ASC', 'DESC'], ValidationTarget.Query), // NO
+    ValidationHelpers.validateIncludes('order_by.*', ['ASC', 'DESC'], ValidationTarget.Query),
+    ValidationHelpers.validateArray('tag_ids', ValidationTarget.Query),
+    ValidationHelpers.validateInteger('tag_ids.*', ValidationTarget.Query),
     ValidationHelpers.validateInteger('skip', ValidationTarget.Query),
     ValidationHelpers.validateInteger('take', ValidationTarget.Query),
     TransactionValidator.validate,
-    // ValidationHelpers.validateArray('tag_ids'),??
   ];
 
   private static validateOnCreateOrUpdate = [
