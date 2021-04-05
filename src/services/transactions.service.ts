@@ -5,20 +5,16 @@ import { Transaction } from '../models/transaction.model';
 import { ValueNormalizer } from '../utils/value-normalizer.utils';
 import { TagsService } from './tags.service';
 import { TransactionMetaDto } from '../dto/transaction-meta.dto';
-import { getRepository } from 'typeorm';
+import { ModelConstants } from '../models/model-constants';
 
 export class TransactionsService {
   static async get(
     params?: FilterSortPageDto
   ): Promise<{ data: Transaction[]; meta: TransactionMetaDto }> {
     const preFilled = FilterSortPageUtils.preFill(params);
-    // sortFilterPage.relations = ['tags'];
+    const searchOptions = FilterSortPageUtils.mapDtoToTypeorm(preFilled);
+    const [result, totalCount] = await Transaction.findAndCount(searchOptions);
 
-    const qb = Transaction.createQueryBuilder('transactions');
-    const sortFilterPage = FilterSortPageUtils.mapDtoToTypeorm(preFilled, qb);
-    const [result, totalCount] = await sortFilterPage.getManyAndCount();
-
-    // const [result, totalCount] = await Transaction.findAndCount(sortFilterPage);
     return {
       data: result,
       meta: { ...preFilled, total_count: totalCount },
@@ -26,7 +22,10 @@ export class TransactionsService {
   }
 
   static async getOneById(transactionId: number): Promise<Transaction> {
-    const transaction = await Transaction.findOne({ id: transactionId }, { relations: ['tags'] });
+    const transaction = await Transaction.findOne(
+      { id: transactionId },
+      { relations: [ModelConstants.tagsTable] }
+    );
 
     if (!transaction) throw new NotFoundError('Transaction not found');
     return transaction;
