@@ -1,11 +1,13 @@
 import { FilterSortPageDto, NonStringFilter, StringFilter } from '../dto/filter-sort-page.dto';
 import {
+  Between,
   Equal,
   FindManyOptions,
   FindOperator,
   LessThanOrEqual,
   Like,
   MoreThanOrEqual,
+  Not,
   SelectQueryBuilder,
 } from 'typeorm';
 import { Transaction } from '../models/transaction.model';
@@ -98,24 +100,32 @@ export class FilterSortPageUtils {
     return options;
   }
 
-  // todo: date lte && gte ...
-  public static mapDateParam(queryParam?: NonStringFilter<Date>): FindOperator<string> {
-    if (queryParam?.lte) {
-      return LessThanOrEqual(DateUtils.toSQLiteString(queryParam.lte));
-    } else if (queryParam?.gte) {
-      return MoreThanOrEqual(DateUtils.toSQLiteString(queryParam.gte));
-    } else if (queryParam?.equal) {
-      return Equal(DateUtils.toSQLiteString(queryParam.equal));
+  public static mapDateParam(param?: NonStringFilter<Date>): FindOperator<string> {
+    if (param?.equal) {
+      return Equal(DateUtils.toSQLiteString(param.equal));
+    } else if (param?.gte && param?.lte) {
+      return param.gte < param.lte
+        ? Between(DateUtils.toSQLiteString(param.gte), DateUtils.toSQLiteString(param.lte))
+        : Not(Between(DateUtils.toSQLiteString(param.lte), DateUtils.toSQLiteString(param.gte)));
+    } else if (param?.gte) {
+      return MoreThanOrEqual(DateUtils.toSQLiteString(param.gte));
+    } else if (param?.lte) {
+      return LessThanOrEqual(DateUtils.toSQLiteString(param.lte));
     }
   }
 
-  public static mapNonStringParam<T>(queryParam?: NonStringFilter<T>): FindOperator<T> {
-    if (queryParam?.lte) {
-      return LessThanOrEqual(queryParam.lte);
-    } else if (queryParam?.gte) {
-      return MoreThanOrEqual(queryParam.gte);
-    } else if (queryParam?.equal) {
-      return Equal(queryParam.equal);
+  // todo: Not(Between... excludes equal result
+  public static mapNonStringParam<T>(param?: NonStringFilter<T>): FindOperator<T> {
+    if (param?.equal) {
+      return Equal(param.equal);
+    } else if (param?.gte && param?.lte) {
+      return param.gte < param.lte
+        ? Between(param.gte, param.lte)
+        : Not(Between(param.lte, param.gte));
+    } else if (param?.gte) {
+      return MoreThanOrEqual(param.gte);
+    } else if (param?.lte) {
+      return LessThanOrEqual(param.lte);
     }
   }
 
@@ -124,33 +134,4 @@ export class FilterSortPageUtils {
       return Like(`%${queryParam.like}%`);
     }
   }
-
-  // private static queryBuilderDateParam(
-  //   qb: SelectQueryBuilder<Transaction>,
-  //   param: NonStringFilter<Date>,
-  //   key: string
-  // ): SelectQueryBuilder<Transaction> {
-  //   if (param?.equal) {
-  //     return qb.where(`transactions.${key} = :date`, {
-  //       date: DateUtils.toSQLiteString(param.equal),
-  //     });
-  //   } else if (param?.gte && param?.lte) {
-  //     const dates = {
-  //       lte: DateUtils.toSQLiteString(param.lte),
-  //       gte: DateUtils.toSQLiteString(param.gte),
-  //     };
-
-  //     return dates.gte < dates.lte ? qb.where(`transactions.${key} BETWEEN :gte AND :lte`, dates) : qb
-  //           .where(`transactions.${key} <= :lte`, { lte: dates.lte })
-  //           .orWhere(`transactions.${key} >= :gte`, { gte: dates.gte });
-  //   } else if (param?.gte) {
-  //     return qb.where(`transactions.${key} >= :date`, {
-  //       date: DateUtils.toSQLiteString(param.gte),
-  //     });
-  //   } else if (param?.lte) {
-  //     return qb.where(`transactions.${key} <= :date`, {
-  //       date: DateUtils.toSQLiteString(param.lte),
-  //     });
-  //   }
-  // }
 }

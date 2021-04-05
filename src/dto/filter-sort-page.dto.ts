@@ -6,7 +6,7 @@ export interface FilterSortPageDto {
   note_3?: StringFilter;
   amount?: NonStringFilter<number>;
   date?: NonStringFilter<Date>;
-  tag_ids?: number[]; // ??
+  tag_ids?: number[];
   skip?: number;
   take?: number;
 }
@@ -21,7 +21,7 @@ export interface OrderBy {
 }
 
 export interface StringFilter {
-  like: string; // todo: %message%
+  like: string;
 }
 export interface NonStringFilter<T> {
   equal?: T;
