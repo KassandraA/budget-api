@@ -25,7 +25,6 @@ export class ValidationHelpers {
       .notEmpty()
       .withMessage(`${paramName} must not be empty`)
       .bail();
-    // todo: add sanitization
   }
 
   static validateInteger(
@@ -83,7 +82,8 @@ export class ValidationHelpers {
     return checker
       .isISO8601({ strict: true })
       .withMessage(`${paramName} must be a valid Date`)
-      .bail();
+      .bail()
+      .toDate();
   }
 
   static validateArray(

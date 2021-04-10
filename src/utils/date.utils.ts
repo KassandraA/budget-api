@@ -1,6 +1,5 @@
 export class DateUtils {
-  public static toSQLiteString(date: Date): string {
-    const d = new Date(date);
+  public static toSQLiteString(d: Date): string {
     return (
       [
         d.getUTCFullYear(),

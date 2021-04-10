@@ -43,18 +43,16 @@ export class TransactionsService {
   ): Promise<Transaction> {
     const tags = await TagsService.getManyById(tagIds);
 
-    let newTransaction = new Transaction();
+    const newTransaction = new Transaction();
 
     newTransaction.date = date;
-    newTransaction.message = message;
-    newTransaction.note_1 = note1;
-    newTransaction.note_2 = note2;
-    newTransaction.note_3 = note3;
+    newTransaction.message = ValueNormalizer.normalizeString(message);
+    newTransaction.note_1 = ValueNormalizer.normalizeString(note1);
+    newTransaction.note_2 = ValueNormalizer.normalizeString(note2);
+    newTransaction.note_3 = ValueNormalizer.normalizeString(note3);
     newTransaction.amount = amount;
     newTransaction.source_id = sourceId;
     newTransaction.tags = tags;
-
-    newTransaction = this.normalizeTransaction(newTransaction);
 
     return this.saveTransaction(newTransaction);
   }
@@ -70,24 +68,23 @@ export class TransactionsService {
     sourceId: number,
     tagIds: number[]
   ): Promise<Transaction> {
-    let updatedTransaction = await Transaction.findOne({
+    const updatedTransaction = await Transaction.findOne({
       id: transactionId,
     });
 
     if (!updatedTransaction) throw new NotFoundError('Transaction not found');
 
     if (date !== undefined) updatedTransaction.date = date;
-    if (message !== undefined) updatedTransaction.message = message;
-    if (note1 !== undefined) updatedTransaction.note_1 = note1;
-    if (note2 !== undefined) updatedTransaction.note_2 = note2;
-    if (note3 !== undefined) updatedTransaction.note_3 = note3;
+    if (message !== undefined)
+      updatedTransaction.message = ValueNormalizer.normalizeString(message);
+    if (note1 !== undefined) updatedTransaction.note_1 = ValueNormalizer.normalizeString(note1);
+    if (note2 !== undefined) updatedTransaction.note_2 = ValueNormalizer.normalizeString(note2);
+    if (note3 !== undefined) updatedTransaction.note_3 = ValueNormalizer.normalizeString(note3);
     if (amount !== undefined) updatedTransaction.amount = amount;
     if (sourceId !== undefined) updatedTransaction.source_id = sourceId;
     if (tagIds !== undefined) {
       updatedTransaction.tags = tagIds.length > 0 ? await TagsService.getManyById(tagIds) : [];
     }
-
-    updatedTransaction = this.normalizeTransaction(updatedTransaction);
 
     return this.saveTransaction(updatedTransaction);
   }
@@ -109,14 +106,5 @@ export class TransactionsService {
         throw error;
       }
     }
-  }
-
-  private static normalizeTransaction(transaction: Transaction): Transaction {
-    transaction.message = ValueNormalizer.normalizeString(transaction.message);
-    transaction.note_1 = ValueNormalizer.normalizeString(transaction.note_1);
-    transaction.note_2 = ValueNormalizer.normalizeString(transaction.note_2);
-    transaction.note_3 = ValueNormalizer.normalizeString(transaction.note_3);
-
-    return transaction;
   }
 }
