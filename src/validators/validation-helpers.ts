@@ -122,14 +122,16 @@ export class ValidationHelpers {
     keys: string[]
   ): ValidationChain {
     return this.getChecker(target, paramName).custom((value) => {
-      // console.log('>>', value);
-      if (value && Object.keys(value).some((k) => !keys.includes(k))) {
+      if (!value) return true;
+
+      const currKeys = Object.keys(value);
+      const invalidKeys = currKeys.filter((k) => !keys.includes(k));
+      if (invalidKeys.length > 0) {
         throw new Error(
-          `${target.toString()}${
-            paramName ? '.' + paramName : ''
-          } parameters may contain only ${keys.join(', ')}`
+          `${target.toString()}${paramName ? '.' + paramName : ''} ` +
+            `contains invalid keys: '${invalidKeys.join("', '")}'. ` +
+            `Allowed keys: '${keys.join("', '")}'`
         );
-        // todo: https://express-validator.github.io/docs/5.3.1/validation-result-api.html
       }
       return true;
     });
