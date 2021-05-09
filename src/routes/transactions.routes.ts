@@ -11,7 +11,7 @@ export class TransactionsRoutes {
     router.post(
       '',
       TransactionValidator.validateOnCreate,
-      TransactionsController.createTransaction
+      TransactionsController.createMultiTransaction
     );
     router.patch(
       '/:id([0-9]+)',

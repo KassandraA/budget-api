@@ -99,6 +99,11 @@ export class ValidationHelpers {
     return checker.isArray().withMessage(`${paramName} must be an array`).bail();
   }
 
+  static validateArrayBody(): ValidationChain {
+    const checker = this.validateRequired(body(), '', true);
+    return checker.isArray().withMessage(`Body must be an array`).bail();
+  }
+
   static validateIncludes(
     paramName: string,
     values: string[],

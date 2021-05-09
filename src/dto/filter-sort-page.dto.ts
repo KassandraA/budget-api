@@ -23,6 +23,7 @@ export interface OrderBy {
 export interface StringFilter {
   like: string;
 }
+
 export interface NonStringFilter<T> {
   equal?: T;
   lte?: T;

@@ -36,23 +36,25 @@ export class TransactionsController {
     }
   }
 
-  static async createTransaction(
+  static async createMultiTransaction(
     req: Request,
     res: Response
-  ): Promise<Response<{ data: Transaction }>> {
+  ): Promise<Response<{ data: Transaction[] }>> {
     try {
-      const newTransaction = await TransactionsService.addOne(
+      const newTransactions = await TransactionsService.addMany(
         // TODO req.body as INewTransactionInterface
-        req.body.date,
-        req.body.message,
-        req.body.note_1,
-        req.body.note_2,
-        req.body.note_3,
-        req.body.amount,
-        req.body.source_id,
-        req.body.tag_ids
+        req.body.map((i: any) => ({
+          message: i.message,
+          note1: i.note_1,
+          note2: i.note_2,
+          note3: i.note_3,
+          date: i.date,
+          amount: i.amount,
+          sourceId: i.source_id,
+          tagIds: i.tag_ids,
+        }))
       );
-      return res.json({ data: newTransaction });
+      return res.json({ data: newTransactions });
     } catch (e) {
       const errorCode = e.statusCode ? e.statusCode : 500;
       return res.status(errorCode).json({ message: e.message });
@@ -64,17 +66,17 @@ export class TransactionsController {
     res: Response
   ): Promise<Response<{ data: Transaction }>> {
     try {
-      const updatedTransaction = await TransactionsService.updateOne(
-        Number(req.params.id),
-        req.body.date,
-        req.body.message,
-        req.body.note_1,
-        req.body.note_2,
-        req.body.note_3,
-        req.body.amount,
-        req.body.source_id,
-        req.body.tag_ids
-      );
+      const updatedTransaction = await TransactionsService.updateOne({
+        transactionId: Number(req.params.id),
+        date: req.body.date,
+        message: req.body.message,
+        note1: req.body.note_1,
+        note2: req.body.note_2,
+        note3: req.body.note_3,
+        amount: req.body.amount,
+        sourceId: req.body.source_id,
+        tagIds: req.body.tag_ids,
+      });
       return res.json({ data: updatedTransaction });
     } catch (e) {
       const errorCode = e.statusCode ? e.statusCode : 500;

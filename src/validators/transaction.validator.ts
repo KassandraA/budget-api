@@ -80,12 +80,12 @@ export class TransactionValidator {
   ];
 
   private static validateOnCreateOrUpdate = [
-    ValidationHelpers.validateString('message'),
-    ValidationHelpers.validateString('note_1'),
-    ValidationHelpers.validateString('note_2'),
-    ValidationHelpers.validateString('note_3'),
-    ValidationHelpers.validateArray('tag_ids'),
-    ValidationHelpers.validateInteger('tag_ids.*'),
+    ValidationHelpers.validateString('*.message'),
+    ValidationHelpers.validateString('*.note_1'),
+    ValidationHelpers.validateString('*.note_2'),
+    ValidationHelpers.validateString('*.note_3'),
+    ValidationHelpers.validateArray('*.tag_ids'),
+    ValidationHelpers.validateInteger('*.tag_ids.*'),
     TransactionValidator.validate,
   ];
 
@@ -101,9 +101,11 @@ export class TransactionValidator {
   ];
 
   static validateOnCreate = [
-    ValidationHelpers.validateDate('date', ValidationTarget.Body, true),
-    ValidationHelpers.validateDecimal('amount', ValidationTarget.Body, true),
-    ValidationHelpers.validateInteger('source_id', ValidationTarget.Body, true),
+    ValidationHelpers.validateArrayBody(),
+    TransactionValidator.validate,
+    ValidationHelpers.validateDate('*.date', ValidationTarget.Body, true),
+    ValidationHelpers.validateDecimal('*.amount', ValidationTarget.Body, true),
+    ValidationHelpers.validateInteger('*.source_id', ValidationTarget.Body, true),
     ...TransactionValidator.validateOnCreateOrUpdate,
   ];
 
