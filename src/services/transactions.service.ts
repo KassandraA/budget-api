@@ -104,13 +104,13 @@ export class TransactionsService {
   private static getNewTransaction(data: TransactionDto, tags: Tag[]): Transaction {
     const newTransaction = new Transaction();
 
-    newTransaction.date = data.date; // normalise date?
+    newTransaction.date = data.date;
     newTransaction.message = ValueNormalizer.normalizeString(data.message);
     newTransaction.note_1 = ValueNormalizer.normalizeString(data.note1);
     newTransaction.note_2 = ValueNormalizer.normalizeString(data.note2);
     newTransaction.note_3 = ValueNormalizer.normalizeString(data.note3);
-    newTransaction.amount = data.amount; // normalise number?
-    newTransaction.source_id = data.sourceId; // normalise number?
+    newTransaction.amount = data.amount;
+    newTransaction.source_id = data.sourceId;
     newTransaction.tags = tags;
 
     return newTransaction;

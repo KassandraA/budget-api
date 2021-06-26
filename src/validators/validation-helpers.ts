@@ -1,4 +1,5 @@
 import { body, query, ValidationChain } from 'express-validator';
+import { ValueNormalizer } from '../utils/value-normalizer.utils';
 import { ValidationTarget } from './validation-target.enum';
 
 export class ValidationHelpers {
@@ -16,14 +17,14 @@ export class ValidationHelpers {
     return checker
       .not()
       .isArray()
-      .withMessage(`${paramName} must not be an array`)
+      .withMessage(`${this.beautifyParam(paramName)} must not be an array`)
       .bail()
       .isString()
-      .withMessage(`${paramName} must be a string`)
+      .withMessage(`${this.beautifyParam(paramName)} must be a string`)
       .bail()
       .if(() => isNotEmpty)
       .notEmpty()
-      .withMessage(`${paramName} must not be empty`)
+      .withMessage(`${this.beautifyParam(paramName)} must not be empty`)
       .bail();
   }
 
@@ -40,10 +41,10 @@ export class ValidationHelpers {
     return checker
       .not()
       .isArray()
-      .withMessage(`${paramName} must not be an array`)
+      .withMessage(`${this.beautifyParam(paramName)} must not be an array`)
       .bail()
       .isInt()
-      .withMessage(`${paramName} must be an integer`)
+      .withMessage(`${this.beautifyParam(paramName)} must be an integer`)
       .bail()
       .toInt();
   }
@@ -61,10 +62,10 @@ export class ValidationHelpers {
     return checker
       .not()
       .isArray()
-      .withMessage(`${paramName} must not be an array`)
+      .withMessage(`${this.beautifyParam(paramName)} must not be an array`)
       .bail()
       .isDecimal()
-      .withMessage(`${paramName} must be a decimal`)
+      .withMessage(`${this.beautifyParam(paramName)} must be a decimal`)
       .bail()
       .toFloat();
   }
@@ -81,7 +82,7 @@ export class ValidationHelpers {
     );
     return checker
       .isISO8601({ strict: true })
-      .withMessage(`${paramName} must be a valid Date`)
+      .withMessage(`${this.beautifyParam(paramName)} must be a valid Date`)
       .bail()
       .toDate();
   }
@@ -96,12 +97,18 @@ export class ValidationHelpers {
       paramName,
       isRequired
     );
-    return checker.isArray().withMessage(`${paramName} must be an array`).bail();
+    return checker
+      .isArray()
+      .withMessage(`${this.beautifyParam(paramName)} must be an array`)
+      .bail();
   }
 
-  static validateArrayBody(): ValidationChain {
-    const checker = this.validateRequired(body(), '', true);
-    return checker.isArray().withMessage(`Body must be an array`).bail();
+  static validateArrayBody(isArray: boolean = true): ValidationChain {
+    const condition = isArray ? body() : body().not();
+    return condition
+      .isArray()
+      .withMessage(`Body must ${isArray ? '' : 'not'} be an array`)
+      .bail();
   }
 
   static validateIncludes(
@@ -117,7 +124,7 @@ export class ValidationHelpers {
     );
     return checker
       .isIn(values)
-      .withMessage(`${paramName} must be in ${values.join(', ')}`)
+      .withMessage(`${this.beautifyParam(paramName)} must be in ${values.join(', ')}`)
       .bail();
   }
 
@@ -148,7 +155,10 @@ export class ValidationHelpers {
     required: boolean
   ): ValidationChain {
     return required
-      ? checker.exists().withMessage(`${param} is required`).bail()
+      ? checker
+          .exists()
+          .withMessage(`${this.beautifyParam(param)} is required`)
+          .bail()
       : checker.optional();
   }
 
@@ -160,5 +170,9 @@ export class ValidationHelpers {
       default:
         return paramName ? body(paramName) : body();
     }
+  }
+
+  private static beautifyParam(param: string): string {
+    return param.replace(/[^\w\s]/gi, '');
   }
 }

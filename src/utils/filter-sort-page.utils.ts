@@ -114,7 +114,6 @@ export class FilterSortPageUtils {
     }
   }
 
-  // todo: Not(Between... excludes equal result
   public static mapNonStringParam<T>(param?: NonStringFilter<T>): FindOperator<T> {
     if (param?.equal) {
       return Equal(param.equal);

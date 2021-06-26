@@ -79,16 +79,6 @@ export class TransactionValidator {
     TransactionValidator.validate,
   ];
 
-  private static validateOnCreateOrUpdate = [
-    ValidationHelpers.validateString('*.message'),
-    ValidationHelpers.validateString('*.note_1'),
-    ValidationHelpers.validateString('*.note_2'),
-    ValidationHelpers.validateString('*.note_3'),
-    ValidationHelpers.validateArray('*.tag_ids'),
-    ValidationHelpers.validateInteger('*.tag_ids.*'),
-    TransactionValidator.validate,
-  ];
-
   private static validate(req: Request, res: Response, next: NextFunction) {
     const errors = validationResult(req);
     if (!errors.isEmpty()) return res.status(422).json({ errors: errors.array() });
@@ -106,13 +96,27 @@ export class TransactionValidator {
     ValidationHelpers.validateDate('*.date', ValidationTarget.Body, true),
     ValidationHelpers.validateDecimal('*.amount', ValidationTarget.Body, true),
     ValidationHelpers.validateInteger('*.source_id', ValidationTarget.Body, true),
-    ...TransactionValidator.validateOnCreateOrUpdate,
+    ValidationHelpers.validateString('*.message'),
+    ValidationHelpers.validateString('*.note_1'),
+    ValidationHelpers.validateString('*.note_2'),
+    ValidationHelpers.validateString('*.note_3'),
+    ValidationHelpers.validateArray('*.tag_ids'),
+    ValidationHelpers.validateInteger('*.tag_ids.*'),
+    TransactionValidator.validate,
   ];
 
   static validateOnUpdate = [
+    ValidationHelpers.validateArrayBody(false),
+    TransactionValidator.validate,
     ValidationHelpers.validateDate('date'),
     ValidationHelpers.validateDecimal('amount'),
     ValidationHelpers.validateInteger('source_id'),
-    ...TransactionValidator.validateOnCreateOrUpdate,
+    ValidationHelpers.validateString('message'),
+    ValidationHelpers.validateString('note_1'),
+    ValidationHelpers.validateString('note_2'),
+    ValidationHelpers.validateString('note_3'),
+    ValidationHelpers.validateArray('tag_ids'),
+    ValidationHelpers.validateInteger('tag_ids.*'),
+    TransactionValidator.validate,
   ];
 }
