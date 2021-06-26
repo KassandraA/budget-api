@@ -2,6 +2,7 @@ import { NotUniqueError } from '../errors/not-unique.error';
 import { NotFoundError } from '../errors/not-found.error';
 import { RemovalRestrictedError } from '../errors/removal-restricted.error';
 import { SourceStatus } from '../models/source-status.model';
+import { ValueNormalizer } from '../utils/value-normalizer.utils';
 
 export class SourceStatusesService {
   static async getAll() {
@@ -18,18 +19,23 @@ export class SourceStatusesService {
   static async addOne(name: string, description: string): Promise<SourceStatus> {
     const newSourceStatus = new SourceStatus();
     newSourceStatus.name = name;
-    newSourceStatus.description = description;
+    newSourceStatus.description = ValueNormalizer.normalizeString(description);
 
     return this.saveSourceStatus(newSourceStatus);
   }
 
-  static async updateOne(sourceStatusId: number, name: string, description: string): Promise<SourceStatus> {
+  static async updateOne(
+    sourceStatusId: number,
+    name: string,
+    description: string
+  ): Promise<SourceStatus> {
     const updatedSourceStatus = await SourceStatus.findOne({ id: sourceStatusId });
 
     if (!updatedSourceStatus) throw new NotFoundError('Source status not found');
 
     if (name !== undefined) updatedSourceStatus.name = name;
-    if (description !== undefined) updatedSourceStatus.description = description;
+    if (description !== undefined)
+      updatedSourceStatus.description = ValueNormalizer.normalizeString(description);
 
     return this.saveSourceStatus(updatedSourceStatus);
   }

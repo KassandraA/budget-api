@@ -8,10 +8,11 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
+import { ModelConstants } from './model-constants';
 import { Source } from './source.model';
 import { Tag } from './tag.model';
 
-@Entity('transactions')
+@Entity(ModelConstants.transactionsTable)
 export class Transaction extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;

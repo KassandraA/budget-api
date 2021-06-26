@@ -6,10 +6,18 @@ const router = Router();
 
 export class TransactionsRoutes {
   get routes() {
-    router.get('', TransactionsController.getTransactions);
+    router.get('', TransactionValidator.validateOnGet, TransactionsController.getTransactions);
     router.get('/:id([0-9]+)', TransactionsController.getTransactionById);
-    router.post('', TransactionValidator.validateOnCreate, TransactionsController.createTransaction);
-    router.patch('/:id([0-9]+)', TransactionValidator.validateOnUpdate, TransactionsController.updateTransaction);
+    router.post(
+      '',
+      TransactionValidator.validateOnCreate,
+      TransactionsController.createMultiTransaction
+    );
+    router.patch(
+      '/:id([0-9]+)',
+      TransactionValidator.validateOnUpdate,
+      TransactionsController.updateTransaction
+    );
     router.delete('/:id([0-9]+)', TransactionsController.deleteTransaction);
 
     return router;

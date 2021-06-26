@@ -18,6 +18,8 @@ export class TagsService {
   }
 
   static async getManyById(tagIds: number[]): Promise<Tag[]> {
+    if (!tagIds || tagIds.length === 0) return [];
+
     const tags = await Tag.findByIds(tagIds);
 
     if (tags.length !== tagIds.length) {

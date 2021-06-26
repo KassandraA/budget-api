@@ -1,7 +1,8 @@
 import { BaseEntity, Column, Entity, ManyToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { ModelConstants } from './model-constants';
 import { Transaction } from './transaction.model';
 
-@Entity('tags')
+@Entity(ModelConstants.tagsTable)
 export class Tag extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;

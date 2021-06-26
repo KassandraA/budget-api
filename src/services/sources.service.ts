@@ -1,6 +1,7 @@
 import { NotUniqueError } from '../errors/not-unique.error';
 import { NotFoundError } from '../errors/not-found.error';
 import { Source } from '../models/source.model';
+import { ValueNormalizer } from '../utils/value-normalizer.utils';
 
 export class SourcesService {
   static async getAll(): Promise<Source[]> {
@@ -26,10 +27,10 @@ export class SourcesService {
   ): Promise<Source> {
     const newSource = new Source();
     newSource.name = name;
-    newSource.description = description;
-    newSource.currency = currency;
-    newSource.note_1 = note1;
-    newSource.note_2 = note2;
+    newSource.description = ValueNormalizer.normalizeString(description);
+    newSource.currency = ValueNormalizer.normalizeString(currency);
+    newSource.note_1 = ValueNormalizer.normalizeString(note1);
+    newSource.note_2 = ValueNormalizer.normalizeString(note2);
     newSource.status_id = statusId;
 
     return this.saveSource(newSource);
@@ -51,10 +52,11 @@ export class SourcesService {
     if (!updatedSource) throw new NotFoundError('Source not found');
 
     if (name !== undefined) updatedSource.name = name;
-    if (description !== undefined) updatedSource.description = description;
-    if (currency !== undefined) updatedSource.currency = currency;
-    if (note1 !== undefined) updatedSource.note_1 = note1;
-    if (note2 !== undefined) updatedSource.note_2 = note2;
+    if (description !== undefined)
+      updatedSource.description = ValueNormalizer.normalizeString(description);
+    if (currency !== undefined) updatedSource.currency = ValueNormalizer.normalizeString(currency);
+    if (note1 !== undefined) updatedSource.note_1 = ValueNormalizer.normalizeString(note1);
+    if (note2 !== undefined) updatedSource.note_2 = ValueNormalizer.normalizeString(note2);
     if (statusId !== undefined) updatedSource.status_id = statusId;
 
     return this.saveSource(updatedSource);
