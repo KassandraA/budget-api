@@ -90,24 +90,19 @@ export class ValidationHelpers {
   static validateArray(
     paramName: string,
     target: ValidationTarget = ValidationTarget.Body,
-    isRequired: boolean = false
+    isRequired: boolean = false,
+    mustBeArray: boolean = true
   ): ValidationChain {
-    const checker = this.validateRequired(
+    const param = paramName.length ? this.beautifyParam(paramName) : target;
+    let checker = this.validateRequired(
       this.getChecker(target, paramName),
-      paramName,
+      param,
       isRequired
     );
+    checker = mustBeArray ? checker : checker.not();
     return checker
       .isArray()
-      .withMessage(`${this.beautifyParam(paramName)} must be an array`)
-      .bail();
-  }
-
-  static validateArrayBody(isArray: boolean = true): ValidationChain {
-    const condition = isArray ? body() : body().not();
-    return condition
-      .isArray()
-      .withMessage(`Body must ${isArray ? '' : 'not'} be an array`)
+      .withMessage(`${param} must${mustBeArray ? ' ' : ' not '}be an array`)
       .bail();
   }
 

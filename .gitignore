@@ -8,8 +8,6 @@
 /node_modules
 
 # linters
-.eslintrc.js
-tslint.json
 
 # misc
 package-lock.json

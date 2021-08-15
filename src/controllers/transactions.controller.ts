@@ -3,8 +3,8 @@ import { Transaction } from '../models/transaction.model';
 import { TransactionsService } from '../services/transactions.service';
 import { FilterSortPageDto } from '../dto/filter-sort-page.dto';
 import { TransactionMetaDto } from '../dto/transaction-meta.dto';
-import { TransactionDto } from '../dto/transaction.dto';
 import { FilterSortPageUtils } from '../utils/filter-sort-page.utils';
+import { TransactionConverter } from '../utils/transaction-converter.utils';
 
 export class TransactionsController {
   static async getTransactions(
@@ -43,7 +43,7 @@ export class TransactionsController {
   ): Promise<Response<{ data: Transaction[] }>> {
     try {
       const newTransactions = await TransactionsService.addMany(
-        req.body.map((i: any) => TransactionsController.setTransactionDto(i))
+        req.body.map((i: any) => TransactionConverter.toTransactionDto(i))
       );
       return res.json({ data: newTransactions });
     } catch (e) {
@@ -59,7 +59,7 @@ export class TransactionsController {
     try {
       const updatedTransaction = await TransactionsService.updateOne({
         transactionId: Number(req.params.id),
-        ...TransactionsController.setTransactionDto(req.body),
+        ...TransactionConverter.toTransactionDto(req.body),
       });
       return res.json({ data: updatedTransaction });
     } catch (e) {
@@ -79,18 +79,5 @@ export class TransactionsController {
       const errorCode = e.statusCode ? e.statusCode : 500;
       return res.status(errorCode).json({ message: e.message });
     }
-  }
-
-  private static setTransactionDto(data: any): TransactionDto {
-    return {
-      message: data.message,
-      note1: data.note_1,
-      note2: data.note_2,
-      note3: data.note_3,
-      date: data.date,
-      amount: data.amount,
-      sourceId: data.source_id,
-      tagIds: data.tag_ids,
-    };
   }
 }

@@ -18,7 +18,7 @@ export class SourceStatusesService {
 
   static async addOne(name: string, description: string): Promise<SourceStatus> {
     const newSourceStatus = new SourceStatus();
-    newSourceStatus.name = name;
+    newSourceStatus.name = ValueNormalizer.normalizeString(name);
     newSourceStatus.description = ValueNormalizer.normalizeString(description);
 
     return this.saveSourceStatus(newSourceStatus);
@@ -33,7 +33,7 @@ export class SourceStatusesService {
 
     if (!updatedSourceStatus) throw new NotFoundError('Source status not found');
 
-    if (name !== undefined) updatedSourceStatus.name = name;
+    if (name !== undefined) updatedSourceStatus.name = ValueNormalizer.normalizeString(name);
     if (description !== undefined)
       updatedSourceStatus.description = ValueNormalizer.normalizeString(description);
 

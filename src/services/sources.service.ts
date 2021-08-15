@@ -26,7 +26,7 @@ export class SourcesService {
     statusId: number
   ): Promise<Source> {
     const newSource = new Source();
-    newSource.name = name;
+    newSource.name = ValueNormalizer.normalizeString(name);
     newSource.description = ValueNormalizer.normalizeString(description);
     newSource.currency = ValueNormalizer.normalizeString(currency);
     newSource.note_1 = ValueNormalizer.normalizeString(note1);
@@ -51,7 +51,7 @@ export class SourcesService {
 
     if (!updatedSource) throw new NotFoundError('Source not found');
 
-    if (name !== undefined) updatedSource.name = name;
+    if (name !== undefined) updatedSource.name = ValueNormalizer.normalizeString(name);
     if (description !== undefined)
       updatedSource.description = ValueNormalizer.normalizeString(description);
     if (currency !== undefined) updatedSource.currency = ValueNormalizer.normalizeString(currency);
@@ -74,7 +74,7 @@ export class SourcesService {
       return await source.save();
     } catch (error) {
       if (error.message.includes('FOREIGN KEY constraint failed')) {
-        throw new NotFoundError('status_id not found');
+        throw new NotFoundError(`status_id not found: ${source.status_id}`);
       } else if (error.message.includes('UNIQUE constraint failed: sources.name')) {
         throw new NotUniqueError(`The name '${source.name}' is already in use`);
       } else {

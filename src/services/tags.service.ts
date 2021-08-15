@@ -1,7 +1,7 @@
-import { RemovalRestrictedError } from '../errors/removal-restricted.error';
 import { NotFoundError } from '../errors/not-found.error';
 import { NotUniqueError } from '../errors/not-unique.error';
 import { Tag } from '../models/tag.model';
+import { ValueNormalizer } from '../utils/value-normalizer.utils';
 
 export class TagsService {
   static async getAll(): Promise<Tag[]> {
@@ -32,7 +32,7 @@ export class TagsService {
 
   static async addOne(name: string): Promise<Tag> {
     const newTag = new Tag();
-    newTag.name = name;
+    newTag.name = ValueNormalizer.normalizeString(name);
 
     return this.saveTag(newTag);
   }
@@ -43,7 +43,7 @@ export class TagsService {
     });
 
     if (!updatedTag) throw new NotFoundError('Tag not found');
-    if (name !== undefined) updatedTag.name = name;
+    if (name !== undefined) updatedTag.name = ValueNormalizer.normalizeString(name);
 
     return this.saveTag(updatedTag);
   }

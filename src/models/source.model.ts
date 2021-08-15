@@ -1,8 +1,9 @@
 import { BaseEntity, Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { ModelConstants } from './model-constants';
 import { SourceStatus } from './source-status.model';
 import { Transaction } from './transaction.model';
 
-@Entity('sources')
+@Entity(ModelConstants.sourcesTable)
 export class Source extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;

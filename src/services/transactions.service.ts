@@ -33,17 +33,17 @@ export class TransactionsService {
     return transaction;
   }
 
-  static async addMany(data: TransactionDto[]): Promise<Transaction[]> {
-    const allTagIs = data.reduce((ts, tran) => {
+  static async addMany(transactions: TransactionDto[]): Promise<Transaction[]> {
+    const allTagIs = transactions.reduce((ts, tran) => {
       return tran?.tagIds?.length > 0 ? [...ts, ...tran.tagIds] : [];
     }, []);
 
     const allTags = await TagsService.getManyById([...new Set(allTagIs)]);
 
-    const transactionArray = data.map((t) =>
-      this.getNewTransaction(
-        t,
-        allTags.filter((i) => t.tagIds.includes(i.id))
+    const transactionArray = transactions.map((tran) =>
+      this.getTransactionFromDto(
+        tran,
+        allTags.filter((tag) => tran.tagIds.includes(tag.id))
       )
     );
 
@@ -101,7 +101,7 @@ export class TransactionsService {
     }
   }
 
-  private static getNewTransaction(data: TransactionDto, tags: Tag[]): Transaction {
+  private static getTransactionFromDto(data: TransactionDto, tags: Tag[]): Transaction {
     const newTransaction = new Transaction();
 
     newTransaction.date = data.date;

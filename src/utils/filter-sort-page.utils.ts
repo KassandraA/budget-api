@@ -32,7 +32,8 @@ export class FilterSortPageUtils {
   }
 
   public static preFill(query?: FilterSortPageDto): FilterSortPageDto {
-    const monthAgo = new Date(new Date().setDate(new Date().getDate() - 30));
+    const d = new Date();
+    const monthAgo = d.setDate(d.getDate() - 30);
 
     const options: FilterSortPageDto = {
       ...(query?.message ? { message: query.message } : {}),
@@ -40,7 +41,7 @@ export class FilterSortPageUtils {
       ...(query?.note_2 ? { note_2: query.note_2 } : {}),
       ...(query?.note_3 ? { note_3: query.note_3 } : {}),
       ...(query?.amount ? { amount: query.amount } : {}),
-      ...(query?.date ? { date: query.date } : { date: { gte: monthAgo } }),
+      ...(query?.date ? { date: query.date } : { date: { gte: new Date(monthAgo) } }),
       ...(query?.tag_ids ? { tag_ids: query.tag_ids } : {}),
 
       ...(query?.order_by

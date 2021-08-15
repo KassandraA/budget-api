@@ -91,7 +91,7 @@ export class TransactionValidator {
   ];
 
   static validateOnCreate = [
-    ValidationHelpers.validateArrayBody(),
+    ValidationHelpers.validateArray('', ValidationTarget.Body, false, true),
     TransactionValidator.validate,
     ValidationHelpers.validateDate('*.date', ValidationTarget.Body, true),
     ValidationHelpers.validateDecimal('*.amount', ValidationTarget.Body, true),
@@ -106,7 +106,7 @@ export class TransactionValidator {
   ];
 
   static validateOnUpdate = [
-    ValidationHelpers.validateArrayBody(false),
+    ValidationHelpers.validateArray('', ValidationTarget.Body, false, false),
     TransactionValidator.validate,
     ValidationHelpers.validateDate('date'),
     ValidationHelpers.validateDecimal('amount'),
