@@ -7,7 +7,7 @@ import { FilterSortPageUtils } from '../utils/filter-sort-page.utils';
 import { TransactionConverter } from '../utils/transaction-converter.utils';
 
 export class TransactionsController {
-  static async getTransactions(
+  static async getAll(
     req: Request,
     res: Response
   ): Promise<Response<{ data: Transaction[]; meta: TransactionMetaDto }>> {
@@ -16,7 +16,7 @@ export class TransactionsController {
         ? (req.query as FilterSortPageDto)
         : null;
 
-      const transactions = await TransactionsService.get(dto);
+      const transactions = await TransactionsService.getAll(dto);
       return res.json(transactions);
     } catch (e) {
       const errorCode = e.statusCode ? e.statusCode : 500;
@@ -24,7 +24,7 @@ export class TransactionsController {
     }
   }
 
-  static async getTransactionById(
+  static async getOneById(
     req: Request,
     res: Response
   ): Promise<Response<{ data: Transaction }>> {
@@ -37,7 +37,7 @@ export class TransactionsController {
     }
   }
 
-  static async createMultiTransaction(
+  static async addMany(
     req: Request,
     res: Response
   ): Promise<Response<{ data: Transaction[] }>> {
@@ -52,7 +52,7 @@ export class TransactionsController {
     }
   }
 
-  static async updateTransaction(
+  static async updateOne(
     req: Request,
     res: Response
   ): Promise<Response<{ data: Transaction }>> {
@@ -68,7 +68,7 @@ export class TransactionsController {
     }
   }
 
-  static async deleteTransaction(
+  static async deleteOne(
     req: Request,
     res: Response
   ): Promise<Response<{ message: string }>> {

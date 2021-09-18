@@ -3,7 +3,7 @@ import { TagsService } from '../services/tags.service';
 import { Tag } from '../models/tag.model';
 
 export class TagsController {
-  static async getTags(req: Request, res: Response): Promise<Response<{ data: Tag[] }>> {
+  static async getAll(req: Request, res: Response): Promise<Response<{ data: Tag[] }>> {
     try {
       const tags = await TagsService.getAll();
       return res.json({ data: tags });
@@ -13,7 +13,7 @@ export class TagsController {
     }
   }
 
-  static async getTagById(req: Request, res: Response): Promise<Response<{ data: Tag }>> {
+  static async getOneById(req: Request, res: Response): Promise<Response<{ data: Tag }>> {
     try {
       const tag = await TagsService.getOneById(Number(req.params.id));
       return res.json({ data: tag });
@@ -23,7 +23,7 @@ export class TagsController {
     }
   }
 
-  static async createTag(req: Request, res: Response): Promise<Response<{ data: Tag }>> {
+  static async addOne(req: Request, res: Response): Promise<Response<{ data: Tag }>> {
     try {
       const newTag = await TagsService.addOne(req.body.name);
       return res.json({ data: newTag });
@@ -33,7 +33,7 @@ export class TagsController {
     }
   }
 
-  static async updateTag(req: Request, res: Response): Promise<Response<{ data: Tag }>> {
+  static async updateOne(req: Request, res: Response): Promise<Response<{ data: Tag }>> {
     try {
       const updatedTag = await TagsService.updateOne(Number(req.params.id), req.body.name);
       return res.json({ data: updatedTag });
@@ -43,7 +43,7 @@ export class TagsController {
     }
   }
 
-  static async deleteTag(req: Request, res: Response): Promise<Response<{ message: string }>> {
+  static async deleteOne(req: Request, res: Response): Promise<Response<{ message: string }>> {
     try {
       await TagsService.deleteOne(Number(req.params.id));
       return res.json({ message: 'Deleted successfully' });

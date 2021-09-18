@@ -6,11 +6,11 @@ import { ValueNormalizer } from '../utils/value-normalizer.utils';
 import { TagsService } from './tags.service';
 import { TransactionMetaDto } from '../dto/transaction-meta.dto';
 import { ModelConstants } from '../models/model-constants';
-import { Tag } from '../models/tag.model';
 import { TransactionDto } from '../dto/transaction.dto';
+import { TransactionConverter } from '../utils/transaction-converter.utils';
 
 export class TransactionsService {
-  static async get(
+  static async getAll(
     params?: FilterSortPageDto
   ): Promise<{ data: Transaction[]; meta: TransactionMetaDto }> {
     const preFilled = FilterSortPageUtils.preFill(params);
@@ -41,7 +41,7 @@ export class TransactionsService {
     const allTags = await TagsService.getManyById([...new Set(allTagIs)]);
 
     const transactionArray = transactions.map((tran) =>
-      this.getTransactionFromDto(
+      TransactionConverter.toTransactionFromDto(
         tran,
         allTags.filter((tag) => tran.tagIds.includes(tag.id))
       )
@@ -99,20 +99,5 @@ export class TransactionsService {
         throw error;
       }
     }
-  }
-
-  private static getTransactionFromDto(data: TransactionDto, tags: Tag[]): Transaction {
-    const newTransaction = new Transaction();
-
-    newTransaction.date = data.date;
-    newTransaction.message = ValueNormalizer.normalizeString(data.message);
-    newTransaction.note_1 = ValueNormalizer.normalizeString(data.note1);
-    newTransaction.note_2 = ValueNormalizer.normalizeString(data.note2);
-    newTransaction.note_3 = ValueNormalizer.normalizeString(data.note3);
-    newTransaction.amount = data.amount;
-    newTransaction.source_id = data.sourceId;
-    newTransaction.tags = tags;
-
-    return newTransaction;
   }
 }
