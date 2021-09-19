@@ -6,12 +6,11 @@ const router = Router();
 
 export class SourceStatusesRoutes {
   get routes() {
-    router.get('', SourceStatusesController.getSourceStatuses);
-    router.get('/:id([0-9]+)', SourceStatusesController.getSourceStatusById);
-    router.post('', SourceStatusValidator.validateOnCreate, SourceStatusesController.createSourceStatus);
-    router.patch('/:id([0-9]+)', SourceStatusValidator.validateOnUpdate, SourceStatusesController.updateSourceStatus);
-    router.delete('/:id([0-9]+)', SourceStatusesController.deleteSourceStatus);
-
+    router.get('', SourceStatusesController.getAll);
+    router.get('/:id([0-9]+)', SourceStatusesController.getOneById);
+    router.post('', SourceStatusValidator.validateOnCreate, SourceStatusesController.addOne);
+    router.patch('/:id([0-9]+)', SourceStatusValidator.validateOnUpdate, SourceStatusesController.updateOne);
+    router.delete('/:id([0-9]+)', SourceStatusesController.deleteOne);
     return router;
   }
 }

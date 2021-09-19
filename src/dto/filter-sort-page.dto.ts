@@ -1,19 +1,31 @@
-export class FilterSortPageDto {
-  filter: IDictionary;
-  order: IDictionary;
-  perPage: number;
-  pageNumber: number;
+export interface FilterSortPageDto {
+  order_by?: OrderBy;
+  message?: StringFilter;
+  note_1?: StringFilter;
+  note_2?: StringFilter;
+  note_3?: StringFilter;
+  amount?: NonStringFilter<number>;
+  date?: NonStringFilter<Date>;
+  tag_ids?: number[];
+  skip?: number;
+  take?: number;
 }
 
-export interface IDictionary {
-  [key: string]: any;
+export interface OrderBy {
+  message?: 'ASC' | 'DESC';
+  note_1?: 'ASC' | 'DESC';
+  note_2?: 'ASC' | 'DESC';
+  note_3?: 'ASC' | 'DESC';
+  amount?: 'ASC' | 'DESC';
+  date?: 'ASC' | 'DESC';
 }
 
-export interface TransactionFilter {
-  message?: string;
-  note_1?: string;
-  note_2?: string;
-  note_3?: string;
-  amount?: number;
-  source_id?: number;
+export interface StringFilter {
+  like: string;
+}
+
+export interface NonStringFilter<T> {
+  equal?: T;
+  lte?: T;
+  gte?: T;
 }

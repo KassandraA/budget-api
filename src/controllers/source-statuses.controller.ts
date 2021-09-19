@@ -3,7 +3,7 @@ import { SourceStatusesService } from '../services/source-statuses.service';
 import { SourceStatus } from '../models/source-status.model';
 
 export class SourceStatusesController {
-  static async getSourceStatuses(req: Request, res: Response): Promise<Response<{ data: SourceStatus[] }>> {
+  static async getAll(req: Request, res: Response): Promise<Response<{ data: SourceStatus[] }>> {
     try {
       const sourceStatuses = await SourceStatusesService.getAll();
       return res.json({ data: sourceStatuses });
@@ -13,7 +13,7 @@ export class SourceStatusesController {
     }
   }
 
-  static async getSourceStatusById(req: Request, res: Response): Promise<Response<{ data: SourceStatus }>> {
+  static async getOneById(req: Request, res: Response): Promise<Response<{ data: SourceStatus }>> {
     try {
       const sourceStatus = await SourceStatusesService.getOneById(Number(req.params.id));
       return res.json({ data: sourceStatus });
@@ -23,7 +23,7 @@ export class SourceStatusesController {
     }
   }
 
-  static async createSourceStatus(req: Request, res: Response): Promise<Response<{ data: SourceStatus }>> {
+  static async addOne(req: Request, res: Response): Promise<Response<{ data: SourceStatus }>> {
     try {
       const newSourceStatus = await SourceStatusesService.addOne(req.body.name, req.body.description);
       return res.json({ data: newSourceStatus });
@@ -33,7 +33,7 @@ export class SourceStatusesController {
     }
   }
 
-  static async updateSourceStatus(req: Request, res: Response): Promise<Response<{ data: SourceStatus }>> {
+  static async updateOne(req: Request, res: Response): Promise<Response<{ data: SourceStatus }>> {
     try {
       const updatedSourceStatus = await SourceStatusesService.updateOne(
         Number(req.params.id),
@@ -47,7 +47,7 @@ export class SourceStatusesController {
     }
   }
 
-  static async deleteSourceStatus(req: Request, res: Response): Promise<Response<{ message: string }>> {
+  static async deleteOne(req: Request, res: Response): Promise<Response<{ message: string }>> {
     try {
       await SourceStatusesService.deleteOne(Number(req.params.id));
       return res.json({ message: 'Deleted successfully' });

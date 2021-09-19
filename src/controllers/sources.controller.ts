@@ -3,7 +3,7 @@ import { SourcesService } from '../services/sources.service';
 import { Source } from '../models/source.model';
 
 export class SourcesController {
-  static async getSources(req: Request, res: Response): Promise<Response<{ data: Source[] }>> {
+  static async getAll(req: Request, res: Response): Promise<Response<{ data: Source[] }>> {
     try {
       const sources = await SourcesService.getAll();
       return res.json({ data: sources });
@@ -13,7 +13,7 @@ export class SourcesController {
     }
   }
 
-  static async getSourceById(req: Request, res: Response): Promise<Response<{ data: Source }>> {
+  static async getOneById(req: Request, res: Response): Promise<Response<{ data: Source }>> {
     try {
       const source = await SourcesService.getOneById(Number(req.params.id));
       return res.json({ data: source });
@@ -23,7 +23,7 @@ export class SourcesController {
     }
   }
 
-  static async createSource(req: Request, res: Response): Promise<Response<{ data: Source }>> {
+  static async addOne(req: Request, res: Response): Promise<Response<{ data: Source }>> {
     try {
       const newSource = await SourcesService.addOne(
         req.body.name,
@@ -40,7 +40,7 @@ export class SourcesController {
     }
   }
 
-  static async updateSource(req: Request, res: Response): Promise<Response<{ data: Source }>> {
+  static async updateOne(req: Request, res: Response): Promise<Response<{ data: Source }>> {
     try {
       const updatedSource = await SourcesService.updateOne(
         Number(req.params.id),
@@ -58,7 +58,7 @@ export class SourcesController {
     }
   }
 
-  static async deleteSource(req: Request, res: Response): Promise<Response<{ message: string }>> {
+  static async deleteOne(req: Request, res: Response): Promise<Response<{ message: string }>> {
     try {
       await SourcesService.deleteOne(Number(req.params.id));
       return res.json({ message: 'Deleted successfully' });

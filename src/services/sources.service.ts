@@ -1,6 +1,7 @@
 import { NotUniqueError } from '../errors/not-unique.error';
 import { NotFoundError } from '../errors/not-found.error';
 import { Source } from '../models/source.model';
+import { ValueNormalizer } from '../utils/value-normalizer.utils';
 
 export class SourcesService {
   static async getAll(): Promise<Source[]> {
@@ -25,11 +26,11 @@ export class SourcesService {
     statusId: number
   ): Promise<Source> {
     const newSource = new Source();
-    newSource.name = name;
-    newSource.description = description;
-    newSource.currency = currency;
-    newSource.note_1 = note1;
-    newSource.note_2 = note2;
+    newSource.name = ValueNormalizer.normalizeString(name);
+    newSource.description = ValueNormalizer.normalizeString(description);
+    newSource.currency = ValueNormalizer.normalizeString(currency);
+    newSource.note_1 = ValueNormalizer.normalizeString(note1);
+    newSource.note_2 = ValueNormalizer.normalizeString(note2);
     newSource.status_id = statusId;
 
     return this.saveSource(newSource);
@@ -50,11 +51,12 @@ export class SourcesService {
 
     if (!updatedSource) throw new NotFoundError('Source not found');
 
-    if (name !== undefined) updatedSource.name = name;
-    if (description !== undefined) updatedSource.description = description;
-    if (currency !== undefined) updatedSource.currency = currency;
-    if (note1 !== undefined) updatedSource.note_1 = note1;
-    if (note2 !== undefined) updatedSource.note_2 = note2;
+    if (name !== undefined) updatedSource.name = ValueNormalizer.normalizeString(name);
+    if (description !== undefined)
+      updatedSource.description = ValueNormalizer.normalizeString(description);
+    if (currency !== undefined) updatedSource.currency = ValueNormalizer.normalizeString(currency);
+    if (note1 !== undefined) updatedSource.note_1 = ValueNormalizer.normalizeString(note1);
+    if (note2 !== undefined) updatedSource.note_2 = ValueNormalizer.normalizeString(note2);
     if (statusId !== undefined) updatedSource.status_id = statusId;
 
     return this.saveSource(updatedSource);
@@ -72,7 +74,7 @@ export class SourcesService {
       return await source.save();
     } catch (error) {
       if (error.message.includes('FOREIGN KEY constraint failed')) {
-        throw new NotFoundError('status_id not found');
+        throw new NotFoundError(`status_id not found: ${source.status_id}`);
       } else if (error.message.includes('UNIQUE constraint failed: sources.name')) {
         throw new NotUniqueError(`The name '${source.name}' is already in use`);
       } else {

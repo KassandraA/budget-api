@@ -6,12 +6,19 @@ const router = Router();
 
 export class TransactionsRoutes {
   get routes() {
-    router.get('', TransactionsController.getTransactions);
-    router.get('/:id([0-9]+)', TransactionsController.getTransactionById);
-    router.post('', TransactionValidator.validateOnCreate, TransactionsController.createTransaction);
-    router.patch('/:id([0-9]+)', TransactionValidator.validateOnUpdate, TransactionsController.updateTransaction);
-    router.delete('/:id([0-9]+)', TransactionsController.deleteTransaction);
-
+    router.get('', TransactionValidator.validateOnGet, TransactionsController.getMany);
+    router.get('/:id([0-9]+)', TransactionsController.getOneById);
+    router.post(
+      '',
+      TransactionValidator.validateOnCreate,
+      TransactionsController.addMany
+    );
+    router.patch(
+      '/:id([0-9]+)',
+      TransactionValidator.validateOnUpdate,
+      TransactionsController.updateOne
+    );
+    router.delete('/:id([0-9]+)', TransactionsController.deleteOne);
     return router;
   }
 }
