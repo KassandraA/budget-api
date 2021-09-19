@@ -4,7 +4,7 @@ import { Transaction } from "../models/transaction.model";
 import { Tag } from "../models/tag.model";
 
 export class TransactionConverter {
-  public static toTransactionDto(data: any): TransactionDto {
+  public static toDto(data: any): TransactionDto {
     return {
       message: data.message,
       note1: data.note_1,
@@ -17,7 +17,7 @@ export class TransactionConverter {
     };
   }
 
-  public static toTransactionFromDto(data: TransactionDto, tags: Tag[]): Transaction {
+  public static fromDto(data: TransactionDto, tags: Tag[]): Transaction {
     const newTransaction = new Transaction();
 
     newTransaction.date = data.date;

@@ -6,7 +6,7 @@ const router = Router();
 
 export class TransactionsRoutes {
   get routes() {
-    router.get('', TransactionValidator.validateOnGet, TransactionsController.getAll);
+    router.get('', TransactionValidator.validateOnGet, TransactionsController.getMany);
     router.get('/:id([0-9]+)', TransactionsController.getOneById);
     router.post(
       '',

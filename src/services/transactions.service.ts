@@ -10,7 +10,7 @@ import { TransactionDto } from '../dto/transaction.dto';
 import { TransactionConverter } from '../utils/transaction-converter.utils';
 
 export class TransactionsService {
-  static async getAll(
+  static async getMany(
     params?: FilterSortPageDto
   ): Promise<{ data: Transaction[]; meta: TransactionMetaDto }> {
     const preFilled = FilterSortPageUtils.preFill(params);
@@ -41,7 +41,7 @@ export class TransactionsService {
     const allTags = await TagsService.getManyById([...new Set(allTagIs)]);
 
     const transactionArray = transactions.map((tran) =>
-      TransactionConverter.toTransactionFromDto(
+      TransactionConverter.fromDto(
         tran,
         allTags.filter((tag) => tran.tagIds.includes(tag.id))
       )
