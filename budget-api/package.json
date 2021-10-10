@@ -1,7 +1,7 @@
 {
-  "name": "budget_api",
+  "name": "budget-api",
   "version": "1.0.0",
-  "main": "dist/app.js",
+  "main": "dist/budget-api/src/app.js",
   "license": "MIT",
   "devDependencies": {
     "@types/body-parser": "^1.19.0",
@@ -22,7 +22,7 @@
   "scripts": {
     "migration:run": "ts-node ./node_modules/typeorm/cli.js migration:run",
     "migration:revert": "ts-node ./node_modules/typeorm/cli.js migration:revert",
-    "debug": "nodemon --inspect dist/app.js",
+    "debug": "nodemon --inspect dist/budget-api/src/app.js",
     "dev": "nodemon --config nodemon.json --watch src -e ts --exec yarn dev:start",
     "dev:start": "yarn build && yarn start",
     "build": "yarn clean && yarn lint && yarn tsc",

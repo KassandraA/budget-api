@@ -1,4 +1,4 @@
-import { TransactionDto } from "../dto/transaction.dto";
+import { TransactionDto } from "../../../budget-common/src/transaction.dto";
 import { ValueNormalizer } from "./value-normalizer.utils";
 import { Transaction } from "../models/transaction.model";
 import { Tag } from "../models/tag.model";

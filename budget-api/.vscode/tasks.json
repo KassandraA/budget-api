@@ -7,7 +7,7 @@
       "group": "build",
       "problemMatcher": [],
       "label": "yarn build",
-      "detail": "tsc && cp -rf package.json dist/package.json && cp -rf database.db dist/database.db"
+      "detail": "tsc && cp -rf package.json dist/budget-api/src/package.json && cp -rf database.db dist/budget-api/src/database.db"
     },
     {
       "type": "npm",
