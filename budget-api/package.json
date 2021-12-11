@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "main": "dist/budget-api/src/app.js",
   "license": "MIT",
+  "author": "https://github.com/KassandraA",
   "devDependencies": {
     "@types/body-parser": "^1.19.0",
     "ts-node": "^9.1.1",
@@ -27,7 +28,7 @@
     "dev:start": "yarn build && yarn start",
     "build": "yarn clean && yarn lint && yarn tsc",
     "start": "node .",
-    "clean": "rm -rf dist/*",
+    "clean": "rm -r dist/*",
     "lint": "tslint -c tslint.json -p tsconfig.json --fix",
     "tsc": "tsc"
   }
