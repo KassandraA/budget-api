@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- <script src="../budget-common/src/utils/decode.utils.js" type="module"></script> -->
+    <script src="utils.js"></script>
+    <title>Budget UI</title>
+  </head>
+
+  <body>
+    <button onclick="importData()">Import Data</button>
+  </body>
+
+  <script>
+    var newLineBytes = new Uint8Array([13, 10]);
+
+    function importData() {
+      let input = document.createElement("input");
+      input.type = "file";
+      input.onchange = (_) => {
+        let files = Array.from(input.files);
+        // console.log(files[0]);
+        fileToBase64(files[0]);
+      };
+      input.click();
+    }
+
+    function fileToBase64(binaryFile) {
+      var reader = new FileReader();
+      reader.onload = function () {
+        var arrayBuffer = this.result;
+        // console.log('arrayBuffer', arrayBuffer);
+        
+        var array = new Uint8Array(arrayBuffer);
+        if (arrayEndsWithNewLine(array)) {
+          array = array.slice(0, array.length - 2)
+        }
+        // console.log('array', array);
+
+        var base64 = base64EncArr(array);
+        console.log("base64:", base64);
+        
+      };
+      reader.readAsArrayBuffer(binaryFile);
+    }
+
+    function arrayEndsWithNewLine(array) {
+      return array.lastIndexOf(newLineBytes[0]) === array.length - 2 &&
+      array.lastIndexOf(newLineBytes[1]) === array.length - 1;
+    }
+  </script>
+
+</html>

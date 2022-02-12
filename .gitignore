@@ -1,16 +1,16 @@
 # compiled output
 /.temp
 /.tmp
-/dist
+/*/dist
 /build
 
 # dependencies
-/node_modules
+*node_modules
 
 # linters
 
 # misc
-package-lock.json
+*package-lock.json
 
 #database
 *.db

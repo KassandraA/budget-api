@@ -9,6 +9,7 @@ import { TransactionsRoutes } from './routes/transactions.routes';
 connect();
 
 const app = express();
+const port = 5000;
 const sourceRoutes = new SourcesRoutes();
 const sourceStatusRoutes = new SourceStatusesRoutes();
 const tagsRoutes = new TagsRoutes();
@@ -22,6 +23,6 @@ app.use('/api/v1/source_statuses', sourceStatusRoutes.routes);
 app.use('/api/v1/tags', tagsRoutes.routes);
 app.use('/api/v1/transactions', transactionsRoutes.routes);
 
-app.listen(5000, () => {
-  console.log('Server listening');
+app.listen(port, () => {
+  console.log('Server listening on port ', port + 1 );
 });

@@ -1,0 +1,21 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "type": "npm",
+      "script": "build",
+      "group": "build",
+      "problemMatcher": [],
+      "label": "yarn build",
+      "detail": "tsc && cp -rf package.json dist/budget-api/src/package.json && cp -rf database.db dist/budget-api/src/database.db"
+    },
+    {
+      "type": "npm",
+      "script": "debug",
+      "group": "test",
+      "problemMatcher": [],
+      "label": "yarn debug",
+      "detail": "nodemon --inspect ."
+    }
+  ]
+}

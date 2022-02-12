@@ -6,7 +6,7 @@ import { ValueNormalizer } from '../utils/value-normalizer.utils';
 import { TagsService } from './tags.service';
 import { TransactionMetaDto } from '../dto/transaction-meta.dto';
 import { ModelConstants } from '../models/model-constants';
-import { TransactionDto } from '../dto/transaction.dto';
+import { TransactionDto } from '../../../budget-common/src/dto/transaction.dto';
 import { TransactionConverter } from '../utils/transaction-converter.utils';
 
 export class TransactionsService {
