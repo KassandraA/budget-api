@@ -1,9 +1,8 @@
 import { ParserUtils } from "../utils/parser.utils";
-import { ParsedBankDataDto } from "../dto/parsed-bank-data.dto";
 import { Formats } from "../utils/formats.enum";
-import { TransactionDto } from "../../../budget-common/src/dto/transaction.dto";
-import { StringUtils } from "../utils/string.utils";
+import { ParsedBankDataDto } from "../dto/parsed-bank-data.dto";
 import { RawBase64BankDataDto } from "../dto/raw-bank-data.dto";
+import { TransactionDto } from "../../../budget-common/src/dto/transaction.dto";
 
 export class ParserService {
   static async parse(data: RawBase64BankDataDto): Promise<ParsedBankDataDto> {

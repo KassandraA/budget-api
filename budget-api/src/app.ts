@@ -24,5 +24,5 @@ app.use('/api/v1/tags', tagsRoutes.routes);
 app.use('/api/v1/transactions', transactionsRoutes.routes);
 
 app.listen(port, () => {
-  console.log('Server listening on port ', port + 1 );
+  console.log('Server listening on port ', port );
 });

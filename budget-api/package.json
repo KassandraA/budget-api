@@ -23,12 +23,12 @@
   "scripts": {
     "migration:run": "ts-node ./node_modules/typeorm/cli.js migration:run",
     "migration:revert": "ts-node ./node_modules/typeorm/cli.js migration:revert",
-    "debug": "nodemon --inspect dist/budget-api/src/app.js",
+    "debug": "yarn build && nodemon --inspect dist/budget-api/src/app.js",
     "dev": "nodemon --config nodemon.json --watch src -e ts --exec yarn dev:start",
     "dev:start": "yarn build && yarn start",
     "build": "yarn clean && yarn lint && yarn tsc",
     "start": "node .",
-    "clean": "rm -r dist/*",
+    "clean": "rm -r dist/* || true",
     "lint": "tslint -c tslint.json -p tsconfig.json --fix",
     "tsc": "tsc"
   }
