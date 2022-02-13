@@ -48,8 +48,8 @@ export class ParserUtils {
       note2: '',
       note3: '',
       amount: null,
-      sourceId: null,
-      tagIds: []
+      sourceName: '',
+      tagNames: []
     };
 
     transaction.date = new Date(rbczTransaction.transactiondate.split('.').reverse().join('/'));
@@ -58,7 +58,7 @@ export class ParserUtils {
     transaction.note2 = rbczTransaction.merchant;
     transaction.note3 = rbczTransaction.transactiontype;
     transaction.amount = Number((rbczTransaction.bookedamount)?.replace(/\s/g, '').replace(',', '.'));
-    // transaction.sourceId = rbczTransaction.accocuntNumber; // ??? get from sources??
+    transaction.sourceName = rbczTransaction.accountname;
 
     return transaction;
   }

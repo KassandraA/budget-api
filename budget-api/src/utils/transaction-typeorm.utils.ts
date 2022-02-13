@@ -1,4 +1,4 @@
-import { FilterSortPageDto, NonStringFilter, StringFilter } from '../dto/filter-sort-page.dto';
+import { TransactionFilterSortPageDto, NonStringFilter, StringFilter } from '../dto/transaction-filter-sort-page.dto';
 import {
   Between,
   Equal,
@@ -14,8 +14,8 @@ import { Transaction } from '../models/transaction.model';
 import { DateUtils } from './date.utils';
 import { ModelConstants } from '../models/model-constants';
 
-export class FilterSortPageUtils {
-  public static isFilterSortPageDto(obj?: any): obj is FilterSortPageDto {
+export class TransactionTypeormUtils {
+  public static isFilterSortPageDto(obj?: any): obj is TransactionFilterSortPageDto {
     return (
       !obj ||
       ((!obj.order_by || typeof obj.order_by === 'object') &&
@@ -25,24 +25,24 @@ export class FilterSortPageUtils {
         (!obj.note_3 || typeof obj.note_3 === 'object') &&
         (!obj.amount || typeof obj.amount === 'object') &&
         (!obj.date || typeof obj.date === 'object') &&
-        (!obj.tag_ids || typeof obj.tag_ids === 'object') &&
+        (!obj.tag_names || typeof obj.tag_names === 'object') &&
         (!obj.skip || typeof parseInt(obj.skip, 10) === 'number') &&
         (!obj.take || typeof parseInt(obj.take, 10) === 'number'))
     );
   }
 
-  public static preFill(query?: FilterSortPageDto): FilterSortPageDto {
+  public static preFill(query?: TransactionFilterSortPageDto): TransactionFilterSortPageDto {
     const d = new Date();
     const monthAgo = d.setDate(d.getDate() - 30);
 
-    const options: FilterSortPageDto = {
+    const options: TransactionFilterSortPageDto = {
       ...(query?.message ? { message: query.message } : {}),
       ...(query?.note_1 ? { note_1: query.note_1 } : {}),
       ...(query?.note_2 ? { note_2: query.note_2 } : {}),
       ...(query?.note_3 ? { note_3: query.note_3 } : {}),
       ...(query?.amount ? { amount: query.amount } : {}),
       ...(query?.date ? { date: query.date } : { date: { gte: new Date(monthAgo) } }),
-      ...(query?.tag_ids ? { tag_ids: query.tag_ids } : {}),
+      ...(query?.tag_names ? { tag_names: query.tag_names } : {}),
 
       ...(query?.order_by
         ? {
@@ -64,7 +64,7 @@ export class FilterSortPageUtils {
     return options;
   }
 
-  public static mapDtoToTypeorm(query?: FilterSortPageDto): FindManyOptions<Transaction> {
+  public static findMany(query?: TransactionFilterSortPageDto): FindManyOptions<Transaction> {
     const queryFiltered = (sqb: SelectQueryBuilder<Transaction>) => {
       sqb = sqb.where({
         ...(query?.message ? { message: this.mapStringParam(query.message) } : {}),
@@ -74,8 +74,8 @@ export class FilterSortPageUtils {
         ...(query?.amount ? { amount: this.mapNonStringParam(query.amount) } : {}),
         ...(query?.date ? { date: this.mapDateParam(query.date) } : {}),
       });
-      if (query?.tag_ids) {
-        sqb.andWhere(`${ModelConstants.tagsTable}.id IN (:...tagIds)`, { tagIds: query.tag_ids });
+      if (query?.tag_names) {
+        sqb.andWhere(`${ModelConstants.tagsTable}.name IN (:...tagNames)`, { tagNames: query.tag_names });
       }
     };
 

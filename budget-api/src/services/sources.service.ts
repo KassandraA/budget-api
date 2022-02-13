@@ -2,6 +2,7 @@ import { NotUniqueError } from '../errors/not-unique.error';
 import { NotFoundError } from '../errors/not-found.error';
 import { Source } from '../models/source.model';
 import { ValueNormalizer } from '../utils/value-normalizer.utils';
+import { SourceTypeormUtils } from '../utils/source-typeorm.utils';
 
 export class SourcesService {
   static async getAll(): Promise<Source[]> {
@@ -15,6 +16,23 @@ export class SourcesService {
 
     if (!source) throw new NotFoundError('Source not found');
     return source;
+  }
+
+  static async getOneByName(sourceName: string): Promise<Source> {
+    const source = await Source.findOne(
+      SourceTypeormUtils.findOneByName(sourceName)
+    );
+
+    if (!source) throw new NotFoundError(`Source '${sourceName}' not found`);
+    return source;
+  }
+
+  static async getManyByNames(sourceNames: string[]): Promise<Source[]> {
+    if (!sourceNames || sourceNames.length === 0) return [];
+
+    return await Source.find(
+      SourceTypeormUtils.findManyByNames([...new Set(sourceNames)])
+    );
   }
 
   static async addOne(

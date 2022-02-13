@@ -1,4 +1,4 @@
-export interface FilterSortPageDto {
+export interface TransactionFilterSortPageDto {
   order_by?: OrderBy;
   message?: StringFilter;
   note_1?: StringFilter;
@@ -6,7 +6,7 @@ export interface FilterSortPageDto {
   note_3?: StringFilter;
   amount?: NonStringFilter<number>;
   date?: NonStringFilter<Date>;
-  tag_ids?: number[];
+  tag_names?: string[];
   skip?: number;
   take?: number;
 }

@@ -1,5 +1,5 @@
-import { FilterSortPageDto } from './filter-sort-page.dto';
+import { TransactionFilterSortPageDto } from './transaction-filter-sort-page.dto';
 
-export interface TransactionMetaDto extends FilterSortPageDto {
+export interface TransactionMetaDto extends TransactionFilterSortPageDto {
   total_count: number;
 }

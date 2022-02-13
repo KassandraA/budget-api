@@ -1,20 +1,23 @@
-import { FilterSortPageUtils } from '../utils/filter-sort-page.utils';
-import { FilterSortPageDto } from '../dto/filter-sort-page.dto';
+import { TransactionTypeormUtils } from '../utils/transaction-typeorm.utils';
+import { TransactionFilterSortPageDto } from '../dto/transaction-filter-sort-page.dto';
 import { NotFoundError } from '../errors/not-found.error';
 import { Transaction } from '../models/transaction.model';
 import { ValueNormalizer } from '../utils/value-normalizer.utils';
 import { TagsService } from './tags.service';
-import { TransactionMetaDto } from '../dto/transaction-meta.dto';
+import { TransactionResponseDto } from 'src/dto/transaction-response.dto';
 import { ModelConstants } from '../models/model-constants';
 import { TransactionDto } from '../../../budget-common/src/dto/transaction.dto';
 import { TransactionConverter } from '../utils/transaction-converter.utils';
+import { SourcesService } from './sources.service';
+import { Tag } from '../models/tag.model';
+import { Source } from '../models/source.model';
 
 export class TransactionsService {
   static async getMany(
-    params?: FilterSortPageDto
-  ): Promise<{ data: Transaction[]; meta: TransactionMetaDto }> {
-    const preFilled = FilterSortPageUtils.preFill(params);
-    const searchOptions = FilterSortPageUtils.mapDtoToTypeorm(preFilled);
+    params?: TransactionFilterSortPageDto
+  ): Promise<TransactionResponseDto> {
+    const preFilled = TransactionTypeormUtils.preFill(params);
+    const searchOptions = TransactionTypeormUtils.findMany(preFilled);
     const [result, totalCount] = await Transaction.findAndCount(searchOptions);
 
     return {
@@ -34,30 +37,42 @@ export class TransactionsService {
   }
 
   static async addMany(transactions: TransactionDto[]): Promise<Transaction[]> {
-    const allTagIs = transactions.reduce((ts, tran) => {
-      return tran?.tagIds?.length > 0 ? [...ts, ...tran.tagIds] : [];
+    const tagNames = transactions.reduce((tn, tran) => {
+      return tran?.tagNames?.length > 0 ? [...tn, ...tran.tagNames] : [...tn];
     }, []);
+    const transactionTags = await TagsService.addMany(tagNames);
+    const tagsMap = new Map(transactionTags.map((tag) => [tag.name, tag]));
 
-    const allTags = await TagsService.getManyById([...new Set(allTagIs)]);
+    const sourceNames = [...new Set(transactions.map((tran) => tran?.sourceName))];
+    const transactionSources = await SourcesService.getManyByNames(sourceNames);
+    const sourcesMap = new Map(transactionSources.map((source) => [source.name, source]));
 
-    const transactionArray = transactions.map((tran) =>
-      TransactionConverter.fromDto(
-        tran,
-        allTags.filter((tag) => tran.tagIds.includes(tag.id))
-      )
-    );
+    if (sourceNames.length > transactionSources.length) {
+      const missing = sourceNames.filter(name => !sourcesMap.has(name));
+      throw new NotFoundError(`The following sources were not found: '${missing.join("', '")}'`);
+    }
+
+    const transactionArray = transactions.map((tran) => {
+      const source = sourcesMap.get(tran.sourceName) as Source;
+      const tags = tran.tagNames.map((name) => tagsMap.get(name));
+      return TransactionConverter.fromDto(tran, source, tags)
+    });
 
     return this.saveMultipleTransactions(transactionArray);
   }
 
-  static async updateOne(data: TransactionDto): Promise<Transaction> {
-    const updatedTransaction = await Transaction.findOne({
-      id: data.transactionId,
-    });
+  static async updateOne(transactionId: number, data: TransactionDto): Promise<Transaction> {
+    const updatedTransaction = await Transaction.findOne({ id: transactionId });
 
     if (!updatedTransaction) throw new NotFoundError('Transaction not found');
 
-    if (data.date !== undefined) updatedTransaction.date = data.date;
+    if (data.sourceName !== undefined) {
+      const transactionSource = await SourcesService.getOneByName(data.sourceName);
+      if (transactionSource) updatedTransaction.source_id = transactionSource.id;
+    }
+
+    if (data.date !== undefined)
+      updatedTransaction.date = data.date;
     if (data.message !== undefined)
       updatedTransaction.message = ValueNormalizer.normalizeString(data.message);
     if (data.note1 !== undefined)
@@ -66,11 +81,11 @@ export class TransactionsService {
       updatedTransaction.note_2 = ValueNormalizer.normalizeString(data.note2);
     if (data.note3 !== undefined)
       updatedTransaction.note_3 = ValueNormalizer.normalizeString(data.note3);
-    if (data.amount !== undefined) updatedTransaction.amount = data.amount;
-    if (data.sourceId !== undefined) updatedTransaction.source_id = data.sourceId;
-    if (data.tagIds !== undefined) {
+    if (data.amount !== undefined)
+      updatedTransaction.amount = data.amount;
+    if (data.tagNames !== undefined) {
       updatedTransaction.tags =
-        data.tagIds.length > 0 ? await TagsService.getManyById(data.tagIds) : [];
+        data.tagNames.length > 0 ? await TagsService.addMany(data.tagNames) : [];
     }
 
     return (await this.saveMultipleTransactions([updatedTransaction]))[0];
