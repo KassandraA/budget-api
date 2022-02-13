@@ -4,7 +4,7 @@ import { NotFoundError } from '../errors/not-found.error';
 import { Transaction } from '../models/transaction.model';
 import { ValueNormalizer } from '../utils/value-normalizer.utils';
 import { TagsService } from './tags.service';
-import { TransactionResponse } from '../dto/transaction-meta.dto';
+import { TransactionResponseDto } from 'src/dto/transaction-response.dto';
 import { ModelConstants } from '../models/model-constants';
 import { TransactionDto } from '../../../budget-common/src/dto/transaction.dto';
 import { TransactionConverter } from '../utils/transaction-converter.utils';
@@ -15,7 +15,7 @@ import { Source } from '../models/source.model';
 export class TransactionsService {
   static async getMany(
     params?: TransactionFilterSortPageDto
-  ): Promise<TransactionResponse> {
+  ): Promise<TransactionResponseDto> {
     const preFilled = TransactionTypeormUtils.preFill(params);
     const searchOptions = TransactionTypeormUtils.findMany(preFilled);
     const [result, totalCount] = await Transaction.findAndCount(searchOptions);
@@ -61,8 +61,8 @@ export class TransactionsService {
     return this.saveMultipleTransactions(transactionArray);
   }
 
-  static async updateOne(id: number, data: TransactionDto): Promise<Transaction> {
-    const updatedTransaction = await Transaction.findOne({ id });
+  static async updateOne(transactionId: number, data: TransactionDto): Promise<Transaction> {
+    const updatedTransaction = await Transaction.findOne({ id: transactionId });
 
     if (!updatedTransaction) throw new NotFoundError('Transaction not found');
 

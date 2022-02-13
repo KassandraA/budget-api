@@ -11,7 +11,7 @@ export class SourceTypeormUtils {
 
   public static findManyByNames(names: string[]): FindManyOptions<Source> {
     const options: FindManyOptions<Source> = {
-      where: {name: In(names)}
+      where: { name: In(names) }
     }
     return options;
   }

@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import { Transaction } from '../models/transaction.model';
 import { TransactionsService } from '../services/transactions.service';
 import { TransactionFilterSortPageDto } from '../dto/transaction-filter-sort-page.dto';
-import { TransactionResponse } from '../dto/transaction-meta.dto';
+import { TransactionResponseDto } from 'src/dto/transaction-response.dto';
 import { TransactionTypeormUtils } from '../utils/transaction-typeorm.utils';
 import { TransactionConverter } from '../utils/transaction-converter.utils';
 
@@ -10,7 +10,7 @@ export class TransactionsController {
   static async getMany(
     req: Request,
     res: Response
-  ): Promise<Response<TransactionResponse>> {
+  ): Promise<Response<TransactionResponseDto>> {
     try {
       const dto = TransactionTypeormUtils.isFilterSortPageDto(req?.query)
         ? (req.query as TransactionFilterSortPageDto)
@@ -29,8 +29,8 @@ export class TransactionsController {
     res: Response
   ): Promise<Response<{ data: Transaction }>> {
     try {
-      const tag = await TransactionsService.getOneById(Number(req.params.id));
-      return res.json({ data: tag });
+      const transaction = await TransactionsService.getOneById(Number(req.params.id));
+      return res.json({ data: transaction });
     } catch (e) {
       const errorCode = e.statusCode ? e.statusCode : 500;
       return res.status(errorCode).json({ message: e.message });
