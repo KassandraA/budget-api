@@ -1,9 +1,9 @@
 import { BaseEntity, Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { ModelConstants } from './model-constants';
-import { Source } from './source.model';
+import { Account } from './account.model';
 
-@Entity(ModelConstants.sourceStatusesTable)
-export class SourceStatus extends BaseEntity {
+@Entity(ModelConstants.accountStatusesTable)
+export class AccountStatus extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -13,6 +13,6 @@ export class SourceStatus extends BaseEntity {
   @Column({ nullable: true })
   description?: string;
 
-  @OneToMany((type) => Source, (source) => source.status)
-  sources: Source[];
+  @OneToMany(() => Account, (account) => account.status)
+  accounts: Account[];
 }

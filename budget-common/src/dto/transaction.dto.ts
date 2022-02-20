@@ -6,6 +6,6 @@ export interface TransactionDto {
   note2: string;
   note3: string;
   amount: number;
-  sourceName: string;
+  accountName: string;
   tagNames: string[];
 }

@@ -1,10 +1,10 @@
 import { BaseEntity, Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { ModelConstants } from './model-constants';
-import { SourceStatus } from './source-status.model';
+import { AccountStatus } from './account-status.model';
 import { Transaction } from './transaction.model';
 
-@Entity(ModelConstants.sourcesTable)
-export class Source extends BaseEntity {
+@Entity(ModelConstants.accountsTable)
+export class Account extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -18,20 +18,20 @@ export class Source extends BaseEntity {
   currency?: string;
 
   @Column({ nullable: true })
-  note_1?: string;
+  note_1?: string; // todo account number
 
   @Column({ nullable: true })
-  note_2?: string;
+  note_2?: string; // todo card no
 
   @Column()
   status_id: number;
 
-  @OneToMany((type) => Transaction, (transaction) => transaction.source)
+  @OneToMany((type) => Transaction, (transaction) => transaction.account)
   transactions: Transaction[];
 
-  @ManyToOne((type) => SourceStatus, (status) => status.sources, {
+  @ManyToOne((type) => AccountStatus, (status) => status.accounts, {
     onDelete: 'RESTRICT',
   })
   @JoinColumn({ name: 'status_id' })
-  status: SourceStatus;
+  status: AccountStatus;
 }

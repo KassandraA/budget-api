@@ -9,7 +9,7 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { ModelConstants } from './model-constants';
-import { Source } from './source.model';
+import { Account } from './account.model';
 import { Tag } from './tag.model';
 
 @Entity(ModelConstants.transactionsTable)
@@ -36,13 +36,13 @@ export class Transaction extends BaseEntity {
   amount: number;
 
   @Column()
-  source_id: number;
+  account_id: number;
 
-  @ManyToOne((type) => Source, (source) => source.transactions, {
+  @ManyToOne(() => Account, (account) => account.transactions, {
     onDelete: 'CASCADE',
   })
-  @JoinColumn({ name: 'source_id' })
-  source: Source;
+  @JoinColumn({ name: 'account_id' })
+  account: Account;
 
   @ManyToMany(() => Tag, (tag) => tag.transactions)
   @JoinTable({

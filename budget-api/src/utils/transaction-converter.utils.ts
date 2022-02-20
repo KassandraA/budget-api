@@ -2,7 +2,7 @@ import { TransactionDto } from "../../../budget-common/src/dto/transaction.dto";
 import { ValueNormalizer } from "./value-normalizer.utils";
 import { Transaction } from "../models/transaction.model";
 import { Tag } from "../models/tag.model";
-import { Source } from "../models/source.model";
+import { Account } from "../models/account.model";
 
 export class TransactionConverter {
   public static asDto(data: any): TransactionDto {
@@ -13,12 +13,12 @@ export class TransactionConverter {
       note3: data.note_3,
       date: data.date,
       amount: data.amount,
-      sourceName: data.source_name,
+      accountName: data.account_name,
       tagNames: data.tag_names
     };
   }
 
-  public static fromDto(data: TransactionDto, source: Source, tags: Tag[]): Transaction {
+  public static fromDto(data: TransactionDto, account: Account, tags: Tag[]): Transaction {
     const newTransaction = new Transaction();
 
     newTransaction.date = data.date;
@@ -27,7 +27,7 @@ export class TransactionConverter {
     newTransaction.note_2 = ValueNormalizer.normalizeString(data.note2);
     newTransaction.note_3 = ValueNormalizer.normalizeString(data.note3);
     newTransaction.amount = data.amount;
-    newTransaction.source_id = source.id;
+    newTransaction.account_id = account.id;
     newTransaction.tags = tags;
 
     return newTransaction;

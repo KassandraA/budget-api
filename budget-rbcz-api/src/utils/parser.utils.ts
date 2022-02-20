@@ -48,7 +48,7 @@ export class ParserUtils {
       note2: '',
       note3: '',
       amount: null,
-      sourceName: '',
+      accountName: '',
       tagNames: []
     };
 
@@ -58,7 +58,7 @@ export class ParserUtils {
     transaction.note2 = rbczTransaction.merchant;
     transaction.note3 = rbczTransaction.transactiontype;
     transaction.amount = Number((rbczTransaction.bookedamount)?.replace(/\s/g, '').replace(',', '.'));
-    transaction.sourceName = rbczTransaction.accountname;
+    transaction.accountName = rbczTransaction.accountname;
 
     return transaction;
   }

@@ -1,31 +1,31 @@
 import { Request, Response } from 'express';
-import { SourcesService } from '../services/sources.service';
-import { Source } from '../models/source.model';
+import { AccountsService } from '../services/accounts.service';
+import { Account } from '../models/account.model';
 
-export class SourcesController {
-  static async getAll(req: Request, res: Response): Promise<Response<{ data: Source[] }>> {
+export class AccountsController {
+  static async getAll(req: Request, res: Response): Promise<Response<{ data: Account[] }>> {
     try {
-      const sources = await SourcesService.getAll();
-      return res.json({ data: sources });
+      const accounts = await AccountsService.getAll();
+      return res.json({ data: accounts });
     } catch (e) {
       const errorCode = e.statusCode ? e.statusCode : 500;
       return res.status(errorCode).json({ message: e.message });
     }
   }
 
-  static async getOneById(req: Request, res: Response): Promise<Response<{ data: Source }>> {
+  static async getOneById(req: Request, res: Response): Promise<Response<{ data: Account }>> {
     try {
-      const source = await SourcesService.getOneById(Number(req.params.id));
-      return res.json({ data: source });
+      const account = await AccountsService.getOneById(Number(req.params.id));
+      return res.json({ data: account });
     } catch (e) {
       const errorCode = e.statusCode ? e.statusCode : 500;
       return res.status(errorCode).json({ message: e.message });
     }
   }
 
-  static async addOne(req: Request, res: Response): Promise<Response<{ data: Source }>> {
+  static async addOne(req: Request, res: Response): Promise<Response<{ data: Account }>> {
     try {
-      const newSource = await SourcesService.addOne(
+      const newAccount = await AccountsService.addOne(
         req.body.name,
         req.body.description,
         req.body.currency,
@@ -33,16 +33,16 @@ export class SourcesController {
         req.body.note_2,
         req.body.status_id
       );
-      return res.json({ data: newSource });
+      return res.json({ data: newAccount });
     } catch (e) {
       const errorCode = e.statusCode ? e.statusCode : 500;
       return res.status(errorCode).json({ message: e.message });
     }
   }
 
-  static async updateOne(req: Request, res: Response): Promise<Response<{ data: Source }>> {
+  static async updateOne(req: Request, res: Response): Promise<Response<{ data: Account }>> {
     try {
-      const updatedSource = await SourcesService.updateOne(
+      const updatedAccount = await AccountsService.updateOne(
         Number(req.params.id),
         req.body.name,
         req.body.description,
@@ -51,7 +51,7 @@ export class SourcesController {
         req.body.note_2,
         req.body.status_id
       );
-      return res.json({ data: updatedSource });
+      return res.json({ data: updatedAccount });
     } catch (e) {
       const errorCode = e.statusCode ? e.statusCode : 500;
       return res.status(errorCode).json({ message: e.message });
@@ -60,7 +60,7 @@ export class SourcesController {
 
   static async deleteOne(req: Request, res: Response): Promise<Response<{ message: string }>> {
     try {
-      await SourcesService.deleteOne(Number(req.params.id));
+      await AccountsService.deleteOne(Number(req.params.id));
       return res.json({ message: 'Deleted successfully' });
     } catch (e) {
       const errorCode = e.statusCode ? e.statusCode : 500;

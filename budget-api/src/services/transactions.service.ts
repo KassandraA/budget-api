@@ -8,9 +8,8 @@ import { TransactionResponseDto } from 'src/dto/transaction-response.dto';
 import { ModelConstants } from '../models/model-constants';
 import { TransactionDto } from '../../../budget-common/src/dto/transaction.dto';
 import { TransactionConverter } from '../utils/transaction-converter.utils';
-import { SourcesService } from './sources.service';
-import { Tag } from '../models/tag.model';
-import { Source } from '../models/source.model';
+import { AccountsService } from './accounts.service';
+import { Account } from '../models/account.model';
 
 export class TransactionsService {
   static async getMany(
@@ -43,19 +42,19 @@ export class TransactionsService {
     const transactionTags = await TagsService.addMany(tagNames);
     const tagsMap = new Map(transactionTags.map((tag) => [tag.name, tag]));
 
-    const sourceNames = [...new Set(transactions.map((tran) => tran?.sourceName))];
-    const transactionSources = await SourcesService.getManyByNames(sourceNames);
-    const sourcesMap = new Map(transactionSources.map((source) => [source.name, source]));
+    const accountNames = [...new Set(transactions.map((tran) => tran?.accountName))];
+    const transactionAccounts = await AccountsService.getManyByNames(accountNames);
+    const accountsMap = new Map(transactionAccounts.map((account) => [account.name, account]));
 
-    if (sourceNames.length > transactionSources.length) {
-      const missing = sourceNames.filter(name => !sourcesMap.has(name));
-      throw new NotFoundError(`The following sources were not found: '${missing.join("', '")}'`);
+    if (accountNames.length > transactionAccounts.length) {
+      const missing = accountNames.filter(name => !accountsMap.has(name));
+      throw new NotFoundError(`The following accounts were not found: '${missing.join("', '")}'`);
     }
 
     const transactionArray = transactions.map((tran) => {
-      const source = sourcesMap.get(tran.sourceName) as Source;
+      const account = accountsMap.get(tran.accountName) as Account;
       const tags = tran.tagNames.map((name) => tagsMap.get(name));
-      return TransactionConverter.fromDto(tran, source, tags)
+      return TransactionConverter.fromDto(tran, account, tags)
     });
 
     return this.saveMultipleTransactions(transactionArray);
@@ -66,9 +65,9 @@ export class TransactionsService {
 
     if (!updatedTransaction) throw new NotFoundError('Transaction not found');
 
-    if (data.sourceName !== undefined) {
-      const transactionSource = await SourcesService.getOneByName(data.sourceName);
-      if (transactionSource) updatedTransaction.source_id = transactionSource.id;
+    if (data.accountName !== undefined) {
+      const transactionAccount = await AccountsService.getOneByName(data.accountName);
+      if (transactionAccount) updatedTransaction.account_id = transactionAccount.id;
     }
 
     if (data.date !== undefined)
@@ -92,10 +91,10 @@ export class TransactionsService {
   }
 
   static async deleteOne(transactionId: number) {
-    const deletedSource = await Transaction.findOne({ id: transactionId });
-    if (!deletedSource) throw new NotFoundError('Transaction not found');
+    const deletedAccount = await Transaction.findOne({ id: transactionId });
+    if (!deletedAccount) throw new NotFoundError('Transaction not found');
 
-    await deletedSource.remove();
+    await deletedAccount.remove();
   }
 
   private static async saveMultipleTransactions(
@@ -109,7 +108,7 @@ export class TransactionsService {
       return await callback();
     } catch (error) {
       if (error.message.includes('FOREIGN KEY constraint failed')) {
-        throw new NotFoundError(`source_id not found`);
+        throw new NotFoundError(`account_id not found`);
       } else {
         throw error;
       }

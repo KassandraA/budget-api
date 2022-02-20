@@ -10,7 +10,7 @@ export class InitialCreate1600285033244 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.createTable(
       new Table({
-        name: 'source_statuses',
+        name: 'account_statuses',
         columns: [
           {
             name: 'id',
@@ -36,7 +36,7 @@ export class InitialCreate1600285033244 implements MigrationInterface {
 
     await queryRunner.createTable(
       new Table({
-        name: 'sources',
+        name: 'accounts',
         columns: [
           {
             name: 'id',
@@ -80,11 +80,11 @@ export class InitialCreate1600285033244 implements MigrationInterface {
     );
 
     await queryRunner.createForeignKey(
-      'sources',
+      'accounts',
       new TableForeignKey({
         columnNames: ['status_id'],
         referencedColumnNames: ['id'],
-        referencedTableName: 'source_statuses',
+        referencedTableName: 'account_statuses',
         onDelete: 'RESTRICT',
       })
     );
@@ -151,7 +151,7 @@ export class InitialCreate1600285033244 implements MigrationInterface {
             isNullable: false,
           },
           {
-            name: 'source_id',
+            name: 'account_id',
             type: 'integer',
           },
         ],
@@ -162,9 +162,9 @@ export class InitialCreate1600285033244 implements MigrationInterface {
     await queryRunner.createForeignKey(
       'transactions',
       new TableForeignKey({
-        columnNames: ['source_id'],
+        columnNames: ['account_id'],
         referencedColumnNames: ['id'],
-        referencedTableName: 'sources',
+        referencedTableName: 'accounts',
         onDelete: 'CASCADE',
       })
     );
@@ -239,7 +239,7 @@ export class InitialCreate1600285033244 implements MigrationInterface {
     await queryRunner.dropTable('transaction_tags');
     await queryRunner.dropTable('transactions');
     await queryRunner.dropTable('tags');
-    await queryRunner.dropTable('sources');
-    await queryRunner.dropTable('source_statuses');
+    await queryRunner.dropTable('accounts');
+    await queryRunner.dropTable('account_statuses');
   }
 }

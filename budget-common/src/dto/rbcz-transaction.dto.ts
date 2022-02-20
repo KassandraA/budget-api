@@ -3,10 +3,10 @@ export interface RBCZTransactionDto  { // RBCZDataContract
   bookedamount: string; // transaction.amount // -1 258,11
   message: string; // transaction.message // DEKUJEME, ROHLIK.CZ; Praha - Karli; CZE
 
-  accocuntnumber: string; // source // 516872XXXXXX2351 (card + incoming accounts)
-  accountnumber: string; // source // 282762002/5500 (account)
-  accountname: string; // source // Andrii Annenko
-  accountcurrency: string; // source // CZK
+  accocuntnumber: string; // account // 516872XXXXXX2351 (card + incoming accounts)
+  accountnumber: string; // account // 282762002/5500 (account)
+  accountname: string; // account // Andrii Annenko
+  accountcurrency: string; // account // CZK
   
   nameofaccount: string; // - // BARCLAYS EXECUTION
   originalamountandcurrency: string; // - // -97

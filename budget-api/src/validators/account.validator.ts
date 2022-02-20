@@ -3,9 +3,12 @@ import { validationResult } from 'express-validator';
 import { ValidationHelpers } from './validation-helpers';
 import { ValidationTarget } from './validation-target.enum';
 
-export class SourceStatusValidator {
+export class AccountValidator {
   private static validate = [
     ValidationHelpers.validateString('description'),
+    ValidationHelpers.validateString('currency'),
+    ValidationHelpers.validateString('note_1'),
+    ValidationHelpers.validateString('note_2'),
 
     (req: Request, res: Response, next: NextFunction) => {
       const errors = validationResult(req);
@@ -16,11 +19,13 @@ export class SourceStatusValidator {
 
   static validateOnCreate = [
     ValidationHelpers.validateString('name', ValidationTarget.Body, true, true),
-    ...SourceStatusValidator.validate,
+    ValidationHelpers.validateInteger('status_id', ValidationTarget.Body, true),
+    ...AccountValidator.validate,
   ];
 
   static validateOnUpdate = [
     ValidationHelpers.validateString('name', ValidationTarget.Body, false, true),
-    ...SourceStatusValidator.validate,
+    ValidationHelpers.validateInteger('status_id'),
+    ...AccountValidator.validate,
   ];
 }
