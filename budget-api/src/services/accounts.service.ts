@@ -39,16 +39,16 @@ export class AccountsService {
     name: string,
     description: string,
     currency: string,
-    note1: string,
-    note2: string,
+    accountNumber: string,
+    cardNumber: string,
     statusId: number
   ): Promise<Account> {
     const newAccount = new Account();
     newAccount.name = ValueNormalizer.normalizeString(name);
     newAccount.description = ValueNormalizer.normalizeString(description);
     newAccount.currency = ValueNormalizer.normalizeString(currency);
-    newAccount.note_1 = ValueNormalizer.normalizeString(note1);
-    newAccount.note_2 = ValueNormalizer.normalizeString(note2);
+    newAccount.account_number = ValueNormalizer.normalizeString(accountNumber);
+    newAccount.card_number = ValueNormalizer.normalizeString(cardNumber);
     newAccount.status_id = statusId;
 
     return this.saveAccount(newAccount);
@@ -59,8 +59,8 @@ export class AccountsService {
     name: string,
     description: string,
     currency: string,
-    note1: string,
-    note2: string,
+    accountNumber: string,
+    cardNumber: string,
     statusId: number
   ): Promise<Account> {
     const updatedAccount = await Account.findOne({
@@ -73,8 +73,8 @@ export class AccountsService {
     if (description !== undefined)
       updatedAccount.description = ValueNormalizer.normalizeString(description);
     if (currency !== undefined) updatedAccount.currency = ValueNormalizer.normalizeString(currency);
-    if (note1 !== undefined) updatedAccount.note_1 = ValueNormalizer.normalizeString(note1);
-    if (note2 !== undefined) updatedAccount.note_2 = ValueNormalizer.normalizeString(note2);
+    if (accountNumber !== undefined) updatedAccount.account_number = ValueNormalizer.normalizeString(accountNumber);
+    if (cardNumber !== undefined) updatedAccount.card_number = ValueNormalizer.normalizeString(cardNumber);
     if (statusId !== undefined) updatedAccount.status_id = statusId;
 
     return this.saveAccount(updatedAccount);

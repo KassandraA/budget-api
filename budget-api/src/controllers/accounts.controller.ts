@@ -29,8 +29,8 @@ export class AccountsController {
         req.body.name,
         req.body.description,
         req.body.currency,
-        req.body.note_1,
-        req.body.note_2,
+        req.body.account_number,
+        req.body.card_number,
         req.body.status_id
       );
       return res.json({ data: newAccount });
@@ -47,8 +47,8 @@ export class AccountsController {
         req.body.name,
         req.body.description,
         req.body.currency,
-        req.body.note_1,
-        req.body.note_2,
+        req.body.account_number,
+        req.body.card_number,
         req.body.status_id
       );
       return res.json({ data: updatedAccount });

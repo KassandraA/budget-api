@@ -7,8 +7,8 @@ export class AccountValidator {
   private static validate = [
     ValidationHelpers.validateString('description'),
     ValidationHelpers.validateString('currency'),
-    ValidationHelpers.validateString('note_1'),
-    ValidationHelpers.validateString('note_2'),
+    ValidationHelpers.validateString('account_number'),
+    ValidationHelpers.validateString('card_number'),
 
     (req: Request, res: Response, next: NextFunction) => {
       const errors = validationResult(req);

@@ -18,10 +18,10 @@ export class Account extends BaseEntity {
   currency?: string;
 
   @Column({ nullable: true })
-  note_1?: string; // todo account number
+  account_number?: string;
 
   @Column({ nullable: true })
-  note_2?: string; // todo card no
+  card_number?: string;
 
   @Column()
   status_id: number;

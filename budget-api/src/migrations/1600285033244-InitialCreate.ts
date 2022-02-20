@@ -61,12 +61,12 @@ export class InitialCreate1600285033244 implements MigrationInterface {
             isNullable: true,
           },
           {
-            name: 'note_1',
+            name: 'account_number',
             type: 'nvarchar2',
             isNullable: true,
           },
           {
-            name: 'note_2',
+            name: 'card_number',
             type: 'nvarchar2',
             isNullable: true,
           },
