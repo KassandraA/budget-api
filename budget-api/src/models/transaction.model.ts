@@ -23,15 +23,6 @@ export class Transaction extends BaseEntity {
   @Column({ nullable: true })
   message?: string;
 
-  @Column({ nullable: true })
-  note_1?: string;
-
-  @Column({ nullable: true })
-  note_2?: string;
-
-  @Column({ nullable: true })
-  note_3?: string;
-
   @Column()
   amount: number;
 

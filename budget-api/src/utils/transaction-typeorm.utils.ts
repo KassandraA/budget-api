@@ -20,9 +20,6 @@ export class TransactionTypeormUtils {
       !obj ||
       ((!obj.order_by || typeof obj.order_by === 'object') &&
         (!obj.message || typeof obj.message === 'object') &&
-        (!obj.note_1 || typeof obj.note_1 === 'object') &&
-        (!obj.note_2 || typeof obj.note_2 === 'object') &&
-        (!obj.note_3 || typeof obj.note_3 === 'object') &&
         (!obj.amount || typeof obj.amount === 'object') &&
         (!obj.date || typeof obj.date === 'object') &&
         (!obj.tag_names || typeof obj.tag_names === 'object') &&
@@ -37,9 +34,6 @@ export class TransactionTypeormUtils {
 
     const options: TransactionFilterSortPageDto = {
       ...(query?.message ? { message: query.message } : {}),
-      ...(query?.note_1 ? { note_1: query.note_1 } : {}),
-      ...(query?.note_2 ? { note_2: query.note_2 } : {}),
-      ...(query?.note_3 ? { note_3: query.note_3 } : {}),
       ...(query?.amount ? { amount: query.amount } : {}),
       ...(query?.date ? { date: query.date } : { date: { gte: new Date(monthAgo) } }),
       ...(query?.tag_names ? { tag_names: query.tag_names } : {}),
@@ -48,9 +42,6 @@ export class TransactionTypeormUtils {
         ? {
             order_by: {
               ...(query.order_by.amount ? { amount: query.order_by.amount } : {}),
-              ...(query.order_by.note_1 ? { note_1: query.order_by.note_1 } : {}),
-              ...(query.order_by.note_2 ? { note_2: query.order_by.note_2 } : {}),
-              ...(query.order_by.note_3 ? { note_3: query.order_by.note_3 } : {}),
               ...(query.order_by.message ? { message: query.order_by.message } : {}),
               ...(query.order_by.date ? { date: query.order_by.date } : { date: 'DESC' }),
             },
@@ -68,9 +59,6 @@ export class TransactionTypeormUtils {
     const queryFiltered = (sqb: SelectQueryBuilder<Transaction>) => {
       sqb = sqb.where({
         ...(query?.message ? { message: this.mapStringParam(query.message) } : {}),
-        ...(query?.note_1 ? { note_1: this.mapStringParam(query.note_1) } : {}),
-        ...(query?.note_2 ? { note_2: this.mapStringParam(query.note_2) } : {}),
-        ...(query?.note_3 ? { note_3: this.mapStringParam(query.note_3) } : {}),
         ...(query?.amount ? { amount: this.mapNonStringParam(query.amount) } : {}),
         ...(query?.date ? { date: this.mapDateParam(query.date) } : {}),
       });
@@ -88,9 +76,6 @@ export class TransactionTypeormUtils {
       where: queryFiltered,
       order: {
         ...(query?.order_by?.amount ? { amount: query.order_by.amount } : {}),
-        ...(query?.order_by?.note_1 ? { note_1: query.order_by.note_1 } : {}),
-        ...(query?.order_by?.note_2 ? { note_2: query.order_by.note_2 } : {}),
-        ...(query?.order_by?.note_3 ? { note_3: query.order_by.note_3 } : {}),
         ...(query?.order_by?.message ? { message: query.order_by.message } : {}),
         ...(query?.order_by?.date ? { date: query.order_by.date } : {}),
       },

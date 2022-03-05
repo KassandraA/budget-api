@@ -7,16 +7,13 @@ export class TransactionValidator {
   private static queryParams = [
     'order_by',
     'message',
-    'note_1',
-    'note_2',
-    'note_3',
     'amount',
     'date',
     'tag_names',
     'skip',
     'take',
   ];
-  private static orderByParams = ['message', 'note_1', 'note_2', 'note_3', 'amount', 'date'];
+  private static orderByParams = ['message', 'amount', 'date'];
   private static stringParams = ['like'];
   private static nonStringParams = ['lte', 'gte', 'equal'];
 
@@ -37,21 +34,6 @@ export class TransactionValidator {
       TransactionValidator.stringParams
     ),
     ValidationHelpers.validateObjectKeys(
-      'note_1',
-      ValidationTarget.Query,
-      TransactionValidator.stringParams
-    ),
-    ValidationHelpers.validateObjectKeys(
-      'note_2',
-      ValidationTarget.Query,
-      TransactionValidator.stringParams
-    ),
-    ValidationHelpers.validateObjectKeys(
-      'note_3',
-      ValidationTarget.Query,
-      TransactionValidator.stringParams
-    ),
-    ValidationHelpers.validateObjectKeys(
       'amount',
       ValidationTarget.Query,
       TransactionValidator.nonStringParams
@@ -66,9 +48,6 @@ export class TransactionValidator {
 
   private static validateQueryValues = [
     ValidationHelpers.validateString('message.*', ValidationTarget.Query, false, true),
-    ValidationHelpers.validateString('note_1.*', ValidationTarget.Query, false, true),
-    ValidationHelpers.validateString('note_2.*', ValidationTarget.Query, false, true),
-    ValidationHelpers.validateString('note_3.*', ValidationTarget.Query, false, true),
     ValidationHelpers.validateDecimal('amount.*', ValidationTarget.Query),
     ValidationHelpers.validateDate('date.*', ValidationTarget.Query),
     ValidationHelpers.validateIncludes('order_by.*', ['ASC', 'DESC'], ValidationTarget.Query),
@@ -97,9 +76,6 @@ export class TransactionValidator {
     ValidationHelpers.validateDecimal('*.amount', ValidationTarget.Body, true),
     ValidationHelpers.validateString('*.account_name', ValidationTarget.Body, true),
     ValidationHelpers.validateString('*.message'),
-    ValidationHelpers.validateString('*.note_1'),
-    ValidationHelpers.validateString('*.note_2'),
-    ValidationHelpers.validateString('*.note_3'),
     ValidationHelpers.validateArray('*.tag_names'),
     ValidationHelpers.validateString('*.tag_names.*'),
     TransactionValidator.validate,
@@ -112,9 +88,6 @@ export class TransactionValidator {
     ValidationHelpers.validateDecimal('amount'),
     ValidationHelpers.validateString('account_name'),
     ValidationHelpers.validateString('message'),
-    ValidationHelpers.validateString('note_1'),
-    ValidationHelpers.validateString('note_2'),
-    ValidationHelpers.validateString('note_3'),
     ValidationHelpers.validateArray('tag_names'),
     ValidationHelpers.validateString('tag_names.*'),
     TransactionValidator.validate,

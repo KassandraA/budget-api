@@ -131,21 +131,6 @@ export class InitialCreate1600285033244 implements MigrationInterface {
             isNullable: true,
           },
           {
-            name: 'note_1',
-            type: 'nvarchar2',
-            isNullable: true,
-          },
-          {
-            name: 'note_2',
-            type: 'nvarchar2',
-            isNullable: true,
-          },
-          {
-            name: 'note_3',
-            type: 'nvarchar2',
-            isNullable: true,
-          },
-          {
             name: 'amount',
             type: 'integer',
             isNullable: false,

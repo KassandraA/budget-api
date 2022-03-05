@@ -74,12 +74,6 @@ export class TransactionsService {
       updatedTransaction.date = data.date;
     if (data.message !== undefined)
       updatedTransaction.message = ValueNormalizer.normalizeString(data.message);
-    if (data.note1 !== undefined)
-      updatedTransaction.note_1 = ValueNormalizer.normalizeString(data.note1);
-    if (data.note2 !== undefined)
-      updatedTransaction.note_2 = ValueNormalizer.normalizeString(data.note2);
-    if (data.note3 !== undefined)
-      updatedTransaction.note_3 = ValueNormalizer.normalizeString(data.note3);
     if (data.amount !== undefined)
       updatedTransaction.amount = data.amount;
     if (data.tagNames !== undefined) {

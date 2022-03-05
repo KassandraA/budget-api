@@ -44,9 +44,6 @@ export class ParserUtils {
     const transaction: TransactionDto = {
       date: new Date(),
       message: '',
-      note1: '',
-      note2: '',
-      note3: '',
       amount: null,
       accountName: '',
       tagNames: []
@@ -54,9 +51,6 @@ export class ParserUtils {
 
     transaction.date = new Date(rbczTransaction.transactiondate.split('.').reverse().join('/'));
     transaction.message = rbczTransaction.message;
-    transaction.note1 = rbczTransaction.message !== rbczTransaction.note ? rbczTransaction.note : '';
-    transaction.note2 = rbczTransaction.merchant;
-    transaction.note3 = rbczTransaction.transactiontype;
     transaction.amount = Number((rbczTransaction.bookedamount)?.replace(/\s/g, '').replace(',', '.'));
     transaction.accountName = rbczTransaction.accountname;
 
