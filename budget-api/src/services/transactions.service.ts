@@ -53,7 +53,7 @@ export class TransactionsService {
 
     const transactionArray = transactions.map((tran) => {
       const account = accountsMap.get(tran.accountName) as Account;
-      const tags = tran.tagNames.map((name) => tagsMap.get(name));
+      const tags = tran.tagNames ? tran.tagNames.map((name) => tagsMap.get(name)) : [];
       return TransactionConverter.fromDto(tran, account, tags)
     });
 
@@ -74,6 +74,8 @@ export class TransactionsService {
       updatedTransaction.date = data.date;
     if (data.message !== undefined)
       updatedTransaction.message = ValueNormalizer.normalizeString(data.message);
+    if (data.transactor !== undefined)
+      updatedTransaction.transactor = ValueNormalizer.normalizeString(data.transactor);
     if (data.amount !== undefined)
       updatedTransaction.amount = data.amount;
     if (data.tagNames !== undefined) {
@@ -101,11 +103,7 @@ export class TransactionsService {
     try {
       return await callback();
     } catch (error) {
-      if (error.message.includes('FOREIGN KEY constraint failed')) {
-        throw new NotFoundError(`account_id not found`);
-      } else {
-        throw error;
-      }
+      throw error;
     }
   }
 }

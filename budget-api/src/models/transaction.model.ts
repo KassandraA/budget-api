@@ -6,11 +6,13 @@ import {
   JoinTable,
   ManyToMany,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { ModelConstants } from './model-constants';
 import { Account } from './account.model';
 import { Tag } from './tag.model';
+import { Property } from './property.model';
 
 @Entity(ModelConstants.transactionsTable)
 export class Transaction extends BaseEntity {
@@ -22,6 +24,9 @@ export class Transaction extends BaseEntity {
 
   @Column({ nullable: true })
   message?: string;
+
+  @Column()
+  transactor: string;
 
   @Column()
   amount: number;
@@ -42,4 +47,7 @@ export class Transaction extends BaseEntity {
     inverseJoinColumn: { name: 'tag_id', referencedColumnName: 'id' },
   })
   tags: Tag[];
+
+  @OneToMany(() => Property, (property) => property.transaction)
+  properties: Property[]
 }

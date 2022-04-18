@@ -26,10 +26,10 @@ export class Account extends BaseEntity {
   @Column()
   status_id: number;
 
-  @OneToMany((type) => Transaction, (transaction) => transaction.account)
+  @OneToMany(() => Transaction, (transaction) => transaction.account)
   transactions: Transaction[];
 
-  @ManyToOne((type) => AccountStatus, (status) => status.accounts, {
+  @ManyToOne(() => AccountStatus, (status) => status.accounts, {
     onDelete: 'RESTRICT',
   })
   @JoinColumn({ name: 'status_id' })

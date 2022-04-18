@@ -8,6 +8,7 @@ export class TransactionConverter {
   public static asDto(data: any): TransactionDto {
     return {
       message: data.message,
+      transactor: data.transactor,
       date: data.date,
       amount: data.amount,
       accountName: data.account_name,
@@ -23,6 +24,8 @@ export class TransactionConverter {
     newTransaction.amount = data.amount;
     newTransaction.account_id = account.id;
     newTransaction.tags = tags;
+    newTransaction.transactor = data.transactor;
+    newTransaction.properties = [];
 
     return newTransaction;
   }

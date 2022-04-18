@@ -41,19 +41,13 @@ export class ParserUtils {
   }
 
   private static mapToTransactionDto(rbczTransaction: RBCZTransactionDto): TransactionDto {
-    const transaction: TransactionDto = {
-      date: new Date(),
-      message: '',
-      amount: null,
-      accountName: '',
+    return {
+      date: new Date(rbczTransaction.transactiondate.split('.').reverse().join('/')),
+      message: rbczTransaction.message,
+      transactor: rbczTransaction.merchant,
+      amount: Number((rbczTransaction.bookedamount)?.replace(/\s/g, '').replace(',', '.')),
+      accountName: rbczTransaction.accountname,
       tagNames: []
     };
-
-    transaction.date = new Date(rbczTransaction.transactiondate.split('.').reverse().join('/'));
-    transaction.message = rbczTransaction.message;
-    transaction.amount = Number((rbczTransaction.bookedamount)?.replace(/\s/g, '').replace(',', '.'));
-    transaction.accountName = rbczTransaction.accountname;
-
-    return transaction;
   }
 }

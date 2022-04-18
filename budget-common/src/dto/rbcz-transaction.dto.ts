@@ -2,6 +2,7 @@ export interface RBCZTransactionDto  { // RBCZDataContract
   transactiondate: string; // transaction.date // 13.08.2021
   bookedamount: string; // transaction.amount // -1 258,11
   message: string; // transaction.message // DEKUJEME, ROHLIK.CZ; Praha - Karli; CZE
+  merchant: string; // transactor // Rohlík.cz
 
   accocuntnumber: string; // account // 516872XXXXXX2351 (card + incoming accounts)
   accountnumber: string; // account // 282762002/5500 (account)
@@ -21,6 +22,5 @@ export interface RBCZTransactionDto  { // RBCZDataContract
   transactionid: string; // - // 4329323639
   city: string; // - // Praha 4
   note_2: string; // -
-  merchant: string; // - // Rohlík.cz
   transactioncategory: string; // - // Payment
 }

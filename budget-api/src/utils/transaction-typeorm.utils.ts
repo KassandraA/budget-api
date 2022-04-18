@@ -20,9 +20,11 @@ export class TransactionTypeormUtils {
       !obj ||
       ((!obj.order_by || typeof obj.order_by === 'object') &&
         (!obj.message || typeof obj.message === 'object') &&
+        (!obj.transactor || typeof obj.transactor === 'object') &&
         (!obj.amount || typeof obj.amount === 'object') &&
         (!obj.date || typeof obj.date === 'object') &&
         (!obj.tag_names || typeof obj.tag_names === 'object') &&
+        (!obj.account_names || typeof obj.account_names === 'object') &&
         (!obj.skip || typeof parseInt(obj.skip, 10) === 'number') &&
         (!obj.take || typeof parseInt(obj.take, 10) === 'number'))
     );
@@ -34,14 +36,17 @@ export class TransactionTypeormUtils {
 
     const options: TransactionFilterSortPageDto = {
       ...(query?.message ? { message: query.message } : {}),
+      ...(query?.transactor ? { transactor: query.transactor } : {}),
       ...(query?.amount ? { amount: query.amount } : {}),
       ...(query?.date ? { date: query.date } : { date: { gte: new Date(monthAgo) } }),
       ...(query?.tag_names ? { tag_names: query.tag_names } : {}),
+      ...(query?.account_names ? { account_names: query.account_names } : {}),
 
       ...(query?.order_by
         ? {
             order_by: {
               ...(query.order_by.amount ? { amount: query.order_by.amount } : {}),
+              ...(query.order_by.transactor ? { transactor: query.order_by.transactor } : {}),
               ...(query.order_by.message ? { message: query.order_by.message } : {}),
               ...(query.order_by.date ? { date: query.order_by.date } : { date: 'DESC' }),
             },
@@ -56,26 +61,33 @@ export class TransactionTypeormUtils {
   }
 
   public static findMany(query?: TransactionFilterSortPageDto): FindManyOptions<Transaction> {
-    const queryFiltered = (sqb: SelectQueryBuilder<Transaction>) => {
+    const queryFilters = (sqb: SelectQueryBuilder<Transaction>) => {
       sqb = sqb.where({
         ...(query?.message ? { message: this.mapStringParam(query.message) } : {}),
+        ...(query?.transactor ? { transactor: this.mapStringParam(query.transactor) } : {}),
         ...(query?.amount ? { amount: this.mapNonStringParam(query.amount) } : {}),
         ...(query?.date ? { date: this.mapDateParam(query.date) } : {}),
       });
       if (query?.tag_names) {
-        sqb.andWhere(`${ModelConstants.tagsTable}.name IN (:...tagNames)`, { tagNames: query.tag_names });
+        sqb.andWhere(`tags.name IN (:...tagNames)`, { tagNames: query.tag_names });
+      }
+      if (query?.account_names) {
+        sqb.andWhere(`account.name IN (:...accountNames)`, { accountNames: query.account_names });
       }
     };
 
     const options: FindManyOptions<Transaction> = {
       join: {
         alias: ModelConstants.transactionsTable,
-        leftJoin: { tags: `${ModelConstants.transactionsTable}.tags` },
+        leftJoinAndSelect: {
+          tags: `${ModelConstants.transactionsTable}.tags`,
+          account: `${ModelConstants.transactionsTable}.account`
+        },
       },
-      relations: [ModelConstants.tagsTable],
-      where: queryFiltered,
+      where: queryFilters,
       order: {
         ...(query?.order_by?.amount ? { amount: query.order_by.amount } : {}),
+        ...(query?.order_by?.transactor ? { transactor: query.order_by.transactor } : {}),
         ...(query?.order_by?.message ? { message: query.order_by.message } : {}),
         ...(query?.order_by?.date ? { date: query.order_by.date } : {}),
       },
