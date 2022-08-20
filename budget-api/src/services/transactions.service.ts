@@ -16,8 +16,8 @@ export class TransactionsService {
     params?: TransactionFilterSortPageDto
   ): Promise<TransactionResponseDto> {
     const preFilled = TransactionTypeormUtils.preFill(params);
-    const searchOptions = TransactionTypeormUtils.findMany(preFilled);
-    const [result, totalCount] = await Transaction.findAndCount(searchOptions);
+    const queryBuilder = TransactionTypeormUtils.getQueryBuilder(preFilled);
+    const [result, totalCount] = await queryBuilder.getManyAndCount();
 
     return {
       data: result,
@@ -26,10 +26,10 @@ export class TransactionsService {
   }
 
   static async getOneById(transactionId: number): Promise<Transaction> {
-    const transaction = await Transaction.findOne(
-      { id: transactionId },
-      { relations: [ModelConstants.tagsTable] }
-    );
+    const transaction = await Transaction.findOne({
+      where: { id: transactionId },
+      relations: [ModelConstants.tagsTable]
+    });
 
     if (!transaction) throw new NotFoundError('Transaction not found');
     return transaction;
@@ -61,7 +61,7 @@ export class TransactionsService {
   }
 
   static async updateOne(transactionId: number, data: TransactionDto): Promise<Transaction> {
-    const updatedTransaction = await Transaction.findOne({ id: transactionId });
+    const updatedTransaction = await Transaction.findOneBy({ id: transactionId });
 
     if (!updatedTransaction) throw new NotFoundError('Transaction not found');
 
@@ -87,7 +87,7 @@ export class TransactionsService {
   }
 
   static async deleteOne(transactionId: number) {
-    const deletedAccount = await Transaction.findOne({ id: transactionId });
+    const deletedAccount = await Transaction.findOneBy({ id: transactionId });
     if (!deletedAccount) throw new NotFoundError('Transaction not found');
 
     await deletedAccount.remove();

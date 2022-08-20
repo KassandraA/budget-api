@@ -1,12 +1,12 @@
 import 'reflect-metadata';
 import express from 'express';
-import { connect } from './db/db';
+import { AppDataSource } from './db/db';
 import { AccountsRoutes } from './routes/accounts.routes';
 import { AccountStatusesRoutes } from './routes/account-statuses.routes';
 import { TagsRoutes } from './routes/tags.routes';
 import { TransactionsRoutes } from './routes/transactions.routes';
 
-connect();
+AppDataSource.initialize();
 
 const app = express();
 const port = 5000;

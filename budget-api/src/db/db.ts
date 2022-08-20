@@ -1,7 +1,6 @@
-import { createConnection } from 'typeorm';
+import { DataSource } from 'typeorm';
 
-export let connect = async () => {
-  const connection = await createConnection({
+export const AppDataSource = new DataSource({
     type: 'sqlite',
     database: 'database.db',
     name: 'default',
@@ -9,9 +8,4 @@ export let connect = async () => {
     logging: true,
     entities: [__dirname + '/../models/*.js'],
     migrations: [__dirname + '/../migrations/*.js'],
-    cli: {
-      entitiesDir: __dirname + '/../models/',
-      migrationsDir: __dirname + '/../migrations/',
-    },
   });
-};

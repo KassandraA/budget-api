@@ -10,7 +10,7 @@ export class TagsService {
   }
 
   static async getOneById(tagId: number): Promise<Tag> {
-    const tag = await Tag.findOne({
+    const tag = await Tag.findOneBy({
       id: tagId,
     });
 
@@ -63,7 +63,7 @@ export class TagsService {
   }
 
   static async updateOne(tagId: number, name: string): Promise<Tag> {
-    const updatedTag = await Tag.findOne({
+    const updatedTag = await Tag.findOneBy({
       id: tagId,
     });
 
@@ -74,7 +74,7 @@ export class TagsService {
   }
 
   static async deleteOne(tagId: number) {
-    const deletedTag = await Tag.findOne({ id: tagId });
+    const deletedTag = await Tag.findOneBy({ id: tagId });
     if (!deletedTag) throw new NotFoundError('Tag not found');
 
     await deletedTag.remove();

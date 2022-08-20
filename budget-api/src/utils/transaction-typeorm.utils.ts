@@ -2,7 +2,6 @@ import { TransactionFilterSortPageDto, NonStringFilter, StringFilter } from '../
 import {
   Between,
   Equal,
-  FindManyOptions,
   FindOperator,
   LessThanOrEqual,
   Like,
@@ -46,9 +45,10 @@ export class TransactionTypeormUtils {
         ? {
             order_by: {
               ...(query.order_by.amount ? { amount: query.order_by.amount } : {}),
+              ...(query.order_by.account_name ? { account_name: query.order_by.account_name } : {}),
               ...(query.order_by.transactor ? { transactor: query.order_by.transactor } : {}),
               ...(query.order_by.message ? { message: query.order_by.message } : {}),
-              ...(query.order_by.date ? { date: query.order_by.date } : { date: 'DESC' }),
+              ...(query.order_by.date ? { date: query.order_by.date } : {}),
             },
           }
         : { order_by: { date: 'DESC' } }),
@@ -60,42 +60,38 @@ export class TransactionTypeormUtils {
     return options;
   }
 
-  public static findMany(query?: TransactionFilterSortPageDto): FindManyOptions<Transaction> {
-    const queryFilters = (sqb: SelectQueryBuilder<Transaction>) => {
-      sqb = sqb.where({
-        ...(query?.message ? { message: this.mapStringParam(query.message) } : {}),
-        ...(query?.transactor ? { transactor: this.mapStringParam(query.transactor) } : {}),
-        ...(query?.amount ? { amount: this.mapNonStringParam(query.amount) } : {}),
-        ...(query?.date ? { date: this.mapDateParam(query.date) } : {}),
-      });
-      if (query?.tag_names) {
-        sqb.andWhere(`tags.name IN (:...tagNames)`, { tagNames: query.tag_names });
-      }
-      if (query?.account_names) {
-        sqb.andWhere(`account.name IN (:...accountNames)`, { accountNames: query.account_names });
-      }
-    };
+  public static getQueryBuilder(
+    query?: TransactionFilterSortPageDto
+  ): SelectQueryBuilder<Transaction> {
+    const builder = Transaction.createQueryBuilder(ModelConstants.transactionsTable);
+    builder
+      .leftJoinAndSelect(`${ModelConstants.transactionsTable}.tags`, 'tags')
+      .leftJoinAndSelect(`${ModelConstants.transactionsTable}.account`, 'account');
+    builder.where({
+      ...(query?.message ? { message: this.mapStringParam(query.message) } : {}),
+      ...(query?.transactor ? { transactor: this.mapStringParam(query.transactor) } : {}),
+      ...(query?.amount ? { amount: this.mapNonStringParam(query.amount) } : {}),
+      ...(query?.date ? { date: this.mapDateParam(query.date) } : {})
+    });
+    if (query?.tag_names) {
+      builder.andWhere(`tags.name IN (:...tagNames)`, { tagNames: query.tag_names });
+    }
+    if (query?.account_names) {
+      builder.andWhere(`account.name IN (:...accountNames)`, { accountNames: query.account_names });
+    }
 
-    const options: FindManyOptions<Transaction> = {
-      join: {
-        alias: ModelConstants.transactionsTable,
-        leftJoinAndSelect: {
-          tags: `${ModelConstants.transactionsTable}.tags`,
-          account: `${ModelConstants.transactionsTable}.account`
-        },
-      },
-      where: queryFilters,
-      order: {
-        ...(query?.order_by?.amount ? { amount: query.order_by.amount } : {}),
-        ...(query?.order_by?.transactor ? { transactor: query.order_by.transactor } : {}),
-        ...(query?.order_by?.message ? { message: query.order_by.message } : {}),
-        ...(query?.order_by?.date ? { date: query.order_by.date } : {}),
-      },
-      skip: query?.skip ? query.skip : 0,
-      take: query?.take ? query.take : 100,
-    };
+    builder.orderBy({
+      ...(query?.order_by?.amount ? { 'transactions.amount': query.order_by.amount } : {}),
+      ...(query?.order_by?.transactor ? { 'transactions.transactor': query.order_by.transactor } : {}),
+      ...(query?.order_by?.message ? { 'transactions.message': query.order_by.message } : {}),
+      ...(query?.order_by?.date ? { 'transactions.date': query.order_by.date } : {}),
+      ...(query?.order_by?.account_name ? { 'account.name': query.order_by.account_name } : {})
+    });
 
-    return options;
+    builder.skip(query?.skip ? query.skip : 0)
+    builder.take(query?.take ? query.take : 100)
+
+    return builder;
   }
 
   public static mapDateParam(param?: NonStringFilter<Date>): FindOperator<string> {

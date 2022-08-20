@@ -10,7 +10,7 @@ export class AccountStatusesService {
   }
 
   static async getOneById(accountStatusId: number): Promise<AccountStatus> {
-    const accountStatus = await AccountStatus.findOne({ id: accountStatusId });
+    const accountStatus = await AccountStatus.findOneBy({ id: accountStatusId });
 
     if (!accountStatus) throw new NotFoundError('Account status not found');
     return accountStatus;
@@ -29,7 +29,7 @@ export class AccountStatusesService {
     name: string,
     description: string
   ): Promise<AccountStatus> {
-    const updatedAccountStatus = await AccountStatus.findOne({ id: accountStatusId });
+    const updatedAccountStatus = await AccountStatus.findOneBy({ id: accountStatusId });
 
     if (!updatedAccountStatus) throw new NotFoundError('Account status not found');
 
@@ -41,7 +41,7 @@ export class AccountStatusesService {
   }
 
   static async deleteOne(accountStatusId: number) {
-    const deletedAccountStatus = await AccountStatus.findOne({ id: accountStatusId });
+    const deletedAccountStatus = await AccountStatus.findOneBy({ id: accountStatusId });
     if (!deletedAccountStatus) throw new NotFoundError('Account status not found');
     try {
       await deletedAccountStatus.remove();
