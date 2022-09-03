@@ -44,7 +44,7 @@ export class ParserUtils {
     return {
       date: new Date(rbczTransaction.transactiondate.split('.').reverse().join('/')),
       message: rbczTransaction.message,
-      transactor: rbczTransaction.merchant,
+      transactor: rbczTransaction.merchant.trim() ?? rbczTransaction.nameofaccount.trim(),
       amount: Number((rbczTransaction.bookedamount)?.replace(/\s/g, '').replace(',', '.')),
       accountName: rbczTransaction.accountname,
       tagNames: []

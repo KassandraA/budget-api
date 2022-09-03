@@ -1,8 +1,8 @@
+import { In } from 'typeorm';
 import { NotUniqueError } from '../errors/not-unique.error';
 import { NotFoundError } from '../errors/not-found.error';
 import { Account } from '../models/account.model';
 import { ValueNormalizer } from '../utils/value-normalizer.utils';
-import { AccountTypeormUtils } from '../utils/account-typeorm.utils';
 
 export class AccountsService {
   static async getAll(): Promise<Account[]> {
@@ -10,29 +10,20 @@ export class AccountsService {
   }
 
   static async getOneById(accountId: number): Promise<Account> {
-    const account = await Account.findOneBy({
-      id: accountId,
-    });
-
+    const account = await Account.findOneBy({ id: accountId });
     if (!account) throw new NotFoundError('Account not found');
     return account;
   }
 
   static async getOneByName(accountName: string): Promise<Account> {
-    const account = await Account.findOne(
-      AccountTypeormUtils.findOneByName(accountName)
-    );
-
+    const account = await Account.findOneBy({ name: accountName });
     if (!account) throw new NotFoundError(`Account '${accountName}' not found`);
     return account;
   }
 
   static async getManyByNames(accountNames: string[]): Promise<Account[]> {
     if (!accountNames || accountNames.length === 0) return [];
-
-    return await Account.find(
-      AccountTypeormUtils.findManyByNames([...new Set(accountNames)])
-    );
+    return await Account.findBy({ name: In([...new Set(accountNames)]) });
   }
 
   static async addOne(

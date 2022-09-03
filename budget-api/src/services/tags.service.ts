@@ -1,8 +1,8 @@
+import { In } from "typeorm";
 import { NotFoundError } from '../errors/not-found.error';
 import { NotUniqueError } from '../errors/not-unique.error';
 import { Tag } from '../models/tag.model';
 import { ValueNormalizer } from '../utils/value-normalizer.utils';
-import { TagTypeormUtils } from '../utils/tag-typeorm.utils';
 
 export class TagsService {
   static async getAll(): Promise<Tag[]> {
@@ -10,9 +10,7 @@ export class TagsService {
   }
 
   static async getOneById(tagId: number): Promise<Tag> {
-    const tag = await Tag.findOneBy({
-      id: tagId,
-    });
+    const tag = await Tag.findOneBy({ id: tagId });
 
     if (!tag) throw new NotFoundError('Tag not found');
     return tag;
@@ -21,7 +19,7 @@ export class TagsService {
   static async getManyById(tagIds: number[]): Promise<Tag[]> {
     if (!tagIds || tagIds.length === 0) return [];
 
-    const tags = await Tag.findByIds(tagIds);
+    const tags = await Tag.findBy({ id: In(tagIds) });
 
     if (tags.length !== tagIds.length) {
       const receivedTagIds = tags.map((t) => t.id);
@@ -34,7 +32,7 @@ export class TagsService {
   static async getManyByNames(tagNames: string[]): Promise<Tag[]> {
     if (!tagNames || tagNames.length === 0) return [];
 
-    return await Tag.find(TagTypeormUtils.findManyByNames([...new Set(tagNames)]));
+    return await Tag.findBy({ name: In([...new Set(tagNames)]) });
   }
 
   static async addOne(name: string): Promise<Tag> {
@@ -63,9 +61,7 @@ export class TagsService {
   }
 
   static async updateOne(tagId: number, name: string): Promise<Tag> {
-    const updatedTag = await Tag.findOneBy({
-      id: tagId,
-    });
+    const updatedTag = await Tag.findOneBy({ id: tagId });
 
     if (!updatedTag) throw new NotFoundError('Tag not found');
     if (name !== undefined) updatedTag.name = ValueNormalizer.normalizeString(name);

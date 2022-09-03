@@ -57,7 +57,7 @@ export class TransactionsService {
       return TransactionConverter.fromDto(tran, account, tags)
     });
 
-    return this.saveMultipleTransactions(transactionArray);
+    return Transaction.save(transactionArray);
   }
 
   static async updateOne(transactionId: number, data: TransactionDto): Promise<Transaction> {
@@ -83,27 +83,13 @@ export class TransactionsService {
         data.tagNames.length > 0 ? await TagsService.addMany(data.tagNames) : [];
     }
 
-    return (await this.saveMultipleTransactions([updatedTransaction]))[0];
+    return await Transaction.save(updatedTransaction);
   }
 
   static async deleteOne(transactionId: number) {
-    const deletedAccount = await Transaction.findOneBy({ id: transactionId });
-    if (!deletedAccount) throw new NotFoundError('Transaction not found');
+    const transaction = await Transaction.findOneBy({ id: transactionId });
+    if (!transaction) throw new NotFoundError('Transaction not found');
 
-    await deletedAccount.remove();
-  }
-
-  private static async saveMultipleTransactions(
-    multiTransactions: Transaction[]
-  ): Promise<Transaction[]> {
-    return this.catchErrorOnSave(() => Transaction.save(multiTransactions));
-  }
-
-  private static async catchErrorOnSave<T>(callback: () => Promise<T>): Promise<T> {
-    try {
-      return await callback();
-    } catch (error) {
-      throw error;
-    }
+    await transaction.remove();
   }
 }

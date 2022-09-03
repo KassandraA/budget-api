@@ -1,5 +1,4 @@
 import { body, query, ValidationChain } from 'express-validator';
-import { ValueNormalizer } from '../utils/value-normalizer.utils';
 import { ValidationTarget } from './validation-target.enum';
 
 export class ValidationHelpers {
