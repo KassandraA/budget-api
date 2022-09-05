@@ -1,5 +1,3 @@
-import { Property } from "../../../budget-api/src/models/property.model";
-
 export interface TransactionDto {
   transactionId?: number;
   date: Date;
@@ -8,5 +6,5 @@ export interface TransactionDto {
   amount: number;
   accountName: string;
   tagNames: string[];
-  properties?: Property[]
+  properties?: Map<string, string>;
 }

@@ -9,12 +9,12 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { ModelConstants } from './model-constants';
+import { DatabaseConstants } from './database-constants';
 import { Account } from './account.model';
 import { Tag } from './tag.model';
 import { Property } from './property.model';
 
-@Entity(ModelConstants.transactionsTable)
+@Entity(DatabaseConstants.transactionsTable)
 export class Transaction extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
@@ -48,6 +48,8 @@ export class Transaction extends BaseEntity {
   })
   tags: Tag[];
 
-  @OneToMany(() => Property, (property) => property.transaction)
+  @OneToMany(() => Property, (property) => property.transaction, {
+    cascade: ['insert', 'update']
+  })
   properties: Property[]
 }

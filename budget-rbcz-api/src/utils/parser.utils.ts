@@ -46,8 +46,33 @@ export class ParserUtils {
       message: rbczTransaction.message,
       transactor: rbczTransaction.merchant.trim() ?? rbczTransaction.nameofaccount.trim(),
       amount: Number((rbczTransaction.bookedamount)?.replace(/\s/g, '').replace(',', '.')),
+      
       accountName: rbczTransaction.accountname,
-      tagNames: []
+      tagNames: [],
+      properties: this.toPropertiesMap(rbczTransaction)
     };
+  }
+
+  private static toPropertiesMap(transaction: RBCZTransactionDto): Map<string, string> { 
+    return new Map<string, string>([
+      ["accocuntnumber", transaction.accocuntnumber],
+      ["accountnumber", transaction.accountnumber],
+      ["accountname", transaction.accountname],
+      ["accountcurrency", transaction.accountcurrency],
+      ["nameofaccount", transaction.nameofaccount],
+      ["originalamountandcurrency", transaction.originalamountandcurrency],
+      ["originalamountandcurrency_1", transaction.originalamountandcurrency_1],
+      ["note", transaction.note],
+      ["transactiontype", transaction.transactiontype],
+      ["bookingdate", transaction.bookingdate],
+      ["vs", transaction.vs],
+      ["ks", transaction.ks],
+      ["ss", transaction.ss],
+      ["fee", transaction.fee],
+      ["transactionid", transaction.transactionid],
+      ["city", transaction.city],
+      ["note_2", transaction.note_2],
+      ["transactioncategory", transaction.transactioncategory],
+    ])
   }
 }

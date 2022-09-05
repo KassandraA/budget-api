@@ -1,9 +1,9 @@
 import { BaseEntity, Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
-import { ModelConstants } from './model-constants';
+import { DatabaseConstants } from './database-constants';
 import { AccountStatus } from './account-status.model';
 import { Transaction } from './transaction.model';
 
-@Entity(ModelConstants.accountsTable)
+@Entity(DatabaseConstants.accountsTable)
 export class Account extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;

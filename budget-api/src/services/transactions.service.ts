@@ -10,6 +10,8 @@ import { TransactionDto } from '../../../budget-common/src/dto/transaction.dto';
 import { TransactionConverter } from '../utils/transaction-converter.utils';
 import { AccountsService } from './accounts.service';
 import { Account } from '../models/account.model';
+import { Tag } from '../models/tag.model';
+import { Property } from '../models/property.model';
 
 export class TransactionsService {
   static async getMany(
@@ -28,7 +30,11 @@ export class TransactionsService {
   static async getOneById(transactionId: number): Promise<Transaction> {
     const transaction = await Transaction.findOne({
       where: { id: transactionId },
-      relations: [ModelConstants.tagsTable]
+      relations: [
+        ModelConstants.transactionAccountProperty,
+        ModelConstants.transactionTagsProperty,
+        ModelConstants.transactionPropertiesProperty
+      ]
     });
 
     if (!transaction) throw new NotFoundError('Transaction not found');
@@ -36,25 +42,14 @@ export class TransactionsService {
   }
 
   static async addMany(transactions: TransactionDto[]): Promise<Transaction[]> {
-    const tagNames = transactions.reduce((tn, tran) => {
-      return tran?.tagNames?.length > 0 ? [...tn, ...tran.tagNames] : [...tn];
-    }, []);
-    const transactionTags = await TagsService.addMany(tagNames);
-    const tagsMap = new Map(transactionTags.map((tag) => [tag.name, tag]));
-
-    const accountNames = [...new Set(transactions.map((tran) => tran?.accountName))];
-    const transactionAccounts = await AccountsService.getManyByNames(accountNames);
-    const accountsMap = new Map(transactionAccounts.map((account) => [account.name, account]));
-
-    if (accountNames.length > transactionAccounts.length) {
-      const missing = accountNames.filter(name => !accountsMap.has(name));
-      throw new NotFoundError(`The following accounts were not found: '${missing.join("', '")}'`);
-    }
+    const tagsMap = await this.getTagsMap(transactions);
+    const accountsMap = await this.getAccountsMap(transactions);
 
     const transactionArray = transactions.map((tran) => {
       const account = accountsMap.get(tran.accountName) as Account;
       const tags = tran.tagNames ? tran.tagNames.map((name) => tagsMap.get(name)) : [];
-      return TransactionConverter.fromDto(tran, account, tags)
+      const props = this.getProperties(tran);
+      return TransactionConverter.fromDto(tran, account, tags, props);
     });
 
     return Transaction.save(transactionArray);
@@ -91,5 +86,37 @@ export class TransactionsService {
     if (!transaction) throw new NotFoundError('Transaction not found');
 
     await transaction.remove();
+  }
+
+  private static async getTagsMap(transactions: TransactionDto[]): Promise<Map<string, Tag>> {
+    const tagNames = transactions.reduce((tn, tran) => {
+      return tran?.tagNames?.length > 0 ? [...tn, ...tran.tagNames] : [...tn];
+    }, []);
+    const transactionTags = await TagsService.addMany(tagNames);
+    return new Map(transactionTags.map((tag) => [tag.name, tag]));
+  }
+
+  private static async getAccountsMap(transactions: TransactionDto[]): Promise<Map<string, Account>> {
+    const accountNames = [...new Set(transactions.map((tran) => tran?.accountName))];
+    const transactionAccounts = await AccountsService.getManyByNames(accountNames);
+    const accountsMap = new Map(transactionAccounts.map((account) => [account.name, account]));
+
+    if (accountNames.length > transactionAccounts.length) {
+      const missing = accountNames.filter(name => !accountsMap.has(name));
+      throw new NotFoundError(`The following accounts were not found: '${missing.join("', '")}'`);
+    } else {
+      return accountsMap;
+    }
+  }
+
+  private static getProperties(transaction: TransactionDto): Property[] {
+   return !transaction.properties.size
+      ? []
+      : Array.from(transaction.properties, ([propName, propValue]) => {
+          const prop = new Property();
+          prop.name = propName;
+          prop.value = propValue;
+          return prop;
+        });
   }
 }

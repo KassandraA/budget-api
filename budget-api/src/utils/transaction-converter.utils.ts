@@ -3,6 +3,7 @@ import { ValueNormalizer } from "./value-normalizer.utils";
 import { Transaction } from "../models/transaction.model";
 import { Tag } from "../models/tag.model";
 import { Account } from "../models/account.model";
+import { Property } from "../models/property.model";
 
 export class TransactionConverter {
   public static asDto(data: any): TransactionDto {
@@ -12,11 +13,12 @@ export class TransactionConverter {
       date: data.date,
       amount: data.amount,
       accountName: data.account_name,
-      tagNames: data.tag_names
+      tagNames: data.tag_names,
+      properties: new Map(Object.entries(data.properties))
     };
   }
 
-  public static fromDto(data: TransactionDto, account: Account, tags: Tag[]): Transaction {
+  public static fromDto(data: TransactionDto, account: Account, tags: Tag[], properties: Property[]): Transaction {
     const newTransaction = new Transaction();
 
     newTransaction.date = data.date;
@@ -25,7 +27,7 @@ export class TransactionConverter {
     newTransaction.account_id = account.id;
     newTransaction.tags = tags;
     newTransaction.transactor = data.transactor;
-    newTransaction.properties = [];
+    newTransaction.properties = properties;
 
     return newTransaction;
   }

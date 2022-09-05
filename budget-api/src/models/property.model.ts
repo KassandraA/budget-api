@@ -1,8 +1,8 @@
 import { BaseEntity, Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
-import { ModelConstants } from './model-constants';
+import { DatabaseConstants } from './database-constants';
 import { Transaction } from './transaction.model';
 
-@Entity(ModelConstants.propertiesTable)
+@Entity(DatabaseConstants.propertiesTable)
 export class Property extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;

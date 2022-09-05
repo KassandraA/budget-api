@@ -12,6 +12,7 @@ import {
 import { Transaction } from '../models/transaction.model';
 import { DateUtils } from './date.utils';
 import { ModelConstants } from '../models/model-constants';
+import { DatabaseConstants } from '../models/database-constants';
 
 export class TransactionTypeormUtils {
   public static isFilterSortPageDto(obj?: any): obj is TransactionFilterSortPageDto {
@@ -63,10 +64,20 @@ export class TransactionTypeormUtils {
   public static getQueryBuilder(
     query?: TransactionFilterSortPageDto
   ): SelectQueryBuilder<Transaction> {
-    const builder = Transaction.createQueryBuilder(ModelConstants.transactionsTable);
+    const builder = Transaction.createQueryBuilder(DatabaseConstants.transactionsTable);
     builder
-      .leftJoinAndSelect(`${ModelConstants.transactionsTable}.tags`, 'tags')
-      .leftJoinAndSelect(`${ModelConstants.transactionsTable}.account`, 'account');
+      .leftJoinAndSelect(
+        `${DatabaseConstants.transactionsTable}.${ModelConstants.transactionTagsProperty}`,
+        ModelConstants.transactionTagsProperty
+      )
+      .leftJoinAndSelect(
+        `${DatabaseConstants.transactionsTable}.${ModelConstants.transactionAccountProperty}`,
+        ModelConstants.transactionAccountProperty
+      )
+      .leftJoinAndSelect(
+        `${DatabaseConstants.transactionsTable}.${ModelConstants.transactionPropertiesProperty}`,
+        ModelConstants.transactionPropertiesProperty
+      );
     builder.where({
       ...(query?.message ? { message: this.mapStringParam(query.message) } : {}),
       ...(query?.transactor ? { transactor: this.mapStringParam(query.transactor) } : {}),
