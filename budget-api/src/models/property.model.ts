@@ -17,7 +17,8 @@ export class Property extends BaseEntity {
   transaction_id: number;
 
   @ManyToOne(() => Transaction, (transaction) => transaction.properties, {
-    onDelete: 'CASCADE'
+    onDelete: 'CASCADE',
+    orphanedRowAction: 'delete'
   })
   @JoinColumn({ name: 'transaction_id'})
   transaction: Transaction;

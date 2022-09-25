@@ -12,6 +12,7 @@ import { AccountsService } from './accounts.service';
 import { Account } from '../models/account.model';
 import { Tag } from '../models/tag.model';
 import { Property } from '../models/property.model';
+import { DatabaseConstants } from '../models/database-constants';
 
 export class TransactionsService {
   static async getMany(
@@ -56,7 +57,12 @@ export class TransactionsService {
   }
 
   static async updateOne(transactionId: number, data: TransactionDto): Promise<Transaction> {
-    const updatedTransaction = await Transaction.findOneBy({ id: transactionId });
+    const updatedTransaction = await Transaction.createQueryBuilder(DatabaseConstants.transactionsTable)
+      .leftJoinAndSelect(
+        `${DatabaseConstants.transactionsTable}.${ModelConstants.transactionPropertiesProperty}`,
+        ModelConstants.transactionPropertiesProperty
+      ).where({id: transactionId})
+      .getOne();
 
     if (!updatedTransaction) throw new NotFoundError('Transaction not found');
 
@@ -73,10 +79,10 @@ export class TransactionsService {
       updatedTransaction.transactor = ValueNormalizer.normalizeString(data.transactor);
     if (data.amount !== undefined)
       updatedTransaction.amount = data.amount;
-    if (data.tagNames !== undefined) {
-      updatedTransaction.tags =
-        data.tagNames.length > 0 ? await TagsService.addMany(data.tagNames) : [];
-    }
+    if (data.tagNames !== undefined)
+      updatedTransaction.tags = data.tagNames.length > 0 ? await TagsService.addMany(data.tagNames) : [];
+    if (data.properties !== undefined)
+      updatedTransaction.properties = this.getUpdatedProperties(updatedTransaction.properties, data.properties);
 
     return await Transaction.save(updatedTransaction);
   }
@@ -118,5 +124,37 @@ export class TransactionsService {
           prop.value = propValue;
           return prop;
         });
+  }
+
+  private static getUpdatedProperties(existingProps: Property[], newProps: Map<string, any>): Property[] {
+    if (!newProps.size) {
+      return [];
+    }
+    const newPrs = new Map(newProps);
+    const existingPrs = existingProps?.length
+      ? existingProps.filter((ep) => {
+          const newVal = newProps.get(ep.name);
+          if (newVal) {
+            if (ep.value !== newVal) {
+              ep.value = newVal;
+            }
+            newPrs.delete(ep.name);
+            return true;
+          } else {
+            return false;
+          }
+        })
+      : [];
+
+    const addedPrs = newPrs.size
+      ? Array.from(newPrs, ([propName, propValue]) => {
+          const prop = new Property();
+          prop.name = propName;
+          prop.value = propValue;
+          return prop;
+        })
+      : [];
+
+    return [...existingPrs, ...addedPrs];
   }
 }

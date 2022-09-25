@@ -89,6 +89,8 @@ export class TransactionValidator {
     ValidationHelpers.validateString('*.account_name', ValidationTarget.Body, true),
     ValidationHelpers.validateArray('*.tag_names'),
     ValidationHelpers.validateString('*.tag_names.*'),
+    ValidationHelpers.validateArray('*.properties', ValidationTarget.Body, false, false),
+    ValidationHelpers.validateString('*.properties.*'),
     TransactionValidator.validate,
   ];
 
@@ -102,6 +104,8 @@ export class TransactionValidator {
     ValidationHelpers.validateString('account_name'),
     ValidationHelpers.validateArray('tag_names'),
     ValidationHelpers.validateString('tag_names.*'),
+    ValidationHelpers.validateArray('properties', ValidationTarget.Body, false, false),
+    ValidationHelpers.validateString('properties.*'),
     TransactionValidator.validate,
   ];
 }

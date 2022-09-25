@@ -49,7 +49,7 @@ export class Transaction extends BaseEntity {
   tags: Tag[];
 
   @OneToMany(() => Property, (property) => property.transaction, {
-    cascade: ['insert', 'update']
+    cascade: true
   })
   properties: Property[]
 }
