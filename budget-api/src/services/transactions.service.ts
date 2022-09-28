@@ -88,10 +88,10 @@ export class TransactionsService {
   }
 
   static async deleteOne(transactionId: number): Promise<void> {
-    const transaction = await Transaction.findOneBy({ id: transactionId });
-    if (!transaction) throw new NotFoundError('Transaction not found');
-
-    await transaction.remove();
+    const result = await Transaction.delete(transactionId);
+    if (result.affected < 1) {
+      throw new NotFoundError('Transaction not found');
+    }
   }
 
   private static async getTagsMap(transactions: TransactionDto[]): Promise<Map<string, Tag>> {

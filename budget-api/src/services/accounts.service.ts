@@ -72,10 +72,10 @@ export class AccountsService {
   }
 
   static async deleteOne(accountId: number) {
-    const deletedAccount = await Account.findOneBy({ id: accountId });
-    if (!deletedAccount) throw new NotFoundError('Account not found');
-
-    await deletedAccount.remove();
+    const result = await Account.delete(accountId);
+    if (result.affected < 1) {
+      throw new NotFoundError('Account not found');
+    }
   }
 
   private static async saveAccount(account: Account): Promise<Account> {

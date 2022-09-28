@@ -70,10 +70,10 @@ export class TagsService {
   }
 
   static async deleteOne(tagId: number): Promise<void> {
-    const deletedTag = await Tag.findOneBy({ id: tagId });
-    if (!deletedTag) throw new NotFoundError('Tag not found');
-
-    await deletedTag.remove();
+    const result = await Tag.delete(tagId);
+    if (result.affected < 1) {
+      throw new NotFoundError('Tag not found');
+    }
   }
 
   private static async saveTag(tag: Tag): Promise<Tag> {

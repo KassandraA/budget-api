@@ -41,10 +41,11 @@ export class AccountStatusesService {
   }
 
   static async deleteOne(accountStatusId: number) {
-    const deletedAccountStatus = await AccountStatus.findOneBy({ id: accountStatusId });
-    if (!deletedAccountStatus) throw new NotFoundError('Account status not found');
     try {
-      await deletedAccountStatus.remove();
+      const result = await AccountStatus.delete(accountStatusId);
+      if (result.affected < 1) {
+        throw new NotFoundError('Account status not found');
+      }
     } catch (error) {
       if (error.message.includes('FOREIGN KEY constraint failed')) {
         throw new RemovalRestrictedError(
