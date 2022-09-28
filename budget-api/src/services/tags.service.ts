@@ -69,7 +69,7 @@ export class TagsService {
     return this.saveTag(updatedTag);
   }
 
-  static async deleteOne(tagId: number) {
+  static async deleteOne(tagId: number): Promise<void> {
     const deletedTag = await Tag.findOneBy({ id: tagId });
     if (!deletedTag) throw new NotFoundError('Tag not found');
 

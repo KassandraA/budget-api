@@ -5,17 +5,17 @@ import { ValidationTarget } from './validation-target.enum';
 
 export class TransactionValidator {
   private static queryParams = [
-    'order_by',
+    'orderBy',
     'message',
     'transactor',
     'amount',
     'date',
-    'tag_names',
-    'account_names',
+    'tagNames',
+    'accountNames',
     'skip',
     'take',
   ];
-  private static orderByParams = ['message', 'transactor', 'amount', 'date', 'account_name'];
+  private static orderByParams = ['message', 'transactor', 'amount', 'date', 'accountName'];
   private static stringParams = ['like'];
   private static nonStringParams = ['lte', 'gte', 'equal'];
 
@@ -26,7 +26,7 @@ export class TransactionValidator {
       TransactionValidator.queryParams
     ),
     ValidationHelpers.validateObjectKeys(
-      'order_by',
+      'orderBy',
       ValidationTarget.Query,
       TransactionValidator.orderByParams
     ),
@@ -58,11 +58,11 @@ export class TransactionValidator {
     ValidationHelpers.validateString('transactor.*', ValidationTarget.Query, false, true),
     ValidationHelpers.validateDecimal('amount.*', ValidationTarget.Query),
     ValidationHelpers.validateDate('date.*', ValidationTarget.Query),
-    ValidationHelpers.validateIncludes('order_by.*', ['ASC', 'DESC'], ValidationTarget.Query),
-    ValidationHelpers.validateArray('tag_names', ValidationTarget.Query),
-    ValidationHelpers.validateString('tag_names.*', ValidationTarget.Query, false, true),
-    ValidationHelpers.validateArray('account_names', ValidationTarget.Query),
-    ValidationHelpers.validateString('account_names.*', ValidationTarget.Query, false, true),
+    ValidationHelpers.validateIncludes('orderBy.*', ['ASC', 'DESC'], ValidationTarget.Query),
+    ValidationHelpers.validateArray('tagNames', ValidationTarget.Query),
+    ValidationHelpers.validateString('tagNames.*', ValidationTarget.Query, false, true),
+    ValidationHelpers.validateArray('accountNames', ValidationTarget.Query),
+    ValidationHelpers.validateString('accountNames.*', ValidationTarget.Query, false, true),
     ValidationHelpers.validateInteger('skip', ValidationTarget.Query),
     ValidationHelpers.validateInteger('take', ValidationTarget.Query),
     TransactionValidator.validate,
@@ -86,9 +86,9 @@ export class TransactionValidator {
     ValidationHelpers.validateDecimal('*.amount', ValidationTarget.Body, true),
     ValidationHelpers.validateString('*.message'),
     ValidationHelpers.validateString('*.transactor', ValidationTarget.Body, true),
-    ValidationHelpers.validateString('*.account_name', ValidationTarget.Body, true),
-    ValidationHelpers.validateArray('*.tag_names'),
-    ValidationHelpers.validateString('*.tag_names.*'),
+    ValidationHelpers.validateString('*.accountName', ValidationTarget.Body, true),
+    ValidationHelpers.validateArray('*.tagNames'),
+    ValidationHelpers.validateString('*.tagNames.*'),
     ValidationHelpers.validateArray('*.properties', ValidationTarget.Body, false, false),
     ValidationHelpers.validateString('*.properties.*'),
     TransactionValidator.validate,
@@ -101,9 +101,9 @@ export class TransactionValidator {
     ValidationHelpers.validateDecimal('amount'),
     ValidationHelpers.validateString('message'),
     ValidationHelpers.validateString('transactor'),
-    ValidationHelpers.validateString('account_name'),
-    ValidationHelpers.validateArray('tag_names'),
-    ValidationHelpers.validateString('tag_names.*'),
+    ValidationHelpers.validateString('accountName'),
+    ValidationHelpers.validateArray('tagNames'),
+    ValidationHelpers.validateString('tagNames.*'),
     ValidationHelpers.validateArray('properties', ValidationTarget.Body, false, false),
     ValidationHelpers.validateString('properties.*'),
     TransactionValidator.validate,

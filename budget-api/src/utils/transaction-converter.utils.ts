@@ -12,8 +12,8 @@ export class TransactionConverter {
       transactor: data.transactor,
       date: data.date,
       amount: data.amount,
-      accountName: data.account_name,
-      tagNames: data.tag_names,
+      accountName: data.accountName,
+      tagNames: data.tagNames,
       properties: new Map(Object.entries(data.properties))
     };
   }

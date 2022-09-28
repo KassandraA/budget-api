@@ -18,13 +18,13 @@ export class TransactionTypeormUtils {
   public static isFilterSortPageDto(obj?: any): obj is TransactionFilterSortPageDto {
     return (
       !obj ||
-      ((!obj.order_by || typeof obj.order_by === 'object') &&
+      ((!obj.orderBy || typeof obj.orderBy === 'object') &&
         (!obj.message || typeof obj.message === 'object') &&
         (!obj.transactor || typeof obj.transactor === 'object') &&
         (!obj.amount || typeof obj.amount === 'object') &&
         (!obj.date || typeof obj.date === 'object') &&
-        (!obj.tag_names || typeof obj.tag_names === 'object') &&
-        (!obj.account_names || typeof obj.account_names === 'object') &&
+        (!obj.tagNames || typeof obj.tagNames === 'object') &&
+        (!obj.accountNames || typeof obj.accountNames === 'object') &&
         (!obj.skip || typeof parseInt(obj.skip, 10) === 'number') &&
         (!obj.take || typeof parseInt(obj.take, 10) === 'number'))
     );
@@ -39,20 +39,20 @@ export class TransactionTypeormUtils {
       ...(query?.transactor ? { transactor: query.transactor } : {}),
       ...(query?.amount ? { amount: query.amount } : {}),
       ...(query?.date ? { date: query.date } : { date: { gte: new Date(monthAgo) } }),
-      ...(query?.tag_names ? { tag_names: query.tag_names } : {}),
-      ...(query?.account_names ? { account_names: query.account_names } : {}),
+      ...(query?.tagNames ? { tagNames: query.tagNames } : {}),
+      ...(query?.accountNames ? { accountNames: query.accountNames } : {}),
 
-      ...(query?.order_by
+      ...(query?.orderBy
         ? {
-            order_by: {
-              ...(query.order_by.amount ? { amount: query.order_by.amount } : {}),
-              ...(query.order_by.account_name ? { account_name: query.order_by.account_name } : {}),
-              ...(query.order_by.transactor ? { transactor: query.order_by.transactor } : {}),
-              ...(query.order_by.message ? { message: query.order_by.message } : {}),
-              ...(query.order_by.date ? { date: query.order_by.date } : {}),
+            orderBy: {
+              ...(query.orderBy.amount ? { amount: query.orderBy.amount } : {}),
+              ...(query.orderBy.accountName ? { accountName: query.orderBy.accountName } : {}),
+              ...(query.orderBy.transactor ? { transactor: query.orderBy.transactor } : {}),
+              ...(query.orderBy.message ? { message: query.orderBy.message } : {}),
+              ...(query.orderBy.date ? { date: query.orderBy.date } : {}),
             },
           }
-        : { order_by: { date: 'DESC' } }),
+        : { orderBy: { date: 'DESC' } }),
 
       skip: query?.skip ? +query.skip : 0,
       take: query?.take ? +query.take : 100,
@@ -84,19 +84,19 @@ export class TransactionTypeormUtils {
       ...(query?.amount ? { amount: this.mapNonStringParam(query.amount) } : {}),
       ...(query?.date ? { date: this.mapDateParam(query.date) } : {})
     });
-    if (query?.tag_names) {
-      builder.andWhere(`tags.name IN (:...tagNames)`, { tagNames: query.tag_names });
+    if (query?.tagNames) {
+      builder.andWhere(`tags.name IN (:...tagNames)`, { tagNames: query.tagNames });
     }
-    if (query?.account_names) {
-      builder.andWhere(`account.name IN (:...accountNames)`, { accountNames: query.account_names });
+    if (query?.accountNames) {
+      builder.andWhere(`account.name IN (:...accountNames)`, { accountNames: query.accountNames });
     }
 
     builder.orderBy({
-      ...(query?.order_by?.amount ? { 'transactions.amount': query.order_by.amount } : {}),
-      ...(query?.order_by?.transactor ? { 'transactions.transactor': query.order_by.transactor } : {}),
-      ...(query?.order_by?.message ? { 'transactions.message': query.order_by.message } : {}),
-      ...(query?.order_by?.date ? { 'transactions.date': query.order_by.date } : {}),
-      ...(query?.order_by?.account_name ? { 'account.name': query.order_by.account_name } : {})
+      ...(query?.orderBy?.amount ? { 'transactions.amount': query.orderBy.amount } : {}),
+      ...(query?.orderBy?.transactor ? { 'transactions.transactor': query.orderBy.transactor } : {}),
+      ...(query?.orderBy?.message ? { 'transactions.message': query.orderBy.message } : {}),
+      ...(query?.orderBy?.date ? { 'transactions.date': query.orderBy.date } : {}),
+      ...(query?.orderBy?.accountName ? { 'account.name': query.orderBy.accountName } : {})
     });
 
     builder.skip(query?.skip ? query.skip : 0)

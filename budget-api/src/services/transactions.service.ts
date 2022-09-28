@@ -4,7 +4,6 @@ import { NotFoundError } from '../errors/not-found.error';
 import { Transaction } from '../models/transaction.model';
 import { ValueNormalizer } from '../utils/value-normalizer.utils';
 import { TagsService } from './tags.service';
-import { TransactionResponseDto } from 'src/dto/transaction-response.dto';
 import { ModelConstants } from '../models/model-constants';
 import { TransactionDto } from '../../../budget-common/src/dto/transaction.dto';
 import { TransactionConverter } from '../utils/transaction-converter.utils';
@@ -13,6 +12,7 @@ import { Account } from '../models/account.model';
 import { Tag } from '../models/tag.model';
 import { Property } from '../models/property.model';
 import { DatabaseConstants } from '../models/database-constants';
+import { TransactionResponseDto } from '../dto/transaction-response.dto';
 
 export class TransactionsService {
   static async getMany(
@@ -87,7 +87,7 @@ export class TransactionsService {
     return await Transaction.save(updatedTransaction);
   }
 
-  static async deleteOne(transactionId: number) {
+  static async deleteOne(transactionId: number): Promise<void> {
     const transaction = await Transaction.findOneBy({ id: transactionId });
     if (!transaction) throw new NotFoundError('Transaction not found');
 

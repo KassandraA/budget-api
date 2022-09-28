@@ -1,11 +1,11 @@
 export interface TransactionFilterSortPageDto {
-  order_by?: OrderBy;
+  orderBy?: OrderBy;
   message?: StringFilter;
   transactor?: StringFilter;
   amount?: NonStringFilter<number>;
   date?: NonStringFilter<Date>;
-  tag_names?: string[];
-  account_names?: string[];
+  tagNames?: string[];
+  accountNames?: string[];
   skip?: number;
   take?: number;
 }
@@ -15,7 +15,7 @@ export interface OrderBy {
   transactor?: 'ASC' | 'DESC';
   amount?: 'ASC' | 'DESC';
   date?: 'ASC' | 'DESC';
-  account_name?: 'ASC' | 'DESC';
+  accountName?: 'ASC' | 'DESC';
 }
 
 export interface StringFilter {
