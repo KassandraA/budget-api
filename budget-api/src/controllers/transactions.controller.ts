@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import { Transaction } from '../models/transaction.model';
 import { TransactionsService } from '../services/transactions.service';
 import { TransactionFilterSortPageDto } from '../dto/transaction-filter-sort-page.dto';
-import { TransactionResponseDto } from 'src/dto/transaction-response.dto';
+import { TransactionResponseDto } from '../dto/transaction-response.dto';
 import { TransactionTypeormUtils } from '../utils/transaction-typeorm.utils';
 import { TransactionConverter } from '../utils/transaction-converter.utils';
 

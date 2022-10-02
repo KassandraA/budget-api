@@ -8,7 +8,7 @@ export interface RBCZTransactionDto  { // RBCZDataContract
   accountnumber: string; // account // 282762002/5500 (account)
   accountname: string; // account // Andrii Annenko
   accountcurrency: string; // account // CZK
-  
+
   nameofaccount: string; // - // BARCLAYS EXECUTION
   originalamountandcurrency: string; // - // -97
   originalamountandcurrency_1: string; // - // EUR

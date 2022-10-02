@@ -140,8 +140,8 @@ export class TransactionsService {
             }
             newPrs.delete(ep.name);
             return true;
-          } 
-            
+          }
+
           return false;
         })
       : [];
