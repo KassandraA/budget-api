@@ -14,18 +14,18 @@ export class AccountValidator {
       const errors = validationResult(req);
       if (!errors.isEmpty()) return res.status(422).json({ errors: errors.array() });
       next();
-    },
+    }
   ];
 
   static validateOnCreate = [
     ValidationHelpers.validateString('name', ValidationTarget.Body, true, true),
     ValidationHelpers.validateInteger('status_id', ValidationTarget.Body, true),
-    ...AccountValidator.validate,
+    ...AccountValidator.validate
   ];
 
   static validateOnUpdate = [
     ValidationHelpers.validateString('name', ValidationTarget.Body, false, true),
     ValidationHelpers.validateInteger('status_id'),
-    ...AccountValidator.validate,
+    ...AccountValidator.validate
   ];
 }

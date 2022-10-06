@@ -3,7 +3,7 @@ import {
   QueryRunner,
   Table,
   TableForeignKey,
-  TableIndex,
+  TableIndex
 } from 'typeorm';
 
 export class InitialCreate1646497152778 implements MigrationInterface {
@@ -16,20 +16,20 @@ export class InitialCreate1646497152778 implements MigrationInterface {
             name: 'id',
             type: 'integer',
             isPrimary: true,
-            isGenerated: true,
+            isGenerated: true
           },
           {
             name: 'name',
             type: 'nvarchar2',
             isNullable: false,
-            isUnique: true,
+            isUnique: true
           },
           {
             name: 'description',
             type: 'nvarchar2',
-            isNullable: true,
-          },
-        ],
+            isNullable: true
+          }
+        ]
       }),
       true
     );
@@ -42,39 +42,39 @@ export class InitialCreate1646497152778 implements MigrationInterface {
             name: 'id',
             type: 'integer',
             isPrimary: true,
-            isGenerated: true,
+            isGenerated: true
           },
           {
             name: 'name',
             type: 'nvarchar2',
             isNullable: false,
-            isUnique: true,
+            isUnique: true
           },
           {
             name: 'description',
             type: 'nvarchar2',
-            isNullable: true,
+            isNullable: true
           },
           {
             name: 'currency',
             type: 'nvarchar2',
-            isNullable: true,
+            isNullable: true
           },
           {
             name: 'account_number',
             type: 'nvarchar2',
-            isNullable: true,
+            isNullable: true
           },
           {
             name: 'card_number',
             type: 'nvarchar2',
-            isNullable: true,
+            isNullable: true
           },
           {
             name: 'status_id',
-            type: 'integer',
-          },
-        ],
+            type: 'integer'
+          }
+        ]
       }),
       true
     );
@@ -85,7 +85,7 @@ export class InitialCreate1646497152778 implements MigrationInterface {
         columnNames: ['status_id'],
         referencedColumnNames: ['id'],
         referencedTableName: 'account_statuses',
-        onDelete: 'RESTRICT',
+        onDelete: 'RESTRICT'
       })
     );
 
@@ -97,15 +97,15 @@ export class InitialCreate1646497152778 implements MigrationInterface {
             name: 'id',
             type: 'integer',
             isPrimary: true,
-            isGenerated: true,
+            isGenerated: true
           },
           {
             name: 'name',
             type: 'nvarchar2',
             isNullable: false,
-            isUnique: true,
-          },
-        ],
+            isUnique: true
+          }
+        ]
       }),
       true
     );
@@ -118,33 +118,33 @@ export class InitialCreate1646497152778 implements MigrationInterface {
             name: 'id',
             type: 'integer',
             isPrimary: true,
-            isGenerated: true,
+            isGenerated: true
           },
           {
             name: 'date',
             type: 'datetime',
-            isNullable: false,
+            isNullable: false
           },
           {
             name: 'message',
             type: 'nvarchar2',
-            isNullable: true,
+            isNullable: true
           },
           {
             name: 'transactor',
             type: 'nvarchar2',
-            isNullable: false,
+            isNullable: false
           },
           {
             name: 'amount',
             type: 'integer',
-            isNullable: false,
+            isNullable: false
           },
           {
             name: 'account_id',
-            type: 'integer',
-          },
-        ],
+            type: 'integer'
+          }
+        ]
       }),
       true
     );
@@ -155,7 +155,7 @@ export class InitialCreate1646497152778 implements MigrationInterface {
         columnNames: ['account_id'],
         referencedColumnNames: ['id'],
         referencedTableName: 'accounts',
-        onDelete: 'RESTRICT',
+        onDelete: 'RESTRICT'
       })
     );
 
@@ -163,7 +163,7 @@ export class InitialCreate1646497152778 implements MigrationInterface {
       'transactions',
       new TableIndex({
         name: 'IDX_TRANSACTIONS_DATE',
-        columnNames: ['date'],
+        columnNames: ['date']
       })
     );
 
@@ -173,13 +173,13 @@ export class InitialCreate1646497152778 implements MigrationInterface {
         columns: [
           {
             name: 'transaction_id',
-            type: 'integer',
+            type: 'integer'
           },
           {
             name: 'tag_id',
-            type: 'integer',
-          },
-        ],
+            type: 'integer'
+          }
+        ]
       })
     );
 
@@ -189,7 +189,7 @@ export class InitialCreate1646497152778 implements MigrationInterface {
         columnNames: ['transaction_id'],
         referencedColumnNames: ['id'],
         referencedTableName: 'transactions',
-        onDelete: 'CASCADE',
+        onDelete: 'CASCADE'
       })
     );
 
@@ -199,20 +199,20 @@ export class InitialCreate1646497152778 implements MigrationInterface {
         columnNames: ['tag_id'],
         referencedColumnNames: ['id'],
         referencedTableName: 'tags',
-        onDelete: 'CASCADE',
+        onDelete: 'CASCADE'
       })
     );
 
     await queryRunner.createPrimaryKey('transaction_tags', [
       'transaction_id',
-      'tag_id',
+      'tag_id'
     ]);
 
     await queryRunner.createIndex(
       'transaction_tags',
       new TableIndex({
         name: 'IDX_TRANSACTION_TAGS_TRANSACTION_ID',
-        columnNames: ['transaction_id'],
+        columnNames: ['transaction_id']
       })
     );
 
@@ -220,7 +220,7 @@ export class InitialCreate1646497152778 implements MigrationInterface {
       'transaction_tags',
       new TableIndex({
         name: 'IDX_TRANSACTION_TAGS_TAG_ID',
-        columnNames: ['tag_id'],
+        columnNames: ['tag_id']
       })
     );
 
@@ -232,23 +232,23 @@ export class InitialCreate1646497152778 implements MigrationInterface {
             name: 'id',
             type: 'integer',
             isPrimary: true,
-            isGenerated: true,
+            isGenerated: true
           },
           {
             name: 'name',
             type: 'navchar2',
-            isNullable: false,
+            isNullable: false
           },
           {
             name: 'value',
             type: 'navchar2',
-            isNullable: true,
+            isNullable: true
           },
           {
             name: 'transaction_id',
-            type: 'integer',
-          },
-        ],
+            type: 'integer'
+          }
+        ]
       })
     );
 
@@ -258,7 +258,7 @@ export class InitialCreate1646497152778 implements MigrationInterface {
           columnNames: ['transaction_id'],
           referencedColumnNames: ['id'],
           referencedTableName: 'transactions',
-          onDelete: 'CASCADE',
+          onDelete: 'CASCADE'
         })
       );
   }

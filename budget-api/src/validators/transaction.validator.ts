@@ -13,7 +13,7 @@ export class TransactionValidator {
     'tagNames',
     'accountNames',
     'skip',
-    'take',
+    'take'
   ];
   private static orderByParams = ['message', 'transactor', 'amount', 'date', 'accountName'];
   private static stringParams = ['like'];
@@ -50,7 +50,7 @@ export class TransactionValidator {
       ValidationTarget.Query,
       TransactionValidator.nonStringParams
     ),
-    TransactionValidator.validate,
+    TransactionValidator.validate
   ];
 
   private static validateQueryValues = [
@@ -65,7 +65,7 @@ export class TransactionValidator {
     ValidationHelpers.validateString('accountNames.*', ValidationTarget.Query, false, true),
     ValidationHelpers.validateInteger('skip', ValidationTarget.Query),
     ValidationHelpers.validateInteger('take', ValidationTarget.Query),
-    TransactionValidator.validate,
+    TransactionValidator.validate
   ];
 
   private static validate(req: Request, res: Response, next: NextFunction) {
@@ -76,7 +76,7 @@ export class TransactionValidator {
 
   static validateOnGet = [
     ...TransactionValidator.validateQueryKeys,
-    ...TransactionValidator.validateQueryValues,
+    ...TransactionValidator.validateQueryValues
   ];
 
   static validateOnCreate = [
@@ -91,7 +91,7 @@ export class TransactionValidator {
     ValidationHelpers.validateString('*.tagNames.*'),
     ValidationHelpers.validateArray('*.properties', ValidationTarget.Body, false, false),
     ValidationHelpers.validateString('*.properties.*'),
-    TransactionValidator.validate,
+    TransactionValidator.validate
   ];
 
   static validateOnUpdate = [
@@ -106,6 +106,6 @@ export class TransactionValidator {
     ValidationHelpers.validateString('tagNames.*'),
     ValidationHelpers.validateArray('properties', ValidationTarget.Body, false, false),
     ValidationHelpers.validateString('properties.*'),
-    TransactionValidator.validate,
+    TransactionValidator.validate
   ];
 }

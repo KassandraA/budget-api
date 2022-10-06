@@ -11,16 +11,16 @@ export class AccountStatusValidator {
       const errors = validationResult(req);
       if (!errors.isEmpty()) return res.status(422).json({ errors: errors.array() });
       next();
-    },
+    }
   ];
 
   static validateOnCreate = [
     ValidationHelpers.validateString('name', ValidationTarget.Body, true, true),
-    ...AccountStatusValidator.validate,
+    ...AccountStatusValidator.validate
   ];
 
   static validateOnUpdate = [
     ValidationHelpers.validateString('name', ValidationTarget.Body, false, true),
-    ...AccountStatusValidator.validate,
+    ...AccountStatusValidator.validate
   ];
 }

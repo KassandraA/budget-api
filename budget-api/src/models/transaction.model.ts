@@ -7,7 +7,7 @@ import {
   ManyToMany,
   ManyToOne,
   OneToMany,
-  PrimaryGeneratedColumn,
+  PrimaryGeneratedColumn
 } from 'typeorm';
 import { DatabaseConstants } from './database-constants';
 import { Account } from './account.model';
@@ -35,7 +35,7 @@ export class Transaction extends BaseEntity {
   account_id: number;
 
   @ManyToOne(() => Account, (account) => account.transactions, {
-    onDelete: 'CASCADE',
+    onDelete: 'CASCADE'
   })
   @JoinColumn({ name: 'account_id' })
   account: Account;
@@ -44,7 +44,7 @@ export class Transaction extends BaseEntity {
   @JoinTable({
     name: 'transaction_tags',
     joinColumn: { name: 'transaction_id', referencedColumnName: 'id' },
-    inverseJoinColumn: { name: 'tag_id', referencedColumnName: 'id' },
+    inverseJoinColumn: { name: 'tag_id', referencedColumnName: 'id' }
   })
   tags: Tag[];
 

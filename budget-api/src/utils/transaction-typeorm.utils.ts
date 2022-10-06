@@ -7,7 +7,7 @@ import {
   Like,
   MoreThanOrEqual,
   Not,
-  SelectQueryBuilder,
+  SelectQueryBuilder
 } from 'typeorm';
 import { Transaction } from '../models/transaction.model';
 import { DateUtils } from './date.utils';
@@ -49,13 +49,13 @@ export class TransactionTypeormUtils {
               ...(query.orderBy.accountName ? { accountName: query.orderBy.accountName } : {}),
               ...(query.orderBy.transactor ? { transactor: query.orderBy.transactor } : {}),
               ...(query.orderBy.message ? { message: query.orderBy.message } : {}),
-              ...(query.orderBy.date ? { date: query.orderBy.date } : {}),
-            },
+              ...(query.orderBy.date ? { date: query.orderBy.date } : {})
+            }
           }
         : { orderBy: { date: 'DESC' } }),
 
       skip: query?.skip ? +query.skip : 0,
-      take: query?.take ? +query.take : 100,
+      take: query?.take ? +query.take : 100
     };
 
     return options;

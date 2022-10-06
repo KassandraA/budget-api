@@ -9,16 +9,16 @@ export class TagValidator {
       const errors = validationResult(req);
       if (!errors.isEmpty()) return res.status(422).json({ errors: errors.array() });
       next();
-    },
+    }
   ];
 
   static validateOnCreate = [
     ValidationHelpers.validateString('name', ValidationTarget.Body, true, true),
-    ...TagValidator.validate,
+    ...TagValidator.validate
   ];
 
   static validateOnUpdate = [
     ValidationHelpers.validateString('name', ValidationTarget.Body, true, true),
-    ...TagValidator.validate,
+    ...TagValidator.validate
   ];
 }

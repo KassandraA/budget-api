@@ -6,7 +6,9 @@
   "author": "https://github.com/KassandraA",
   "devDependencies": {
     "@types/body-parser": "^1.19.0",
-    "tslint": "^6.1.3",
+    "@typescript-eslint/eslint-plugin": "^5.39.0",
+    "@typescript-eslint/parser": "^5.39.0",
+    "eslint": "^8.24.0",
     "typeorm": "^0.3.6",
     "typescript": "^4.3.4"
   },
@@ -19,8 +21,8 @@
     "sqlite3": "^5.0.2"
   },
   "scripts": {
-    "migration:run": "ts-node ./node_modules/typeorm/cli.js migration:run",
-    "migration:revert": "ts-node ./node_modules/typeorm/cli.js migration:revert",
-    "clean": "rm -r dist/* || true"
+    "migration:run": "node ./node_modules/typeorm/cli.js migration:run",
+    "migration:revert": "node ./node_modules/typeorm/cli.js migration:revert",
+    "lint": "eslint . --ext .ts --fix"
   }
 }

@@ -1,5 +1,3 @@
-import { CustomSanitizer } from 'express-validator';
-
 export class ValueNormalizer {
   public static normalizeString(value: string): string {
     if (value === undefined) return undefined;

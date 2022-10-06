@@ -55,7 +55,7 @@ export class AccountsService {
     statusId: number
   ): Promise<Account> {
     const updatedAccount = await Account.findOneBy({
-      id: accountId,
+      id: accountId
     });
 
     if (!updatedAccount) throw new NotFoundError('Account not found');

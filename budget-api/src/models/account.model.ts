@@ -30,7 +30,7 @@ export class Account extends BaseEntity {
   transactions: Transaction[];
 
   @ManyToOne(() => AccountStatus, (status) => status.accounts, {
-    onDelete: 'RESTRICT',
+    onDelete: 'RESTRICT'
   })
   @JoinColumn({ name: 'status_id' })
   status: AccountStatus;

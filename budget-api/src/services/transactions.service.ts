@@ -24,7 +24,7 @@ export class TransactionsService {
 
     return {
       data: result,
-      meta: { ...preFilled, total_count: totalCount },
+      meta: { ...preFilled, total_count: totalCount }
     };
   }
 
