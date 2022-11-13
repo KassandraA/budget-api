@@ -2,5 +2,5 @@
   "watch": ["src"],
   "ext": "ts, json",
   "ignore": ["src/**/*.spec.ts"],
-  "exec": "tslint -c tslint.json -p tsconfig.json --fix && tsc --incremental && node"
+  "exec": "eslint . --ext .ts --fix && tsc --incremental && node"
 }

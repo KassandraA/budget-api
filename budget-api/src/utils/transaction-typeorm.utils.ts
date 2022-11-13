@@ -1,8 +1,9 @@
-import { TransactionFilterSortPageDto, NonStringFilter, StringFilter } from '../dto/transaction-filter-sort-page.dto';
+import { TransactionFilterSortPageDto, NonStringFilter, StringFilter, KeyValueType } from '../dto/transaction-filter-sort-page.dto';
 import {
   Between,
   Equal,
   FindOperator,
+  FindOperatorType,
   LessThanOrEqual,
   Like,
   MoreThanOrEqual,
@@ -15,7 +16,7 @@ import { ModelConstants } from '../models/model-constants';
 import { DatabaseConstants } from '../models/database-constants';
 
 export class TransactionTypeormUtils {
-  public static isFilterSortPageDto(obj?: any): obj is TransactionFilterSortPageDto {
+  public static isFilterSortPageDto(obj?: KeyValueType): obj is TransactionFilterSortPageDto {
     return (
       !obj ||
       ((!obj.orderBy || typeof obj.orderBy === 'object') &&
@@ -25,8 +26,8 @@ export class TransactionTypeormUtils {
         (!obj.date || typeof obj.date === 'object') &&
         (!obj.tagNames || typeof obj.tagNames === 'object') &&
         (!obj.accountNames || typeof obj.accountNames === 'object') &&
-        (!obj.skip || typeof parseInt(obj.skip, 10) === 'number') &&
-        (!obj.take || typeof parseInt(obj.take, 10) === 'number'))
+        (!obj.skip || typeof parseInt(obj.skip as string, 10) === 'number') &&
+        (!obj.take || typeof parseInt(obj.take as string, 10) === 'number'))
     );
   }
 
@@ -116,6 +117,8 @@ export class TransactionTypeormUtils {
       return MoreThanOrEqual(DateUtils.toSQLiteString(param.gte));
     } else if (param?.lte) {
       return LessThanOrEqual(DateUtils.toSQLiteString(param.lte));
+    } else {
+      return new FindOperator({} as FindOperatorType, '');
     }
   }
 
@@ -130,12 +133,16 @@ export class TransactionTypeormUtils {
       return MoreThanOrEqual(param.gte);
     } else if (param?.lte) {
       return LessThanOrEqual(param.lte);
+    } else {
+      return new FindOperator({} as FindOperatorType, {} as T);
     }
   }
 
   public static mapStringParam(queryParam?: StringFilter): FindOperator<string> {
     if (queryParam?.like) {
       return Like(`%${queryParam.like}%`);
+    } else {
+      return new FindOperator({} as FindOperatorType, '');
     }
   }
 }

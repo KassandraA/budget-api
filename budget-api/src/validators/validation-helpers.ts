@@ -1,4 +1,5 @@
 import { body, query, ValidationChain } from 'express-validator';
+import { KeyValueType } from '../dto/transaction-filter-sort-page.dto';
 import { ValidationTarget } from './validation-target.enum';
 
 export class ValidationHelpers {
@@ -127,7 +128,7 @@ export class ValidationHelpers {
     target: ValidationTarget,
     keys: string[]
   ): ValidationChain {
-    return this.getChecker(target, paramName).custom((value) => {
+    return this.getChecker(target, paramName).custom((value: KeyValueType) => { // Unsafe argument of type `any` assigned to a parameter of type `{}`  @typescript-eslint/no-unsafe-argument
       if (!value) return true;
 
       const currKeys = Object.keys(value);

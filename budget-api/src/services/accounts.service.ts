@@ -73,7 +73,7 @@ export class AccountsService {
 
   static async deleteOne(accountId: number) {
     const result = await Account.delete(accountId);
-    if (result.affected < 1) {
+    if (result.affected && result.affected < 1) {
       throw new NotFoundError('Account not found');
     }
   }
@@ -82,9 +82,9 @@ export class AccountsService {
     try {
       return await account.save();
     } catch (error) {
-      if (error.message.includes('FOREIGN KEY constraint failed')) {
+      if ((error as Error).message.includes('FOREIGN KEY constraint failed')) {
         throw new NotFoundError(`status_id not found: ${account.status_id}`);
-      } else if (error.message.includes('UNIQUE constraint failed: accounts.name')) {
+      } else if ((error as Error).message.includes('UNIQUE constraint failed: accounts.name')) {
         throw new NotUniqueError(`The name '${account.name}' is already in use`);
       } else {
         throw error;

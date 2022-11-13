@@ -5,20 +5,20 @@ import { Transaction } from './transaction.model';
 @Entity(DatabaseConstants.propertiesTable)
 export class Property extends BaseEntity {
   @PrimaryGeneratedColumn()
-  id: number;
+  id!: number;
 
   @Column()
-  name: string;
+  name!: string;
 
   @Column({ nullable: true })
   value?: string
 
   @Column()
-  transaction_id: number;
+  transaction_id!: number;
 
   @ManyToOne(() => Transaction, (transaction) => transaction.properties, {
     orphanedRowAction: 'delete'
   })
-  @JoinColumn({ name: 'transaction_id'})
-  transaction: Transaction;
+  @JoinColumn({ name: 'transaction_id' })
+  transaction!: Transaction;
 }

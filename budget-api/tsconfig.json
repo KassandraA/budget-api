@@ -1,13 +1,22 @@
 {
   "compilerOptions": {
+    "lib": [
+      "ES2021",
+      "DOM"
+    ],
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "module": "commonjs",
     "esModuleInterop": true,
-    "target": "es6",
+    "target": "es2021",
     "noImplicitAny": true,
     "sourceMap": true,
     "outDir": "dist"
   },
-  "include": ["src/**/*", "../budget-common/**/*"]
+  "extends": "@tsconfig/node16/tsconfig.json",
+  "include": ["src/**/*", "../budget-common/**/*"],
+  "exclude": [
+    "node_modules",
+    "**/*.spec.ts"
+  ]
 }

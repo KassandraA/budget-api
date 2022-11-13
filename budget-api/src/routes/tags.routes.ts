@@ -10,7 +10,7 @@ export class TagsRoutes {
     router.get('/:id([0-9]+)', TagsController.getOneById);
     router.post('', TagValidator.validateOnCreate, TagsController.addOne);
     router.patch('/:id([0-9]+)', TagValidator.validateOnUpdate, TagsController.updateOne);
-    router.delete('/:id([0-9]+)', TagsController.deleteOne);
+    router.delete('/:id([0-9]+)', () => TagsController.deleteOne);
     return router;
   }
 }

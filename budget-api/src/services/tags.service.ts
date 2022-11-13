@@ -71,7 +71,7 @@ export class TagsService {
 
   static async deleteOne(tagId: number): Promise<void> {
     const result = await Tag.delete(tagId);
-    if (result.affected < 1) {
+    if (result.affected && result.affected < 1) {
       throw new NotFoundError('Tag not found');
     }
   }
@@ -80,7 +80,7 @@ export class TagsService {
     try {
       return await tag.save();
     } catch (error) {
-      if (error.message.includes('UNIQUE constraint failed: tags.name')) {
+      if ((error as Error).message.includes('UNIQUE constraint failed: tags.name')) {
         throw new NotUniqueError(`The name '${tag.name}' is already in use`);
       } else {
         throw error;

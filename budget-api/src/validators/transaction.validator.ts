@@ -21,7 +21,7 @@ export class TransactionValidator {
 
   private static validateQueryKeys = [
     ValidationHelpers.validateObjectKeys(
-      null,
+      '',
       ValidationTarget.Query,
       TransactionValidator.queryParams
     ),

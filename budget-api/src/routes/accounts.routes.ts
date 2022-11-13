@@ -5,6 +5,7 @@ import { AccountsController } from '../controllers/accounts.controller';
 const router = Router();
 
 export class AccountsRoutes {
+  // todo @typescript-eslint/unbound-method
   get routes() {
     router.get('', AccountsController.getAll);
     router.get('/:id([0-9]+)', AccountsController.getOneById);

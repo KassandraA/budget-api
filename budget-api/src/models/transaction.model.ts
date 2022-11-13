@@ -17,28 +17,28 @@ import { Property } from './property.model';
 @Entity(DatabaseConstants.transactionsTable)
 export class Transaction extends BaseEntity {
   @PrimaryGeneratedColumn()
-  id: number;
+  id!: number;
 
   @Column()
-  date: Date;
+  date!: Date;
 
   @Column({ nullable: true })
   message?: string;
 
   @Column()
-  transactor: string;
+  transactor!: string;
 
   @Column()
-  amount: number;
+  amount!: number;
 
   @Column()
-  account_id: number;
+  account_id!: number;
 
   @ManyToOne(() => Account, (account) => account.transactions, {
     onDelete: 'CASCADE'
   })
   @JoinColumn({ name: 'account_id' })
-  account: Account;
+  account!: Account;
 
   @ManyToMany(() => Tag, (tag) => tag.transactions)
   @JoinTable({
@@ -46,10 +46,10 @@ export class Transaction extends BaseEntity {
     joinColumn: { name: 'transaction_id', referencedColumnName: 'id' },
     inverseJoinColumn: { name: 'tag_id', referencedColumnName: 'id' }
   })
-  tags: Tag[];
+  tags!: Tag[];
 
   @OneToMany(() => Property, (property) => property.transaction, {
     cascade: true
   })
-  properties: Property[]
+  properties!: Property[];
 }

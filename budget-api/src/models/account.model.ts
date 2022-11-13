@@ -6,10 +6,10 @@ import { Transaction } from './transaction.model';
 @Entity(DatabaseConstants.accountsTable)
 export class Account extends BaseEntity {
   @PrimaryGeneratedColumn()
-  id: number;
+  id!: number;
 
   @Column({ unique: true })
-  name: string;
+  name!: string;
 
   @Column({ nullable: true })
   description?: string;
@@ -24,14 +24,14 @@ export class Account extends BaseEntity {
   card_number?: string;
 
   @Column()
-  status_id: number;
+  status_id!: number;
 
   @OneToMany(() => Transaction, (transaction) => transaction.account)
-  transactions: Transaction[];
+  transactions!: Transaction[];
 
   @ManyToOne(() => AccountStatus, (status) => status.accounts, {
     onDelete: 'RESTRICT'
   })
   @JoinColumn({ name: 'status_id' })
-  status: AccountStatus;
+  status!: AccountStatus;
 }

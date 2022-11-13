@@ -48,7 +48,7 @@ export class TransactionsService {
 
     const transactionArray = transactions.map((tran) => {
       const account = accountsMap.get(tran.accountName) as Account;
-      const tags = tran.tagNames ? tran.tagNames.map((name) => tagsMap.get(name)) : [];
+      const tags = tran.tagNames ? tran.tagNames.map((name) => tagsMap.get(name)) as Tag[] : [];
       const props = this.getProperties(tran);
       return TransactionConverter.fromDto(tran, account, tags, props);
     });
@@ -89,13 +89,13 @@ export class TransactionsService {
 
   static async deleteOne(transactionId: number): Promise<void> {
     const result = await Transaction.delete(transactionId);
-    if (result.affected < 1) {
+    if (result.affected && result.affected < 1) {
       throw new NotFoundError('Transaction not found');
     }
   }
 
   private static async getTagsMap(transactions: TransactionDto[]): Promise<Map<string, Tag>> {
-    const tagNames = transactions.reduce((tn, tran) => {
+    const tagNames = transactions.reduce((tn: string[], tran: TransactionDto) => {
       return tran?.tagNames?.length > 0 ? [...tn, ...tran.tagNames] : [...tn];
     }, []);
     const transactionTags = await TagsService.addMany(tagNames);
@@ -116,7 +116,7 @@ export class TransactionsService {
   }
 
   private static getProperties(transaction: TransactionDto): Property[] {
-   return !transaction.properties.size
+   return !transaction.properties || !transaction.properties.size
       ? []
       : Array.from(transaction.properties, ([propName, propValue]) => {
           const prop = new Property();
@@ -126,7 +126,7 @@ export class TransactionsService {
         });
   }
 
-  private static getUpdatedProperties(existingProps: Property[], newProps: Map<string, any>): Property[] {
+  private static getUpdatedProperties(existingProps: Property[], newProps: Map<string, string>): Property[] {
     if (!newProps.size) {
       return [];
     }

@@ -27,3 +27,7 @@ export interface NonStringFilter<T> {
   lte?: T;
   gte?: T;
 }
+
+export interface KeyValueType {
+  [key: string]: any;
+}

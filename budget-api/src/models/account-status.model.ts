@@ -5,14 +5,14 @@ import { Account } from './account.model';
 @Entity(DatabaseConstants.accountStatusesTable)
 export class AccountStatus extends BaseEntity {
   @PrimaryGeneratedColumn()
-  id: number;
+  id!: number;
 
   @Column({ unique: true })
-  name: string;
+  name!: string;
 
   @Column({ nullable: true })
   description?: string;
 
   @OneToMany(() => Account, (account) => account.status)
-  accounts: Account[];
+  accounts!: Account[];
 }

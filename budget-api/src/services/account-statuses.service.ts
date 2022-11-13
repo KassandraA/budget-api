@@ -43,11 +43,11 @@ export class AccountStatusesService {
   static async deleteOne(accountStatusId: number) {
     try {
       const result = await AccountStatus.delete(accountStatusId);
-      if (result.affected < 1) {
+      if (result.affected && result.affected < 1) {
         throw new NotFoundError('Account status not found');
       }
     } catch (error) {
-      if (error.message.includes('FOREIGN KEY constraint failed')) {
+      if ((error as Error).message.includes('FOREIGN KEY constraint failed')) {
         throw new RemovalRestrictedError(
           `The account status with id ${accountStatusId} can not be deleted, it is used by at least one account`
         );
@@ -61,7 +61,7 @@ export class AccountStatusesService {
     try {
       return await accountStatus.save();
     } catch (error) {
-      if (error.message.includes('UNIQUE constraint failed: account_statuses.name')) {
+      if ((error as Error).message.includes('UNIQUE constraint failed: account_statuses.name')) {
         throw new NotUniqueError(`The name '${accountStatus.name}' is already in use`);
       } else {
         throw error;
