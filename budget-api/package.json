@@ -26,7 +26,7 @@
   "scripts": {
     "migration:run": "node ./node_modules/typeorm/cli.js migration:run",
     "migration:revert": "node ./node_modules/typeorm/cli.js migration:revert",
-    "start": "tsc && node ./dist/budget-api/src/app.js",
+    "start": "yarn lint && tsc && node ./dist/budget-api/src/app.js",
     "lint": "eslint . --ext .ts --fix"
   }
 }
