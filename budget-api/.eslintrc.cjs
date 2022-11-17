@@ -17,6 +17,7 @@ module.exports = {
   },
   rules: {
     "comma-dangle": ["error", "never"],
-    "@typescript-eslint/no-explicit-any": "off"
+    "@typescript-eslint/no-explicit-any": "off",
+    "@typescript-eslint/unbound-method": ["error", { "ignoreStatic": true }],
   }
 };

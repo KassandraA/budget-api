@@ -1,4 +1,4 @@
-import { Router } from 'express';
+import { RequestHandler, Router } from 'express';
 import { TransactionValidator } from '../validators/transaction.validator';
 import { TransactionsController } from '../controllers/transactions.controller';
 
@@ -7,7 +7,7 @@ const router = Router();
 export class TransactionsRoutes {
   get routes() {
     router.get('', TransactionValidator.validateOnGet, TransactionsController.getMany);
-    router.get('/:id([0-9]+)', TransactionsController.getOneById);
+    router.get('/:id([0-9]+)', (TransactionsController.getOneById as RequestHandler));
     router.post(
       '',
       TransactionValidator.validateOnCreate,
@@ -18,7 +18,7 @@ export class TransactionsRoutes {
       TransactionValidator.validateOnUpdate,
       TransactionsController.updateOne
     );
-    router.delete('/:id([0-9]+)', TransactionsController.deleteOne);
+    router.delete('/:id([0-9]+)', (TransactionsController.deleteOne as RequestHandler));
     return router;
   }
 }

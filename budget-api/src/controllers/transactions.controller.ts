@@ -47,8 +47,7 @@ export class TransactionsController {
   ): Promise<Response<{ data: Transaction[] }>> {
     try {
       const newTransactions = await TransactionsService.addMany(
-        // todo error
-        // Unsafe call of an `any` typed value  
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
         (req.body as KeyValueType).map((i: KeyValueType) => TransactionConverter.asDto(i)) as TransactionDto[]
       );
       return res.json({ data: newTransactions });

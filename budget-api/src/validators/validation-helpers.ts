@@ -128,7 +128,7 @@ export class ValidationHelpers {
     target: ValidationTarget,
     keys: string[]
   ): ValidationChain {
-    return this.getChecker(target, paramName).custom((value: KeyValueType) => { // Unsafe argument of type `any` assigned to a parameter of type `{}`  @typescript-eslint/no-unsafe-argument
+    return this.getChecker(target, paramName).custom((value: KeyValueType) => {
       if (!value) return true;
 
       const currKeys = Object.keys(value);
