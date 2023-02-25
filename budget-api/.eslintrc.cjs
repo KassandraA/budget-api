@@ -14,8 +14,5 @@ module.exports = {
   ],
   env: {
     node: true
-  },
-  rules: {
-    "@typescript-eslint/unbound-method": ["error", { "ignoreStatic": true }]
   }
 };

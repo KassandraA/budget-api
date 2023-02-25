@@ -17,7 +17,7 @@ export class ValidationHelpers {
       .not()
       .isArray()
       .withMessage(`${this.beautifyParam(paramName)} must not be an array`)
-      .bail()      
+      .bail()
       .isString()
       .withMessage(`${this.beautifyParam(paramName)} must be a string`)
       .bail()

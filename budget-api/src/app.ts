@@ -6,7 +6,8 @@ import { AccountStatusesRoutes } from './routes/account-statuses.routes';
 import { TagsRoutes } from './routes/tags.routes';
 import { TransactionsRoutes } from './routes/transactions.routes';
 
-AppDataSource.initialize(); /* eslint-disable-line */
+AppDataSource.initialize()
+  .catch((e) => console.log('DB initialization failed: ', e instanceof Error ? e.message : String(e)));
 
 const app = express();
 const port = 5000;

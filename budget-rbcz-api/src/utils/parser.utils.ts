@@ -50,11 +50,11 @@ export class ParserUtils {
       amount: amount,
       accountName: rbczTransaction.accountname,
       tagNames: [],
-      properties: this.toPropertiesOnject(rbczTransaction)
+      properties: this.toPropertiesObject(rbczTransaction)
     };
   }
 
-  private static toPropertiesOnject(transaction: RBCZTransactionDto): { [key: string]: string } { 
+  private static toPropertiesObject(transaction: RBCZTransactionDto): { [key: string]: string } { 
     const entries: [string, string][] = Object.entries(transaction);
     const obj: { [key: string]: string } = {}; 
     entries.map(([key, val]) => obj[key] = val );

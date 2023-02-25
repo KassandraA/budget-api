@@ -2,7 +2,6 @@ import { In } from "typeorm";
 import { NotFoundError } from '../errors/not-found.error';
 import { NotUniqueError } from '../errors/not-unique.error';
 import { Tag } from '../models/tag.model';
-import { ValueNormalizer } from '../utils/value-normalizer.utils';
 
 export class TagsService {
   static async getAll(): Promise<Tag[]> {
@@ -37,7 +36,7 @@ export class TagsService {
 
   static async addOne(name: string): Promise<Tag> {
     const newTag = new Tag();
-    newTag.name = ValueNormalizer.normalizeString(name) as string;
+    newTag.name = name.trim();
 
     return this.saveTag(newTag);
   }
@@ -64,7 +63,7 @@ export class TagsService {
     const updatedTag = await Tag.findOneBy({ id: tagId });
 
     if (!updatedTag) throw new NotFoundError('Tag not found');
-    updatedTag.name = ValueNormalizer.normalizeString(name) as string;
+    updatedTag.name = name.trim();
 
     return this.saveTag(updatedTag);
   }
@@ -72,7 +71,7 @@ export class TagsService {
   static async deleteOne(tagId: number): Promise<string> {
     const result = await Tag.delete(tagId);
     if (result.affected === 1) {
-      return new Promise<string>((resolve) => { resolve('Deleted successfully') });
+      return 'Deleted successfully';
     } else {
       throw new NotFoundError('Tag not found');
     }

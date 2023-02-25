@@ -50,7 +50,7 @@ export class TransactionValidator {
       ValidationTarget.Query,
       TransactionValidator.nonStringParams
     ),
-    TransactionValidator.validate
+    (req: Request, res: Response, next: NextFunction) => TransactionValidator.validate(req, res, next)
   ];
 
   private static validateQueryValues = [
@@ -65,7 +65,7 @@ export class TransactionValidator {
     ValidationHelpers.validateString('accountNames.*', ValidationTarget.Query, false, true),
     ValidationHelpers.validateInteger('skip', ValidationTarget.Query),
     ValidationHelpers.validateInteger('take', ValidationTarget.Query),
-    TransactionValidator.validate
+    (req: Request, res: Response, next: NextFunction) => TransactionValidator.validate(req, res, next)
   ];
 
   private static validate(req: Request, res: Response, next: NextFunction) {
@@ -81,7 +81,7 @@ export class TransactionValidator {
 
   static validateOnCreate = [
     ValidationHelpers.validateArray('', ValidationTarget.Body, false, true),
-    TransactionValidator.validate,
+    (req: Request, res: Response, next: NextFunction) => TransactionValidator.validate(req, res, next),
     ValidationHelpers.validateDate('*.date', ValidationTarget.Body, true),
     ValidationHelpers.validateDecimal('*.amount', ValidationTarget.Body, true),
     ValidationHelpers.validateString('*.message'),
@@ -91,12 +91,12 @@ export class TransactionValidator {
     ValidationHelpers.validateString('*.tagNames.*'),
     ValidationHelpers.validateArray('*.properties', ValidationTarget.Body, false, false),
     ValidationHelpers.validateString('*.properties.*'),
-    TransactionValidator.validate
+    (req: Request, res: Response, next: NextFunction) => TransactionValidator.validate(req, res, next)
   ];
 
   static validateOnUpdate = [
     ValidationHelpers.validateArray('', ValidationTarget.Body, false, false),
-    TransactionValidator.validate,
+    (req: Request, res: Response, next: NextFunction) => TransactionValidator.validate(req, res, next),
     ValidationHelpers.validateDate('date'),
     ValidationHelpers.validateDecimal('amount'),
     ValidationHelpers.validateString('message'),
@@ -106,6 +106,6 @@ export class TransactionValidator {
     ValidationHelpers.validateString('tagNames.*'),
     ValidationHelpers.validateArray('properties', ValidationTarget.Body, false, false),
     ValidationHelpers.validateString('properties.*'),
-    TransactionValidator.validate
+    (req: Request, res: Response, next: NextFunction) => TransactionValidator.validate(req, res, next)
   ];
 }

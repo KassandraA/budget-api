@@ -42,7 +42,7 @@ export class AccountStatusesService {
     try {
       const result = await AccountStatus.delete(accountStatusId);
       if (result.affected === 1) {
-        return new Promise<string>((resolve) => { resolve('Deleted successfully') });
+        return 'Deleted successfully';
       } else {
         throw new NotFoundError('Account status not found');
       }

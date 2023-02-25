@@ -73,7 +73,7 @@ export class AccountsService {
   static async deleteOne(accountId: number): Promise<string> {
     const result = await Account.delete(accountId);
     if (result.affected === 1) {
-      return new Promise<string>((resolve) => { resolve('Deleted successfully') });
+      return 'Deleted successfully';
     } else {
       throw new NotFoundError('Account not found');
     }

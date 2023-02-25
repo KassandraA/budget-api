@@ -72,7 +72,7 @@ export class TransactionsService {
     }
     if (data.date) updatedTransaction.date = data.date;
     if (data.message !== undefined) updatedTransaction.message = ValueNormalizer.normalizeString(data.message);
-    if (data.transactor) updatedTransaction.transactor = ValueNormalizer.normalizeString(data.transactor) as string;
+    if (data.transactor) updatedTransaction.transactor = data.transactor.trim();
     if (data.amount) updatedTransaction.amount = data.amount;
     if (data.tagNames !== undefined) updatedTransaction.tags = data.tagNames.length > 0 ? await TagsService.addMany(data.tagNames) : [];
     if (data.properties !== undefined) updatedTransaction.properties = this.getUpdatedProperties(updatedTransaction.properties, data.properties);
@@ -83,7 +83,7 @@ export class TransactionsService {
   static async deleteOne(transactionId: number): Promise<string> {
     const result = await Transaction.delete(transactionId);
     if (result.affected === 1) {
-      return new Promise<string>((resolve) => { resolve('Deleted successfully') });
+      return 'Deleted successfully';
     } else {
       throw new NotFoundError('Transaction not found');
     }
