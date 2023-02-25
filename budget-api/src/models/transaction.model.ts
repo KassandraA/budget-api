@@ -22,8 +22,11 @@ export class Transaction extends BaseEntity {
   @Column()
   date!: Date;
 
-  @Column({ nullable: true })
-  message?: string;
+  @Column({
+    type: String,
+    nullable: true
+  })
+  message?: string | null;
 
   @Column()
   transactor!: string;

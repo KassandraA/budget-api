@@ -1,77 +1,65 @@
-import { Request, Response } from 'express';
+import { Request } from 'express';
 import { AccountsService } from '../services/accounts.service';
 import { Account } from '../models/account.model';
-import { StatusCodeError } from '../errors/status-code.error';
-import { KeyValueType } from '../dto/transaction-filter-sort-page.dto';
+import { AccountsRequestBody } from '../dto/accounts-request-body.dto';
+import { TypedRequest, TypedRequestBody, TypedRequestParams, TypedResponse } from '../utils/express/typed-request';
+import { BaseController } from './abstract/controller.base';
 
 export class AccountsController {
-  static async getAll(req: Request, res: Response): Promise<Response<{ data: Account[] }>> {
-    try {
-      const accounts = await AccountsService.getAll();
-      return res.json({ data: accounts });
-    } catch (e) {
-      const message = e instanceof Error ? e.message : String(e);
-      const errorCode = e instanceof StatusCodeError ? e.statusCode : 500;
-      return res.status(errorCode).json({ message: message });
-    }
+  static getAll(_req: Request, res: TypedResponse<Account[]>): void {
+    AccountsService.getAll()
+      .then((data) => res.json({ data: data }))
+      .catch((error) => BaseController.writeErrorToResponse(error, res));
   }
 
-  static async getOneById(req: Request, res: Response): Promise<Response<{ data: Account }>> {
-    try {
-      const account = await AccountsService.getOneById(Number(req.params.id));
-      return res.json({ data: account });
-    } catch (e) {
-      const message = e instanceof Error ? e.message : String(e);
-      const errorCode = e instanceof StatusCodeError ? e.statusCode : 500;
-      return res.status(errorCode).json({ message: message });
-    }
+  static getOneById(
+    req: TypedRequestParams<{ id: string }>,
+    res: TypedResponse<Account>
+  ): void {
+    AccountsService.getOneById(Number(req.params.id))
+      .then((data) => res.json({ data: data }))
+      .catch((error) => BaseController.writeErrorToResponse(error, res));
   }
 
-  static async addOne(req: Request, res: Response): Promise<Response<{ data: Account }>> {
-    try {
-      const newAccount = await AccountsService.addOne(
-        (req.body as KeyValueType).name as string,
-        (req.body as KeyValueType).description as string,
-        (req.body as KeyValueType).currency as string,
-        (req.body as KeyValueType).account_number as string,
-        (req.body as KeyValueType).card_number as string,
-        (req.body as KeyValueType).status_id as number
-      );
-      return res.json({ data: newAccount });
-    } catch (e) {
-      const message = e instanceof Error ? e.message : String(e);
-      const errorCode = e instanceof StatusCodeError ? e.statusCode : 500;
-      return res.status(errorCode).json({ message: message });
-    }
+  static addOne(
+    req: TypedRequestBody<AccountsRequestBody>,
+    res: TypedResponse<Account>
+  ): void {
+    AccountsService.addOne(
+      req.body.name,
+      req.body.status_id,
+      req.body.description,
+      req.body.currency,
+      req.body.account_number,
+      req.body.card_number
+    )
+      .then((data) => res.json({ data: data }))
+      .catch((error) => BaseController.writeErrorToResponse(error, res));
   }
 
-  static async updateOne(req: Request, res: Response): Promise<Response<{ data: Account }>> {
-    try {
-      const updatedAccount = await AccountsService.updateOne(
-        Number(req.params.id),
-        (req.body as KeyValueType).name as string,
-        (req.body as KeyValueType).description as string,
-        (req.body as KeyValueType).currency as string,
-        (req.body as KeyValueType).account_number as string,
-        (req.body as KeyValueType).card_number as string,
-        (req.body as KeyValueType).status_id as number
-      );
-      return res.json({ data: updatedAccount });
-    } catch (e) {
-      const message = e instanceof Error ? e.message : String(e);
-      const errorCode = e instanceof StatusCodeError ? e.statusCode : 500;
-      return res.status(errorCode).json({ message: message });
-    }
+  static updateOne(
+    req: TypedRequest<{ id: string }, AccountsRequestBody>,
+    res: TypedResponse<Account>
+  ): void {
+    AccountsService.updateOne(
+      Number(req.params.id),
+      req.body.name,
+      req.body.status_id,
+      req.body.description,
+      req.body.currency,
+      req.body.account_number,
+      req.body.card_number
+    )
+      .then((data) => res.json({ data: data }))
+      .catch((error) => BaseController.writeErrorToResponse(error, res));
   }
 
-  static async deleteOne(req: Request, res: Response): Promise<Response<{ message: string }>> {
-    try {
-      await AccountsService.deleteOne(Number(req.params.id));
-      return res.json({ message: 'Deleted successfully' });
-    } catch (e) {
-      const message = e instanceof Error ? e.message : String(e);
-      const errorCode = e instanceof StatusCodeError ? e.statusCode : 500;
-      return res.status(errorCode).json({ message: message });
-    }
+  static deleteOne(
+    req: TypedRequestParams<{ id: string }>,
+    res: TypedResponse<string>
+  ): void {
+    AccountsService.deleteOne(Number(req.params.id))
+      .then((data) => res.json({ message: data }))
+      .catch((error) => BaseController.writeErrorToResponse(error, res));
   }
 }

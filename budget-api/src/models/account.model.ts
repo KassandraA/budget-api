@@ -11,17 +11,29 @@ export class Account extends BaseEntity {
   @Column({ unique: true })
   name!: string;
 
-  @Column({ nullable: true })
-  description?: string;
+  @Column({
+    type: String,
+    nullable: true
+  })
+  description?: string | null;
 
-  @Column({ nullable: true })
-  currency?: string;
+  @Column({
+    type: String,
+    nullable: true
+  })
+  currency?: string | null;
 
-  @Column({ nullable: true })
-  account_number?: string;
+  @Column({
+    type: String,
+    nullable: true
+  })
+  account_number?: string | null;
 
-  @Column({ nullable: true })
-  card_number?: string;
+  @Column({
+    type: String,
+    nullable: true
+  })
+  card_number?: string | null;
 
   @Column()
   status_id!: number;

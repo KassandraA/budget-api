@@ -16,9 +16,9 @@ import { TransactionResponseDto } from '../dto/transaction-response.dto';
 
 export class TransactionsService {
   static async getMany(
-    params?: TransactionFilterSortPageDto
+    query?: TransactionFilterSortPageDto
   ): Promise<TransactionResponseDto> {
-    const preFilled = TransactionTypeormUtils.preFill(params);
+    const preFilled = TransactionTypeormUtils.preFill(query);
     const queryBuilder = TransactionTypeormUtils.getQueryBuilder(preFilled);
     const [result, totalCount] = await queryBuilder.getManyAndCount();
 
@@ -66,37 +66,32 @@ export class TransactionsService {
 
     if (!updatedTransaction) throw new NotFoundError('Transaction not found');
 
-    if (data.accountName !== undefined) {
+    if (data.accountName) {
       const transactionAccount = await AccountsService.getOneByName(data.accountName);
       if (transactionAccount) updatedTransaction.account_id = transactionAccount.id;
     }
-
-    if (data.date !== undefined)
-      updatedTransaction.date = data.date;
-    if (data.message !== undefined)
-      updatedTransaction.message = ValueNormalizer.normalizeString(data.message);
-    if (data.transactor !== undefined)
-      updatedTransaction.transactor = ValueNormalizer.normalizeString(data.transactor);
-    if (data.amount !== undefined)
-      updatedTransaction.amount = data.amount;
-    if (data.tagNames !== undefined)
-      updatedTransaction.tags = data.tagNames.length > 0 ? await TagsService.addMany(data.tagNames) : [];
-    if (data.properties !== undefined)
-      updatedTransaction.properties = this.getUpdatedProperties(updatedTransaction.properties, data.properties);
+    if (data.date) updatedTransaction.date = data.date;
+    if (data.message !== undefined) updatedTransaction.message = ValueNormalizer.normalizeString(data.message);
+    if (data.transactor) updatedTransaction.transactor = ValueNormalizer.normalizeString(data.transactor) as string;
+    if (data.amount) updatedTransaction.amount = data.amount;
+    if (data.tagNames !== undefined) updatedTransaction.tags = data.tagNames.length > 0 ? await TagsService.addMany(data.tagNames) : [];
+    if (data.properties !== undefined) updatedTransaction.properties = this.getUpdatedProperties(updatedTransaction.properties, data.properties);
 
     return await Transaction.save(updatedTransaction);
   }
 
-  static async deleteOne(transactionId: number): Promise<void> {
+  static async deleteOne(transactionId: number): Promise<string> {
     const result = await Transaction.delete(transactionId);
-    if (result.affected && result.affected < 1) {
+    if (result.affected === 1) {
+      return new Promise<string>((resolve) => { resolve('Deleted successfully') });
+    } else {
       throw new NotFoundError('Transaction not found');
     }
   }
 
   private static async getTagsMap(transactions: TransactionDto[]): Promise<Map<string, Tag>> {
     const tagNames = transactions.reduce((tn: string[], tran: TransactionDto) => {
-      return tran?.tagNames?.length > 0 ? [...tn, ...tran.tagNames] : [...tn];
+      return tran.tagNames && tran.tagNames.length > 0 ? [...tn, ...tran.tagNames] : [...tn];
     }, []);
     const transactionTags = await TagsService.addMany(tagNames);
     return new Map(transactionTags.map((tag) => [tag.name, tag]));
@@ -116,9 +111,10 @@ export class TransactionsService {
   }
 
   private static getProperties(transaction: TransactionDto): Property[] {
-   return !transaction.properties || !transaction.properties.size
+    const tranProps = transaction.properties && this.propsToMap(transaction.properties);
+    return !tranProps || !tranProps.size
       ? []
-      : Array.from(transaction.properties, ([propName, propValue]) => {
+      : Array.from(tranProps, ([propName, propValue]) => {
           const prop = new Property();
           prop.name = propName;
           prop.value = propValue;
@@ -126,19 +122,20 @@ export class TransactionsService {
         });
   }
 
-  private static getUpdatedProperties(existingProps: Property[], newProps: Map<string, string>): Property[] {
-    if (!newProps.size) {
+  private static getUpdatedProperties(existingProps: Property[], newProps: { [key: string]: string }): Property[] {
+    const props = this.propsToMap(newProps);
+    if (!props.size) {
       return [];
     }
-    const newPrs = new Map(newProps);
+    const newPrsCopy = new Map(props);
     const existingPrs = existingProps?.length
       ? existingProps.filter((ep) => {
-          const newVal = newProps.get(ep.name);
-          if (newVal) {
+          const newVal = props.get(ep.name);
+          if (newVal !== undefined) {
             if (ep.value !== newVal) {
-              ep.value = newVal;
+              ep.value = ValueNormalizer.normalizeString(newVal);
             }
-            newPrs.delete(ep.name);
+            newPrsCopy.delete(ep.name);
             return true;
           }
 
@@ -146,15 +143,19 @@ export class TransactionsService {
         })
       : [];
 
-    const addedPrs = newPrs.size
-      ? Array.from(newPrs, ([propName, propValue]) => {
+    const addedPrs = newPrsCopy.size
+      ? Array.from(newPrsCopy, ([propName, propValue]) => {
           const prop = new Property();
           prop.name = propName;
-          prop.value = propValue;
+          prop.value = ValueNormalizer.normalizeString(propValue);
           return prop;
         })
       : [];
 
     return [...existingPrs, ...addedPrs];
+  }
+
+  private static propsToMap(props: { [key: string]: string }): Map<string, string> {
+    return new Map(Object.entries(props));
   }
 }

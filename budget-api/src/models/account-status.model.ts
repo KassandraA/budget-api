@@ -10,8 +10,11 @@ export class AccountStatus extends BaseEntity {
   @Column({ unique: true })
   name!: string;
 
-  @Column({ nullable: true })
-  description?: string;
+  @Column({
+    type: String,
+    nullable: true
+  })
+  description?: string | null;
 
   @OneToMany(() => Account, (account) => account.status)
   accounts!: Account[];

@@ -1,62 +1,50 @@
-import { Request, Response } from 'express';
+import { Request } from 'express';
 import { TagsService } from '../services/tags.service';
 import { Tag } from '../models/tag.model';
-import { StatusCodeError } from '../errors/status-code.error';
-import { KeyValueType } from '../dto/transaction-filter-sort-page.dto';
+import { TagsRequestBody } from '../dto/tags-request-body.dto';
+import { BaseController } from './abstract/controller.base';
+import { TypedRequest, TypedRequestBody, TypedRequestParams, TypedResponse } from '../utils/express/typed-request';
 
 export class TagsController {
-  static async getAll(req: Request, res: Response): Promise<Response<{ data: Tag[] }>> {
-    try {
-      const tags = await TagsService.getAll();
-      return res.json({ data: tags });
-    } catch (e) {
-      const message = e instanceof Error ? e.message : String(e);
-      const errorCode = e instanceof StatusCodeError ? e.statusCode : 500;
-      return res.status(errorCode).json({ message: message });
-    }
+  static getAll(_req: Request, res: TypedResponse<Tag[]>): void {
+    TagsService.getAll()
+      .then((data) => res.json({ data: data }))
+      .catch((error) => BaseController.writeErrorToResponse(error, res));
   }
 
-  static async getOneById(req: Request, res: Response): Promise<Response<{ data: Tag }>> {
-    try {
-      const tag = await TagsService.getOneById(Number(req.params.id));
-      return res.json({ data: tag });
-    } catch (e) {
-      const message = e instanceof Error ? e.message : String(e);
-      const errorCode = e instanceof StatusCodeError ? e.statusCode : 500;
-      return res.status(errorCode).json({ message: message });
-    }
+  static getOneById(
+    req: TypedRequestParams<{ id: string }>,
+    res: TypedResponse<Tag>
+  ): void {
+    TagsService.getOneById(Number(req.params.id))
+      .then((data) => res.json({ data: data }))
+      .catch((error) => BaseController.writeErrorToResponse(error, res));
   }
 
-  static async addOne(req: Request, res: Response): Promise<Response<{ data: Tag }>> {
-    try {
-      const newTag = await TagsService.addOne((req.body as KeyValueType).name as string);
-      return res.json({ data: newTag });
-    } catch (e) {
-      const message = e instanceof Error ? e.message : String(e);
-      const errorCode = e instanceof StatusCodeError ? e.statusCode : 500;
-      return res.status(errorCode).json({ message: message });
-    }
+  static addOne(
+    req: TypedRequestBody<TagsRequestBody>,
+    res: TypedResponse<Tag>
+  ): void {
+    TagsService.addOne(req.body.name)
+      .then((data) => res.json({ data: data }))
+      .catch((error) => BaseController.writeErrorToResponse(error, res));
   }
 
-  static async updateOne(req: Request, res: Response): Promise<Response<{ data: Tag }>> {
-    try {
-      const updatedTag = await TagsService.updateOne(Number(req.params.id), (req.body as KeyValueType).name as string);
-      return res.json({ data: updatedTag });
-    } catch (e) {
-      const message = e instanceof Error ? e.message : String(e);
-      const errorCode = e instanceof StatusCodeError ? e.statusCode : 500;
-      return res.status(errorCode).json({ message: message });
-    }
+  static updateOne(
+    req: TypedRequest<{ id: string }, TagsRequestBody>,
+    res: TypedResponse<Tag>
+  ): void {
+    TagsService.updateOne(Number(req.params.id), req.body.name )
+      .then((data) => res.json({ data: data }))
+      .catch((error) => BaseController.writeErrorToResponse(error, res));
   }
 
-  static async deleteOne(req: Request, res: Response): Promise<Response<{ message: string }>> {
-    try {
-      await TagsService.deleteOne(Number(req.params.id));
-      return res.json({ message: 'Deleted successfully' });
-    } catch (e) {
-      const message = e instanceof Error ? e.message : String(e);
-      const errorCode = e instanceof StatusCodeError ? e.statusCode : 500;
-      return res.status(errorCode).json({ message: message });
-    }
+  static deleteOne(
+    req: TypedRequestParams<{ id: string }>,
+    res: TypedResponse<string>
+  ): void {
+    TagsService.deleteOne(Number(req.params.id))
+      .then((data) => res.json({ message: data }))
+      .catch((error) => BaseController.writeErrorToResponse(error, res));
   }
 }

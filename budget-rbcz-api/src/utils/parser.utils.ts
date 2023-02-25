@@ -41,38 +41,23 @@ export class ParserUtils {
   }
 
   private static mapToTransactionDto(rbczTransaction: RBCZTransactionDto): TransactionDto {
+    const amount = Number((rbczTransaction.bookedamount)?.replace(/\s/g, '').replace(',', '.'));
+    const transactor = amount < 0 ? rbczTransaction.merchant.trim() : rbczTransaction.nameofaccount.trim();
     return {
       date: new Date(rbczTransaction.transactiondate.split('.').reverse().join('/')),
       message: rbczTransaction.message,
-      transactor: rbczTransaction.merchant.trim() ?? rbczTransaction.nameofaccount.trim(),
-      amount: Number((rbczTransaction.bookedamount)?.replace(/\s/g, '').replace(',', '.')),
-      
+      transactor: transactor ? transactor : 'Unknown',
+      amount: amount,
       accountName: rbczTransaction.accountname,
       tagNames: [],
-      properties: this.toPropertiesMap(rbczTransaction)
+      properties: this.toPropertiesOnject(rbczTransaction)
     };
   }
 
-  private static toPropertiesMap(transaction: RBCZTransactionDto): Map<string, string> { 
-    return new Map<string, string>([
-      ["accocuntnumber", transaction.accocuntnumber],
-      ["accountnumber", transaction.accountnumber],
-      ["accountname", transaction.accountname],
-      ["accountcurrency", transaction.accountcurrency],
-      ["nameofaccount", transaction.nameofaccount],
-      ["originalamountandcurrency", transaction.originalamountandcurrency],
-      ["originalamountandcurrency_1", transaction.originalamountandcurrency_1],
-      ["note", transaction.note],
-      ["transactiontype", transaction.transactiontype],
-      ["bookingdate", transaction.bookingdate],
-      ["vs", transaction.vs],
-      ["ks", transaction.ks],
-      ["ss", transaction.ss],
-      ["fee", transaction.fee],
-      ["transactionid", transaction.transactionid],
-      ["city", transaction.city],
-      ["note_2", transaction.note_2],
-      ["transactioncategory", transaction.transactioncategory],
-    ])
+  private static toPropertiesOnject(transaction: RBCZTransactionDto): { [key: string]: string } { 
+    const entries: [string, string][] = Object.entries(transaction);
+    const obj: { [key: string]: string } = {}; 
+    entries.map(([key, val]) => obj[key] = val );
+    return obj;
   }
 }

@@ -7,10 +7,10 @@ const router = Router();
 export class TagsRoutes {
   get routes() {
     router.get('', (TagsController.getAll as RequestHandler));
-    router.get('/:id([0-9]+)', (TagsController.getOneById as RequestHandler));
-    router.post('', TagValidator.validateOnCreate, TagsController.addOne);
-    router.patch('/:id([0-9]+)', TagValidator.validateOnUpdate, TagsController.updateOne);
-    router.delete('/:id([0-9]+)', (TagsController.deleteOne as RequestHandler));
+    router.get('/:id([0-9]+)', TagsController.getOneById);
+    router.post('', TagValidator.validateOnCreateOrUpdate, TagsController.addOne);
+    router.patch('/:id([0-9]+)', TagValidator.validateOnCreateOrUpdate, TagsController.updateOne);
+    router.delete('/:id([0-9]+)', TagsController.deleteOne);
     return router;
   }
 }

@@ -12,12 +12,7 @@ export class TagValidator {
     }
   ];
 
-  static validateOnCreate = [
-    ValidationHelpers.validateString('name', ValidationTarget.Body, true, true),
-    ...TagValidator.validate
-  ];
-
-  static validateOnUpdate = [
+  static validateOnCreateOrUpdate = [
     ValidationHelpers.validateString('name', ValidationTarget.Body, true, true),
     ...TagValidator.validate
   ];

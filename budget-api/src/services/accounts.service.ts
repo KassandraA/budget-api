@@ -28,31 +28,31 @@ export class AccountsService {
 
   static async addOne(
     name: string,
-    description: string,
-    currency: string,
-    accountNumber: string,
-    cardNumber: string,
-    statusId: number
+    statusId: number,
+    description?: string,
+    currency?: string,
+    accountNumber?: string,
+    cardNumber?: string,
   ): Promise<Account> {
     const newAccount = new Account();
-    newAccount.name = ValueNormalizer.normalizeString(name);
-    newAccount.description = ValueNormalizer.normalizeString(description);
-    newAccount.currency = ValueNormalizer.normalizeString(currency);
-    newAccount.account_number = ValueNormalizer.normalizeString(accountNumber);
-    newAccount.card_number = ValueNormalizer.normalizeString(cardNumber);
+    newAccount.name = ValueNormalizer.normalizeString(name) as string;
     newAccount.status_id = statusId;
+    if (description !== undefined) newAccount.description = ValueNormalizer.normalizeString(description);
+    if (currency !== undefined) newAccount.currency = ValueNormalizer.normalizeString(currency);
+    if (accountNumber !== undefined) newAccount.account_number = ValueNormalizer.normalizeString(accountNumber);
+    if (cardNumber !== undefined) newAccount.card_number = ValueNormalizer.normalizeString(cardNumber);
 
     return this.saveAccount(newAccount);
   }
 
   static async updateOne(
     accountId: number,
-    name: string,
-    description: string,
-    currency: string,
-    accountNumber: string,
-    cardNumber: string,
-    statusId: number
+    name?: string,
+    statusId?: number,
+    description?: string,
+    currency?: string,
+    accountNumber?: string,
+    cardNumber?: string,
   ): Promise<Account> {
     const updatedAccount = await Account.findOneBy({
       id: accountId
@@ -60,20 +60,21 @@ export class AccountsService {
 
     if (!updatedAccount) throw new NotFoundError('Account not found');
 
-    if (name !== undefined) updatedAccount.name = ValueNormalizer.normalizeString(name);
-    if (description !== undefined)
-      updatedAccount.description = ValueNormalizer.normalizeString(description);
+    if (name !== undefined) updatedAccount.name = ValueNormalizer.normalizeString(name) as string;
+    if (statusId !== undefined) updatedAccount.status_id = statusId;
+    if (description !== undefined) updatedAccount.description = ValueNormalizer.normalizeString(description);
     if (currency !== undefined) updatedAccount.currency = ValueNormalizer.normalizeString(currency);
     if (accountNumber !== undefined) updatedAccount.account_number = ValueNormalizer.normalizeString(accountNumber);
     if (cardNumber !== undefined) updatedAccount.card_number = ValueNormalizer.normalizeString(cardNumber);
-    if (statusId !== undefined) updatedAccount.status_id = statusId;
 
     return this.saveAccount(updatedAccount);
   }
 
-  static async deleteOne(accountId: number) {
+  static async deleteOne(accountId: number): Promise<string> {
     const result = await Account.delete(accountId);
-    if (result.affected && result.affected < 1) {
+    if (result.affected === 1) {
+      return new Promise<string>((resolve) => { resolve('Deleted successfully') });
+    } else {
       throw new NotFoundError('Account not found');
     }
   }
@@ -82,9 +83,10 @@ export class AccountsService {
     try {
       return await account.save();
     } catch (error) {
-      if ((error as Error).message.includes('FOREIGN KEY constraint failed')) {
+      const message = error instanceof Error ? error.message : String(error);
+      if (message.includes('FOREIGN KEY constraint failed')) {
         throw new NotFoundError(`status_id not found: ${account.status_id}`);
-      } else if ((error as Error).message.includes('UNIQUE constraint failed: accounts.name')) {
+      } else if (message.includes('UNIQUE constraint failed: accounts.name')) {
         throw new NotUniqueError(`The name '${account.name}' is already in use`);
       } else {
         throw error;

@@ -1,15 +1,15 @@
 export interface RBCZTransactionDto  { // RBCZDataContract
-  transactiondate: string; // transaction.date // 13.08.2021
-  bookedamount: string; // transaction.amount // -1 258,11
-  message: string; // transaction.message // DEKUJEME, ROHLIK.CZ; Praha - Karli; CZE
-  merchant: string; // transactor // Rohlík.cz
+  transactiondate: string; // TransactionDto.date // 13.08.2021
+  bookedamount: string; // TransactionDto.amount // -1 258,11
+  message: string; // TransactionDto.message // DEKUJEME, ROHLIK.CZ; Praha - Karli; CZE
+  merchant: string; // TransactionDto.transactor // Rohlík.cz
+  nameofaccount: string; // TransactionDto.transactor // BARCLAYS EXECUTION
+  accountname: string; // TransactionDto.accountName // Andrii Annenko
 
-  accocuntnumber: string; // account // 516872XXXXXX2351 (card + incoming accounts)
-  accountnumber: string; // account // 282762002/5500 (account)
-  accountname: string; // account // Andrii Annenko
-  accountcurrency: string; // account // CZK
+  accountnumber: string; // Account.account_number // 282762002/5500 (account)
+  accocuntnumber: string; // - // 516872XXXXXX2351 (card + incoming accounts)
+  accountcurrency: string; // - // CZK
 
-  nameofaccount: string; // - // BARCLAYS EXECUTION
   originalamountandcurrency: string; // - // -97
   originalamountandcurrency_1: string; // - // EUR
   note: string; // - // DEKUJEME, ROHLIK.CZ; Praha - Karli; CZE

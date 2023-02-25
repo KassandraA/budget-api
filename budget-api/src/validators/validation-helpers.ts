@@ -1,5 +1,4 @@
 import { body, query, ValidationChain } from 'express-validator';
-import { KeyValueType } from '../dto/transaction-filter-sort-page.dto';
 import { ValidationTarget } from './validation-target.enum';
 
 export class ValidationHelpers {
@@ -18,10 +17,11 @@ export class ValidationHelpers {
       .not()
       .isArray()
       .withMessage(`${this.beautifyParam(paramName)} must not be an array`)
-      .bail()
+      .bail()      
       .isString()
       .withMessage(`${this.beautifyParam(paramName)} must be a string`)
       .bail()
+      .trim()
       .if(() => isNotEmpty)
       .notEmpty()
       .withMessage(`${this.beautifyParam(paramName)} must not be empty`)
@@ -128,7 +128,7 @@ export class ValidationHelpers {
     target: ValidationTarget,
     keys: string[]
   ): ValidationChain {
-    return this.getChecker(target, paramName).custom((value: KeyValueType) => {
+    return this.getChecker(target, paramName).custom((value: { [key: string]: unknown }) => {
       if (!value) return true;
 
       const currKeys = Object.keys(value);

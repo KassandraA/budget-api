@@ -55,7 +55,7 @@ export class TransactionValidator {
 
   private static validateQueryValues = [
     ValidationHelpers.validateString('message.*', ValidationTarget.Query, false, true),
-    ValidationHelpers.validateString('transactor.*', ValidationTarget.Query, false, true),
+    ValidationHelpers.validateString('transactor.*', ValidationTarget.Query, true, true),
     ValidationHelpers.validateDecimal('amount.*', ValidationTarget.Query),
     ValidationHelpers.validateDate('date.*', ValidationTarget.Query),
     ValidationHelpers.validateIncludes('orderBy.*', ['ASC', 'DESC'], ValidationTarget.Query),
@@ -85,7 +85,7 @@ export class TransactionValidator {
     ValidationHelpers.validateDate('*.date', ValidationTarget.Body, true),
     ValidationHelpers.validateDecimal('*.amount', ValidationTarget.Body, true),
     ValidationHelpers.validateString('*.message'),
-    ValidationHelpers.validateString('*.transactor', ValidationTarget.Body, true),
+    ValidationHelpers.validateString('*.transactor', ValidationTarget.Body, true, true),
     ValidationHelpers.validateString('*.accountName', ValidationTarget.Body, true),
     ValidationHelpers.validateArray('*.tagNames'),
     ValidationHelpers.validateString('*.tagNames.*'),
@@ -100,7 +100,7 @@ export class TransactionValidator {
     ValidationHelpers.validateDate('date'),
     ValidationHelpers.validateDecimal('amount'),
     ValidationHelpers.validateString('message'),
-    ValidationHelpers.validateString('transactor'),
+    ValidationHelpers.validateString('transactor', ValidationTarget.Body, false, true),
     ValidationHelpers.validateString('accountName'),
     ValidationHelpers.validateArray('tagNames'),
     ValidationHelpers.validateString('tagNames.*'),

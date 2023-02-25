@@ -10,8 +10,11 @@ export class Property extends BaseEntity {
   @Column()
   name!: string;
 
-  @Column({ nullable: true })
-  value?: string
+  @Column({
+    type: String,
+    nullable: true
+  })
+  value?: string | null;
 
   @Column()
   transaction_id!: number;

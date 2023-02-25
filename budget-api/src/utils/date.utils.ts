@@ -11,6 +11,12 @@ export class DateUtils {
     ].join(":")}.${this.getNumLeadingZero(d.getUTCMilliseconds(), "000")}`;
   }
 
+  public static getMonthAgoDate(): Date {
+    const d = new Date();
+    const monthAgo = d.setDate(d.getDate() - 30);
+    return new Date(monthAgo);
+  }
+  
   private static getNumLeadingZero(num: number, zeros = '00'): string {
     const sliced = Math.abs(zeros.length) * -1;
     return `${zeros}${num}`.slice(sliced);

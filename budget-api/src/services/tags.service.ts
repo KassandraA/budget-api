@@ -37,7 +37,7 @@ export class TagsService {
 
   static async addOne(name: string): Promise<Tag> {
     const newTag = new Tag();
-    newTag.name = ValueNormalizer.normalizeString(name);
+    newTag.name = ValueNormalizer.normalizeString(name) as string;
 
     return this.saveTag(newTag);
   }
@@ -64,14 +64,16 @@ export class TagsService {
     const updatedTag = await Tag.findOneBy({ id: tagId });
 
     if (!updatedTag) throw new NotFoundError('Tag not found');
-    if (name !== undefined) updatedTag.name = ValueNormalizer.normalizeString(name);
+    updatedTag.name = ValueNormalizer.normalizeString(name) as string;
 
     return this.saveTag(updatedTag);
   }
 
-  static async deleteOne(tagId: number): Promise<void> {
+  static async deleteOne(tagId: number): Promise<string> {
     const result = await Tag.delete(tagId);
-    if (result.affected && result.affected < 1) {
+    if (result.affected === 1) {
+      return new Promise<string>((resolve) => { resolve('Deleted successfully') });
+    } else {
       throw new NotFoundError('Tag not found');
     }
   }
@@ -80,7 +82,8 @@ export class TagsService {
     try {
       return await tag.save();
     } catch (error) {
-      if ((error as Error).message.includes('UNIQUE constraint failed: tags.name')) {
+      const message = error instanceof Error ? error.message : String(error);
+      if (message.includes('UNIQUE constraint failed: tags.name')) {
         throw new NotUniqueError(`The name '${tag.name}' is already in use`);
       } else {
         throw error;
