@@ -1,9 +1,9 @@
 import { StatusCodeError } from "./status-code.error";
 
-export class NotUniqueError extends StatusCodeError {
+export class InvalidParamsError extends StatusCodeError {
   constructor(message: string) {
     super(message);
-    this.name = 'NotUniqueError';
+    this.name = 'InvalidParamsError';
   }
   public statusCode = 400;
 }

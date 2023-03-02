@@ -1,40 +1,44 @@
 import { Request } from 'express';
-import { TagsService } from '../services/tags.service';
-import { Tag } from '../models/tag.model';
-import { TagsRequestBody } from '../dto/tags-request-body.dto';
+import { AccountStatusesService } from '../services/account-statuses.service';
+import { AccountStatus } from '../models/account-status.model';
+import { AccountStatusesRequestBody } from '../dto/account-statuses-request-body.dto';
 import { BaseController } from './abstract/controller.base';
 import { TypedRequest, TypedRequestBody, TypedRequestParams, TypedResponse } from '../utils/express/typed-request';
 
-export class TagsController {
-  static getAll(_req: Request, res: TypedResponse<Tag[]>): void {
-    TagsService.getAll()
+export class AccountStatusesController extends BaseController {
+  static getAll(_req: Request, res: TypedResponse<AccountStatus[]>): void {
+    AccountStatusesService.getAll()
       .then((data) => res.json({ data: data }))
       .catch((error) => BaseController.writeErrorToResponse(error, res));
   }
 
   static getOneById(
     req: TypedRequestParams<{ id: string }>,
-    res: TypedResponse<Tag>
+    res: TypedResponse<AccountStatus>
   ): void {
-    TagsService.getOneById(Number(req.params.id))
+    AccountStatusesService.getOneById(Number(req.params.id))
       .then((data) => res.json({ data: data }))
       .catch((error) => BaseController.writeErrorToResponse(error, res));
   }
 
   static addOne(
-    req: TypedRequestBody<TagsRequestBody>,
-    res: TypedResponse<Tag>
+    req: TypedRequestBody<AccountStatusesRequestBody>,
+    res: TypedResponse<AccountStatus>
   ): void {
-    TagsService.addOne(req.body.name)
+    AccountStatusesService.addOne(req.body.name, req.body.description)
       .then((data) => res.json({ data: data }))
       .catch((error) => BaseController.writeErrorToResponse(error, res));
   }
 
   static updateOne(
-    req: TypedRequest<{ id: string }, TagsRequestBody>,
-    res: TypedResponse<Tag>
+    req: TypedRequest<{ id: string }, AccountStatusesRequestBody>,
+    res: TypedResponse<AccountStatus>
   ): void {
-    TagsService.updateOne(Number(req.params.id), req.body.name )
+    AccountStatusesService.updateOne(
+      Number(req.params.id),
+      req.body.name,
+      req.body.description
+    )
       .then((data) => res.json({ data: data }))
       .catch((error) => BaseController.writeErrorToResponse(error, res));
   }
@@ -43,7 +47,7 @@ export class TagsController {
     req: TypedRequestParams<{ id: string }>,
     res: TypedResponse<string>
   ): void {
-    TagsService.deleteOne(Number(req.params.id))
+    AccountStatusesService.deleteOne(Number(req.params.id))
       .then((data) => res.json({ message: data }))
       .catch((error) => BaseController.writeErrorToResponse(error, res));
   }

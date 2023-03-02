@@ -6,49 +6,53 @@ import {
   JoinTable,
   ManyToMany,
   ManyToOne,
-  PrimaryGeneratedColumn,
+  OneToMany,
+  PrimaryGeneratedColumn
 } from 'typeorm';
-import { ModelConstants } from './model-constants';
-import { Source } from './source.model';
+import { DatabaseConstants } from './database-constants';
+import { Account } from './account.model';
 import { Tag } from './tag.model';
+import { Property } from './property.model';
 
-@Entity(ModelConstants.transactionsTable)
+@Entity(DatabaseConstants.transactionsTable)
 export class Transaction extends BaseEntity {
   @PrimaryGeneratedColumn()
-  id: number;
+  id!: number;
 
   @Column()
-  date: Date;
+  date!: Date;
 
-  @Column({ nullable: true })
-  message?: string;
-
-  @Column({ nullable: true })
-  note_1?: string;
-
-  @Column({ nullable: true })
-  note_2?: string;
-
-  @Column({ nullable: true })
-  note_3?: string;
-
-  @Column()
-  amount: number;
-
-  @Column()
-  source_id: number;
-
-  @ManyToOne((type) => Source, (source) => source.transactions, {
-    onDelete: 'CASCADE',
+  @Column({
+    type: String,
+    nullable: true
   })
-  @JoinColumn({ name: 'source_id' })
-  source: Source;
+  message?: string | null;
+
+  @Column()
+  transactor!: string;
+
+  @Column()
+  amount!: number;
+
+  @Column()
+  account_id!: number;
+
+  @ManyToOne(() => Account, (account) => account.transactions, {
+    onDelete: 'CASCADE'
+  })
+  @JoinColumn({ name: 'account_id' })
+  account!: Account;
 
   @ManyToMany(() => Tag, (tag) => tag.transactions)
   @JoinTable({
     name: 'transaction_tags',
     joinColumn: { name: 'transaction_id', referencedColumnName: 'id' },
-    inverseJoinColumn: { name: 'tag_id', referencedColumnName: 'id' },
+    inverseJoinColumn: { name: 'tag_id', referencedColumnName: 'id' }
   })
-  tags: Tag[];
+  tags!: Tag[];
+
+  @OneToMany(() => Property, (property) => property.transaction, {
+    cascade: true
+  })
+  properties!: Property[];
 }

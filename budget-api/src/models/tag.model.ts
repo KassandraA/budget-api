@@ -1,15 +1,15 @@
 import { BaseEntity, Column, Entity, ManyToMany, PrimaryGeneratedColumn } from 'typeorm';
-import { ModelConstants } from './model-constants';
+import { DatabaseConstants } from './database-constants';
 import { Transaction } from './transaction.model';
 
-@Entity(ModelConstants.tagsTable)
+@Entity(DatabaseConstants.tagsTable)
 export class Tag extends BaseEntity {
   @PrimaryGeneratedColumn()
-  id: number;
+  id!: number;
 
   @Column({ unique: true })
-  name: string;
+  name!: string;
 
   @ManyToMany(() => Transaction, (transaction) => transaction.tags)
-  transactions: Transaction[];
+  transactions!: Transaction[];
 }

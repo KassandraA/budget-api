@@ -2,12 +2,17 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "type": "node",
-      "request": "attach",
-      "name": "My Node: Nodemon", // cmd nodemon
-      "processId": "${command:PickProcess}",
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen",
+      "name": "Launch with debug",
+      "program": "${workspaceFolder}/dist/budget-api/src/app.js",
+      "request": "launch",
       "restart": true,
-      "protocol": "inspector"
+      "runtimeExecutable": "nodemon",
+      "skipFiles": [
+        "<node_internals>/**"
+      ],
+      "type": "node"
     }
   ]
 }

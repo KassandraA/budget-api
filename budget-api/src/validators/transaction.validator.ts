@@ -5,29 +5,28 @@ import { ValidationTarget } from './validation-target.enum';
 
 export class TransactionValidator {
   private static queryParams = [
-    'order_by',
+    'orderBy',
     'message',
-    'note_1',
-    'note_2',
-    'note_3',
+    'transactor',
     'amount',
     'date',
-    'tag_names',
+    'tagNames',
+    'accountNames',
     'skip',
-    'take',
+    'take'
   ];
-  private static orderByParams = ['message', 'note_1', 'note_2', 'note_3', 'amount', 'date'];
+  private static orderByParams = ['message', 'transactor', 'amount', 'date', 'accountName'];
   private static stringParams = ['like'];
   private static nonStringParams = ['lte', 'gte', 'equal'];
 
   private static validateQueryKeys = [
     ValidationHelpers.validateObjectKeys(
-      null,
+      '',
       ValidationTarget.Query,
       TransactionValidator.queryParams
     ),
     ValidationHelpers.validateObjectKeys(
-      'order_by',
+      'orderBy',
       ValidationTarget.Query,
       TransactionValidator.orderByParams
     ),
@@ -37,17 +36,7 @@ export class TransactionValidator {
       TransactionValidator.stringParams
     ),
     ValidationHelpers.validateObjectKeys(
-      'note_1',
-      ValidationTarget.Query,
-      TransactionValidator.stringParams
-    ),
-    ValidationHelpers.validateObjectKeys(
-      'note_2',
-      ValidationTarget.Query,
-      TransactionValidator.stringParams
-    ),
-    ValidationHelpers.validateObjectKeys(
-      'note_3',
+      'transactor',
       ValidationTarget.Query,
       TransactionValidator.stringParams
     ),
@@ -61,22 +50,22 @@ export class TransactionValidator {
       ValidationTarget.Query,
       TransactionValidator.nonStringParams
     ),
-    TransactionValidator.validate,
+    (req: Request, res: Response, next: NextFunction) => TransactionValidator.validate(req, res, next)
   ];
 
   private static validateQueryValues = [
     ValidationHelpers.validateString('message.*', ValidationTarget.Query, false, true),
-    ValidationHelpers.validateString('note_1.*', ValidationTarget.Query, false, true),
-    ValidationHelpers.validateString('note_2.*', ValidationTarget.Query, false, true),
-    ValidationHelpers.validateString('note_3.*', ValidationTarget.Query, false, true),
+    ValidationHelpers.validateString('transactor.*', ValidationTarget.Query, true, true),
     ValidationHelpers.validateDecimal('amount.*', ValidationTarget.Query),
     ValidationHelpers.validateDate('date.*', ValidationTarget.Query),
-    ValidationHelpers.validateIncludes('order_by.*', ['ASC', 'DESC'], ValidationTarget.Query),
-    ValidationHelpers.validateArray('tag_names', ValidationTarget.Query),
-    ValidationHelpers.validateString('tag_names.*', ValidationTarget.Query),
+    ValidationHelpers.validateIncludes('orderBy.*', ['ASC', 'DESC'], ValidationTarget.Query),
+    ValidationHelpers.validateArray('tagNames', ValidationTarget.Query),
+    ValidationHelpers.validateString('tagNames.*', ValidationTarget.Query, false, true),
+    ValidationHelpers.validateArray('accountNames', ValidationTarget.Query),
+    ValidationHelpers.validateString('accountNames.*', ValidationTarget.Query, false, true),
     ValidationHelpers.validateInteger('skip', ValidationTarget.Query),
     ValidationHelpers.validateInteger('take', ValidationTarget.Query),
-    TransactionValidator.validate,
+    (req: Request, res: Response, next: NextFunction) => TransactionValidator.validate(req, res, next)
   ];
 
   private static validate(req: Request, res: Response, next: NextFunction) {
@@ -87,36 +76,36 @@ export class TransactionValidator {
 
   static validateOnGet = [
     ...TransactionValidator.validateQueryKeys,
-    ...TransactionValidator.validateQueryValues,
+    ...TransactionValidator.validateQueryValues
   ];
 
   static validateOnCreate = [
     ValidationHelpers.validateArray('', ValidationTarget.Body, false, true),
-    TransactionValidator.validate,
+    (req: Request, res: Response, next: NextFunction) => TransactionValidator.validate(req, res, next),
     ValidationHelpers.validateDate('*.date', ValidationTarget.Body, true),
     ValidationHelpers.validateDecimal('*.amount', ValidationTarget.Body, true),
-    ValidationHelpers.validateString('*.source_name', ValidationTarget.Body, true),
     ValidationHelpers.validateString('*.message'),
-    ValidationHelpers.validateString('*.note_1'),
-    ValidationHelpers.validateString('*.note_2'),
-    ValidationHelpers.validateString('*.note_3'),
-    ValidationHelpers.validateArray('*.tag_names'),
-    ValidationHelpers.validateString('*.tag_names.*'),
-    TransactionValidator.validate,
+    ValidationHelpers.validateString('*.transactor', ValidationTarget.Body, true, true),
+    ValidationHelpers.validateString('*.accountName', ValidationTarget.Body, true),
+    ValidationHelpers.validateArray('*.tagNames'),
+    ValidationHelpers.validateString('*.tagNames.*'),
+    ValidationHelpers.validateArray('*.properties', ValidationTarget.Body, false, false),
+    ValidationHelpers.validateString('*.properties.*'),
+    (req: Request, res: Response, next: NextFunction) => TransactionValidator.validate(req, res, next)
   ];
 
   static validateOnUpdate = [
     ValidationHelpers.validateArray('', ValidationTarget.Body, false, false),
-    TransactionValidator.validate,
+    (req: Request, res: Response, next: NextFunction) => TransactionValidator.validate(req, res, next),
     ValidationHelpers.validateDate('date'),
     ValidationHelpers.validateDecimal('amount'),
-    ValidationHelpers.validateString('source_name'),
     ValidationHelpers.validateString('message'),
-    ValidationHelpers.validateString('note_1'),
-    ValidationHelpers.validateString('note_2'),
-    ValidationHelpers.validateString('note_3'),
-    ValidationHelpers.validateArray('tag_names'),
-    ValidationHelpers.validateString('tag_names.*'),
-    TransactionValidator.validate,
+    ValidationHelpers.validateString('transactor', ValidationTarget.Body, false, true),
+    ValidationHelpers.validateString('accountName'),
+    ValidationHelpers.validateArray('tagNames'),
+    ValidationHelpers.validateString('tagNames.*'),
+    ValidationHelpers.validateArray('properties', ValidationTarget.Body, false, false),
+    ValidationHelpers.validateString('properties.*'),
+    (req: Request, res: Response, next: NextFunction) => TransactionValidator.validate(req, res, next)
   ];
 }

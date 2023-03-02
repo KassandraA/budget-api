@@ -1,83 +1,54 @@
-import { Request, Response } from 'express';
 import { Transaction } from '../models/transaction.model';
 import { TransactionsService } from '../services/transactions.service';
+import { TransactionResponseDto } from '../dto/transaction-response.dto';
+import { TransactionDto } from '../../../budget-common/src/dto/transaction.dto';
+import { BaseController } from './abstract/controller.base';
+import { TypedRequestQuery, TypedRequest, TypedRequestBody, TypedRequestParams, TypedResponse } from '../utils/express/typed-request';
 import { TransactionFilterSortPageDto } from '../dto/transaction-filter-sort-page.dto';
-import { TransactionResponseDto } from 'src/dto/transaction-response.dto';
-import { TransactionTypeormUtils } from '../utils/transaction-typeorm.utils';
-import { TransactionConverter } from '../utils/transaction-converter.utils';
 
 export class TransactionsController {
-  static async getMany(
-    req: Request,
-    res: Response
-  ): Promise<Response<TransactionResponseDto>> {
-    try {
-      const dto = TransactionTypeormUtils.isFilterSortPageDto(req?.query)
-        ? (req.query as TransactionFilterSortPageDto)
-        : null;
-
-      const transactions = await TransactionsService.getMany(dto);
-      return res.json(transactions);
-    } catch (e) {
-      const errorCode = e.statusCode ? e.statusCode : 500;
-      return res.status(errorCode).json({ message: e.message });
-    }
+  static getMany(
+    req: TypedRequestQuery<TransactionFilterSortPageDto>,
+    res: TypedResponse<TransactionResponseDto>
+  ): void {
+    TransactionsService.getMany(req.query)
+      .then((data) => res.json({ data: data }))
+      .catch((error) => BaseController.writeErrorToResponse(error, res));
   }
 
-  static async getOneById(
-    req: Request,
-    res: Response
-  ): Promise<Response<{ data: Transaction }>> {
-    try {
-      const transaction = await TransactionsService.getOneById(Number(req.params.id));
-      return res.json({ data: transaction });
-    } catch (e) {
-      const errorCode = e.statusCode ? e.statusCode : 500;
-      return res.status(errorCode).json({ message: e.message });
-    }
+  static getOneById(
+    req: TypedRequestParams<{ id: string }>,
+    res: TypedResponse<Transaction>
+  ): void {
+    TransactionsService.getOneById(Number(req.params.id))
+      .then((data) => res.json({ data: data }))
+      .catch((error) => BaseController.writeErrorToResponse(error, res));
   }
 
-  static async addMany(
-    req: Request,
-    res: Response
-  ): Promise<Response<{ data: Transaction[] }>> {
-    try {
-      const newTransactions = await TransactionsService.addMany(
-        req.body.map((i: any) => TransactionConverter.asDto(i))
-      );
-      return res.json({ data: newTransactions });
-    } catch (e) {
-      const errorCode = e.statusCode ? e.statusCode : 500;
-      return res.status(errorCode).json({ message: e.message });
-    }
+  static addMany(
+    req: TypedRequestBody<TransactionDto[]>,
+    res: TypedResponse<Transaction[]>
+  ): void {
+    TransactionsService.addMany(req.body)
+      .then((data) => res.json({ data: data }))
+      .catch((error) => BaseController.writeErrorToResponse(error, res));
   }
 
-  static async updateOne(
-    req: Request,
-    res: Response
-  ): Promise<Response<{ data: Transaction }>> {
-    try {
-      const updatedTransaction = await TransactionsService.updateOne(
-        Number(req.params.id),
-        TransactionConverter.asDto(req.body)
-      );
-      return res.json({ data: updatedTransaction });
-    } catch (e) {
-      const errorCode = e.statusCode ? e.statusCode : 500;
-      return res.status(errorCode).json({ message: e.message });
-    }
+  static updateOne(
+    req: TypedRequest<{ id: string }, TransactionDto>,
+    res: TypedResponse<Transaction>
+  ): void {
+    TransactionsService.updateOne(Number(req.params.id), req.body)
+      .then((data) => res.json({ data: data }))
+      .catch((error) => BaseController.writeErrorToResponse(error, res));
   }
 
-  static async deleteOne(
-    req: Request,
-    res: Response
-  ): Promise<Response<{ message: string }>> {
-    try {
-      await TransactionsService.deleteOne(Number(req.params.id));
-      return res.json({ message: 'Deleted successfully' });
-    } catch (e) {
-      const errorCode = e.statusCode ? e.statusCode : 500;
-      return res.status(errorCode).json({ message: e.message });
-    }
+  static deleteOne(
+    req: TypedRequestParams<{ id: string }>,
+    res: TypedResponse<string>
+  ): void {
+    TransactionsService.deleteOne(Number(req.params.id))
+      .then((data) => res.json({ message: data }))
+      .catch((error) => BaseController.writeErrorToResponse(error, res));
   }
 }

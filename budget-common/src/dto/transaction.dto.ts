@@ -1,11 +1,9 @@
 export interface TransactionDto {
-  transactionId?: number;
   date: Date;
-  message: string;
-  note1: string;
-  note2: string;
-  note3: string;
+  message?: string;
+  transactor: string;
   amount: number;
-  sourceName: string;
-  tagNames: string[];
+  accountName: string;
+  tagNames?: string[];
+  properties?: { [key: string]: string };
 }

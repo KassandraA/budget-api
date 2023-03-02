@@ -3,89 +3,89 @@ import {
   QueryRunner,
   Table,
   TableForeignKey,
-  TableIndex,
+  TableIndex
 } from 'typeorm';
 
-export class InitialCreate1600285033244 implements MigrationInterface {
+export class InitialCreate1646497152778 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.createTable(
       new Table({
-        name: 'source_statuses',
+        name: 'account_statuses',
         columns: [
           {
             name: 'id',
             type: 'integer',
             isPrimary: true,
-            isGenerated: true,
+            isGenerated: true
           },
           {
             name: 'name',
             type: 'nvarchar2',
             isNullable: false,
-            isUnique: true,
+            isUnique: true
           },
           {
             name: 'description',
             type: 'nvarchar2',
-            isNullable: true,
-          },
-        ],
+            isNullable: true
+          }
+        ]
       }),
       true
     );
 
     await queryRunner.createTable(
       new Table({
-        name: 'sources',
+        name: 'accounts',
         columns: [
           {
             name: 'id',
             type: 'integer',
             isPrimary: true,
-            isGenerated: true,
+            isGenerated: true
           },
           {
             name: 'name',
             type: 'nvarchar2',
             isNullable: false,
-            isUnique: true,
+            isUnique: true
           },
           {
             name: 'description',
             type: 'nvarchar2',
-            isNullable: true,
+            isNullable: true
           },
           {
             name: 'currency',
             type: 'nvarchar2',
-            isNullable: true,
+            isNullable: true
           },
           {
-            name: 'note_1',
+            name: 'account_number',
             type: 'nvarchar2',
-            isNullable: true,
+            isNullable: true
           },
           {
-            name: 'note_2',
+            name: 'card_number',
             type: 'nvarchar2',
-            isNullable: true,
+            isNullable: true
           },
           {
             name: 'status_id',
-            type: 'integer',
-          },
-        ],
+            type: 'integer'
+          }
+        ]
       }),
       true
     );
 
     await queryRunner.createForeignKey(
-      'sources',
+      'accounts',
       new TableForeignKey({
         columnNames: ['status_id'],
         referencedColumnNames: ['id'],
-        referencedTableName: 'source_statuses',
-        onDelete: 'RESTRICT',
+        referencedTableName: 'account_statuses',
+        onDelete: 'RESTRICT'
       })
     );
 
@@ -97,15 +97,15 @@ export class InitialCreate1600285033244 implements MigrationInterface {
             name: 'id',
             type: 'integer',
             isPrimary: true,
-            isGenerated: true,
+            isGenerated: true
           },
           {
             name: 'name',
             type: 'nvarchar2',
             isNullable: false,
-            isUnique: true,
-          },
-        ],
+            isUnique: true
+          }
+        ]
       }),
       true
     );
@@ -118,43 +118,33 @@ export class InitialCreate1600285033244 implements MigrationInterface {
             name: 'id',
             type: 'integer',
             isPrimary: true,
-            isGenerated: true,
+            isGenerated: true
           },
           {
             name: 'date',
             type: 'datetime',
-            isNullable: false,
+            isNullable: false
           },
           {
             name: 'message',
             type: 'nvarchar2',
-            isNullable: true,
+            isNullable: true
           },
           {
-            name: 'note_1',
+            name: 'transactor',
             type: 'nvarchar2',
-            isNullable: true,
-          },
-          {
-            name: 'note_2',
-            type: 'nvarchar2',
-            isNullable: true,
-          },
-          {
-            name: 'note_3',
-            type: 'nvarchar2',
-            isNullable: true,
+            isNullable: false
           },
           {
             name: 'amount',
             type: 'integer',
-            isNullable: false,
+            isNullable: false
           },
           {
-            name: 'source_id',
-            type: 'integer',
-          },
-        ],
+            name: 'account_id',
+            type: 'integer'
+          }
+        ]
       }),
       true
     );
@@ -162,10 +152,10 @@ export class InitialCreate1600285033244 implements MigrationInterface {
     await queryRunner.createForeignKey(
       'transactions',
       new TableForeignKey({
-        columnNames: ['source_id'],
+        columnNames: ['account_id'],
         referencedColumnNames: ['id'],
-        referencedTableName: 'sources',
-        onDelete: 'CASCADE',
+        referencedTableName: 'accounts',
+        onDelete: 'RESTRICT'
       })
     );
 
@@ -173,7 +163,7 @@ export class InitialCreate1600285033244 implements MigrationInterface {
       'transactions',
       new TableIndex({
         name: 'IDX_TRANSACTIONS_DATE',
-        columnNames: ['date'],
+        columnNames: ['date']
       })
     );
 
@@ -183,13 +173,13 @@ export class InitialCreate1600285033244 implements MigrationInterface {
         columns: [
           {
             name: 'transaction_id',
-            type: 'integer',
+            type: 'integer'
           },
           {
             name: 'tag_id',
-            type: 'integer',
-          },
-        ],
+            type: 'integer'
+          }
+        ]
       })
     );
 
@@ -199,7 +189,7 @@ export class InitialCreate1600285033244 implements MigrationInterface {
         columnNames: ['transaction_id'],
         referencedColumnNames: ['id'],
         referencedTableName: 'transactions',
-        onDelete: 'CASCADE',
+        onDelete: 'CASCADE'
       })
     );
 
@@ -209,20 +199,20 @@ export class InitialCreate1600285033244 implements MigrationInterface {
         columnNames: ['tag_id'],
         referencedColumnNames: ['id'],
         referencedTableName: 'tags',
-        onDelete: 'CASCADE',
+        onDelete: 'CASCADE'
       })
     );
 
     await queryRunner.createPrimaryKey('transaction_tags', [
       'transaction_id',
-      'tag_id',
+      'tag_id'
     ]);
 
     await queryRunner.createIndex(
       'transaction_tags',
       new TableIndex({
         name: 'IDX_TRANSACTION_TAGS_TRANSACTION_ID',
-        columnNames: ['transaction_id'],
+        columnNames: ['transaction_id']
       })
     );
 
@@ -230,16 +220,55 @@ export class InitialCreate1600285033244 implements MigrationInterface {
       'transaction_tags',
       new TableIndex({
         name: 'IDX_TRANSACTION_TAGS_TAG_ID',
-        columnNames: ['tag_id'],
+        columnNames: ['tag_id']
       })
     );
+
+    await queryRunner.createTable(
+      new Table({
+        name: 'properties',
+        columns: [
+          {
+            name: 'id',
+            type: 'integer',
+            isPrimary: true,
+            isGenerated: true
+          },
+          {
+            name: 'name',
+            type: 'navchar2',
+            isNullable: false
+          },
+          {
+            name: 'value',
+            type: 'navchar2',
+            isNullable: true
+          },
+          {
+            name: 'transaction_id',
+            type: 'integer'
+          }
+        ]
+      })
+    );
+
+    await queryRunner.createForeignKey(
+        'properties',
+        new TableForeignKey({
+          columnNames: ['transaction_id'],
+          referencedColumnNames: ['id'],
+          referencedTableName: 'transactions',
+          onDelete: 'CASCADE'
+        })
+      );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
+    await queryRunner.dropTable('properties');
     await queryRunner.dropTable('transaction_tags');
     await queryRunner.dropTable('transactions');
     await queryRunner.dropTable('tags');
-    await queryRunner.dropTable('sources');
-    await queryRunner.dropTable('source_statuses');
+    await queryRunner.dropTable('accounts');
+    await queryRunner.dropTable('account_statuses');
   }
 }

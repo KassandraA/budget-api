@@ -41,25 +41,23 @@ export class ParserUtils {
   }
 
   private static mapToTransactionDto(rbczTransaction: RBCZTransactionDto): TransactionDto {
-    const transaction: TransactionDto = {
-      date: new Date(),
-      message: '',
-      note1: '',
-      note2: '',
-      note3: '',
-      amount: null,
-      sourceName: '',
-      tagNames: []
+    const amount = Number((rbczTransaction.bookedamount)?.replace(/\s/g, '').replace(',', '.'));
+    const transactor = amount < 0 ? rbczTransaction.merchant.trim() : rbczTransaction.nameofaccount.trim();
+    return {
+      date: new Date(rbczTransaction.transactiondate.split('.').reverse().join('/')),
+      message: rbczTransaction.message,
+      transactor: transactor ? transactor : 'Unknown',
+      amount: amount,
+      accountName: rbczTransaction.accountname,
+      tagNames: [],
+      properties: this.toPropertiesObject(rbczTransaction)
     };
+  }
 
-    transaction.date = new Date(rbczTransaction.transactiondate.split('.').reverse().join('/'));
-    transaction.message = rbczTransaction.message;
-    transaction.note1 = rbczTransaction.message !== rbczTransaction.note ? rbczTransaction.note : '';
-    transaction.note2 = rbczTransaction.merchant;
-    transaction.note3 = rbczTransaction.transactiontype;
-    transaction.amount = Number((rbczTransaction.bookedamount)?.replace(/\s/g, '').replace(',', '.'));
-    transaction.sourceName = rbczTransaction.accountname;
-
-    return transaction;
+  private static toPropertiesObject(transaction: RBCZTransactionDto): { [key: string]: string } { 
+    const entries: [string, string][] = Object.entries(transaction);
+    const obj: { [key: string]: string } = {}; 
+    entries.map(([key, val]) => obj[key] = val );
+    return obj;
   }
 }

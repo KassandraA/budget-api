@@ -1,13 +1,12 @@
 import { body, query, ValidationChain } from 'express-validator';
-import { ValueNormalizer } from '../utils/value-normalizer.utils';
 import { ValidationTarget } from './validation-target.enum';
 
 export class ValidationHelpers {
   static validateString(
     paramName: string,
     target: ValidationTarget = ValidationTarget.Body,
-    isRequired: boolean = false,
-    isNotEmpty: boolean = false
+    isRequired = false,
+    isNotEmpty = false
   ): ValidationChain {
     const checker = this.validateRequired(
       this.getChecker(target, paramName),
@@ -22,6 +21,7 @@ export class ValidationHelpers {
       .isString()
       .withMessage(`${this.beautifyParam(paramName)} must be a string`)
       .bail()
+      .trim()
       .if(() => isNotEmpty)
       .notEmpty()
       .withMessage(`${this.beautifyParam(paramName)} must not be empty`)
@@ -31,7 +31,7 @@ export class ValidationHelpers {
   static validateInteger(
     paramName: string,
     target: ValidationTarget = ValidationTarget.Body,
-    isRequired: boolean = false
+    isRequired = false
   ): ValidationChain {
     const checker = this.validateRequired(
       this.getChecker(target, paramName),
@@ -52,7 +52,7 @@ export class ValidationHelpers {
   static validateDecimal(
     paramName: string,
     target: ValidationTarget = ValidationTarget.Body,
-    isRequired: boolean = false
+    isRequired = false
   ): ValidationChain {
     const checker = this.validateRequired(
       this.getChecker(target, paramName),
@@ -73,7 +73,7 @@ export class ValidationHelpers {
   static validateDate(
     paramName: string,
     target: ValidationTarget = ValidationTarget.Body,
-    isRequired: boolean = false
+    isRequired = false
   ): ValidationChain {
     const checker = this.validateRequired(
       this.getChecker(target, paramName),
@@ -90,8 +90,8 @@ export class ValidationHelpers {
   static validateArray(
     paramName: string,
     target: ValidationTarget = ValidationTarget.Body,
-    isRequired: boolean = false,
-    mustBeArray: boolean = true
+    isRequired = false,
+    mustBeArray = true
   ): ValidationChain {
     const param = paramName.length ? this.beautifyParam(paramName) : target;
     let checker = this.validateRequired(
@@ -110,7 +110,7 @@ export class ValidationHelpers {
     paramName: string,
     values: string[],
     target: ValidationTarget = ValidationTarget.Body,
-    isRequired: boolean = false
+    isRequired = false
   ): ValidationChain {
     const checker = this.validateRequired(
       this.getChecker(target, paramName),
@@ -128,7 +128,7 @@ export class ValidationHelpers {
     target: ValidationTarget,
     keys: string[]
   ): ValidationChain {
-    return this.getChecker(target, paramName).custom((value) => {
+    return this.getChecker(target, paramName).custom((value: { [key: string]: unknown }) => {
       if (!value) return true;
 
       const currKeys = Object.keys(value);
@@ -157,7 +157,7 @@ export class ValidationHelpers {
       : checker.optional();
   }
 
-  private static getChecker(target: ValidationTarget, paramName: string = ''): ValidationChain {
+  private static getChecker(target: ValidationTarget, paramName = ''): ValidationChain {
     switch (target) {
       case ValidationTarget.Query:
         return paramName ? query(paramName) : query();
