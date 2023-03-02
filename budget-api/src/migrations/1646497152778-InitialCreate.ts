@@ -264,11 +264,11 @@ export class InitialCreate1646497152778 implements MigrationInterface {
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
+    await queryRunner.dropTable('properties');
     await queryRunner.dropTable('transaction_tags');
     await queryRunner.dropTable('transactions');
     await queryRunner.dropTable('tags');
     await queryRunner.dropTable('accounts');
     await queryRunner.dropTable('account_statuses');
-    await queryRunner.dropTable('properties');
   }
 }
