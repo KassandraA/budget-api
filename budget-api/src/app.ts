@@ -7,7 +7,8 @@ import { TagsRoutes } from './routes/tags.routes';
 import { TransactionsRoutes } from './routes/transactions.routes';
 
 AppDataSource.initialize()
-  .catch((e) => console.log('DB initialization failed: ', e instanceof Error ? e.message : String(e)));
+  .then(() => console.log("DataSource has been initialized"))
+  .catch((e) => console.log('DataSource initialization failed: ', e instanceof Error ? e.message : String(e)));
 
 const app = express();
 const port = 5000;
